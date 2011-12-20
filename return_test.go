@@ -44,7 +44,20 @@ func (t *ReturnTest) EmptySet() {
 }
 
 func (t *ReturnTest) OneValue() {
+	action := Return("taco")
+	result := action.Invoke([]interface{}{})
+
+	ExpectThat(len(result), Equals(1))
+	ExpectThat(result[0], Equals("taco"))
 }
 
 func (t *ReturnTest) MultipleValues() {
+	someInt := 17
+	action := Return("taco", &someInt, 19)
+	result := action.Invoke([]interface{}{})
+
+	ExpectThat(len(result), Equals(3))
+	ExpectThat(result[0], Equals("taco"))
+	ExpectThat(result[1], Equals(&someInt))
+	ExpectThat(result[2], Equals(19))
 }
