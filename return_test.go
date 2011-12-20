@@ -17,6 +17,7 @@ package oglemock_test
 
 import (
 	. "github.com/jacobsa/oglematchers"
+	. "github.com/jacobsa/oglemock"
 	. "github.com/jacobsa/ogletest"
 	"testing"
 )
@@ -36,6 +37,10 @@ func TestOgletest(t *testing.T) { RunTests(t) }
 ////////////////////////////////////////////////////////////
 
 func (t *ReturnTest) EmptySet() {
+	action := Return()
+	result := action.Invoke([]interface{}{})
+
+	ExpectThat(len(result), Equals(0))
 }
 
 func (t *ReturnTest) OneValue() {
