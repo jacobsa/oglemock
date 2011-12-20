@@ -28,6 +28,7 @@ import (
 ////////////////////////////////////////////////////////////
 
 type ReturnTest struct {
+
 }
 
 func init()                     { RegisterTestSuite(&ReturnTest{}) }
