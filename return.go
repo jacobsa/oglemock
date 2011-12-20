@@ -19,6 +19,13 @@ package oglemock
 // arguments. You should make sure that these values are correctly typed to be
 // return values for the mock method.
 func Return(vals ...interface{}) Action {
-	return nil
+	return &returnAction{vals}
 }
 
+type returnAction struct {
+	returnVals []interface{}
+}
+
+func (a *returnAction) Invoke(vals []interface{}) []interface{} {
+	return a.returnVals
+}
