@@ -15,6 +15,10 @@
 
 package oglemock
 
+import (
+	"reflect"
+)
+
 // Action represents an action to be taken in response to a call to a mock
 // method.
 type Action interface {
@@ -22,4 +26,8 @@ type Action interface {
 	// It returns zero or more values that may be treated as the return values of
 	// the method.
 	Invoke(methodArgs []interface{}) []interface{}
+
+	// CheckType returns an error iff the action is not able to deal with methods
+	// of the specified type. The type's Kind must be Func.
+	CheckType(signature reflect.Type) error
 }

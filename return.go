@@ -15,6 +15,11 @@
 
 package oglemock
 
+import (
+	"errors"
+	"reflect"
+)
+
 // Return creates an Action that simply returns the values passed to Return as
 // arguments. You should make sure that these values are correctly typed to be
 // return values for the mock method.
@@ -28,4 +33,8 @@ type returnAction struct {
 
 func (a *returnAction) Invoke(vals []interface{}) []interface{} {
 	return a.returnVals
+}
+
+func (a *returnAction) CheckType(signature reflect.Type) error {
+	return errors.New("TODO")
 }
