@@ -15,14 +15,13 @@
 
 package oglemock
 
-// PartialExpectedCall is a function that should be called exactly once with
+// PartialExpecation is a function that should be called exactly once with
 // expected arguments or matchers in order to set up an expected method call.
-// See Controller.ExpectMethodCall below.
+// See Controller.ExpectMethodCall below. It returns an expectation that can be
+// further modified (e.g. by calling WillOnce).
 //
 // If the arguments are of the wrong type, the function panics.
-//
-// TODO(jacobsa): Add a return type that exports Times, WillOnce, and so on.
-type PartialExpectedCall func([]interface{})
+type PartialExpecation func([]interface{}) Expectation
 
 // Controller represents an object that implements the central logic of
 // oglemock: recording and verifying expectations, responding to mock method
@@ -41,7 +40,7 @@ type Controller interface {
 	//
 	// If the mock object doesn't have a method of the supplied name, the
 	// function panics.
-	ExpectCall(o interface{}, methodName string) PartialExpectedCall
+	ExpectCall(o interface{}, methodName string) PartialExpecation
 
 	// HandleMethodCall looks for a registered expectation matching the call of
 	// the given method on mock object o, invokes the appropriate action (if
