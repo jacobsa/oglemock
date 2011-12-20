@@ -24,7 +24,8 @@ import (
 type Action interface {
 	// Invoke runs the specified action, given the arguments to the mock method.
 	// It returns zero or more values that may be treated as the return values of
-	// the method.
+	// the method. If the action doesn't return any values, it may return the nil
+	// slice.
 	Invoke(methodArgs []interface{}) []interface{}
 
 	// CheckType returns an error iff the action is not able to deal with methods
