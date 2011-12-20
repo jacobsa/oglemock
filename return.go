@@ -46,7 +46,7 @@ func (a *returnAction) CheckType(signature reflect.Type) error {
 			fmt.Sprintf("Return given %d vals; expected %d.", numVals, numOut))
 	}
 
-	// Check the type of each.
+	// Check the type of each value to be returned.
 	for i, val := range a.returnVals {
 		expectedType := signature.Out(i)
 		actualType := reflect.TypeOf(val)
