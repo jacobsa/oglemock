@@ -17,6 +17,7 @@ package oglemock
 
 import (
 	"errors"
+	"fmt"
 	"reflect"
 )
 
@@ -36,5 +37,29 @@ func (a *returnAction) Invoke(vals []interface{}) []interface{} {
 }
 
 func (a *returnAction) CheckType(signature reflect.Type) error {
-	return errors.New("TODO")
+	// Check the length of the return value.
+	numOut := signature.NumOut()
+	numVals := len(a.returnVals)
+
+	if numOut != numVals {
+		return errors.New(
+			fmt.Sprintf("Return given %d vals; expected %d.", numVals, numOut))
+	}
+
+	// Check the type of each.
+	for i, val := range a.returnVals {
+		expectedType := signature.Out(i)
+		actualType := reflect.TypeOf(val)
+
+		if expectedType != actualType {
+		return errors.New(
+			fmt.Sprintf(
+				"Return given %v for arg %d; expected %v.",
+				actualType,
+				i,
+				expectedType))
+		}
+	}
+
+	return nil
 }
