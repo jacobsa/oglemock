@@ -21,13 +21,12 @@ import (
 	"reflect"
 )
 
-// InternalCallExpectation is exported for purposes of testing only. You should
-// not touch it.
+// InternalExpectation is exported for purposes of testing only. You should not
+// touch it.
 //
-// InternalCallExpectation represents an expectation for zero or more calls to
-// a mock method, and a set of actions to be taken when those calls are
-// received.
-type InternalCallExpectation struct {
+// InternalExpectation represents an expectation for zero or more calls to a
+// mock method, and a set of actions to be taken when those calls are received.
+type InternalExpectation struct {
 	// The signature of the method to which this expectation is bound, for
 	// checking action types.
 	methodSignature reflect.Type
@@ -61,8 +60,8 @@ func InternalNewExpectation(
 	methodSignature reflect.Type,
 	args []interface{},
 	fileName string,
-	lineNumber int) *InternalCallExpectation {
-	result := &InternalCallExpectation{}
+	lineNumber int) *InternalExpectation {
+	result := &InternalExpectation{}
 
 	// Store fields that can be stored directly.
 	result.methodSignature = methodSignature
@@ -87,7 +86,7 @@ func InternalNewExpectation(
 	return result
 }
 
-func (e *InternalCallExpectation) Times(n uint) Expectation {
+func (e *InternalExpectation) Times(n uint) Expectation {
 	// It is illegal to call this more than once.
 	if e.ExpectedNumMatches != -1 {
 		panic("Times called more than once.")
@@ -111,7 +110,7 @@ func (e *InternalCallExpectation) Times(n uint) Expectation {
 	return e
 }
 
-func (e *InternalCallExpectation) WillOnce(a Action) Expectation {
+func (e *InternalExpectation) WillOnce(a Action) Expectation {
 	// It is illegal to call this after WillRepeatedly.
 	if e.FallbackAction != nil {
 		panic("WillOnce called after WillRepeatedly.")
@@ -128,7 +127,7 @@ func (e *InternalCallExpectation) WillOnce(a Action) Expectation {
 	return e
 }
 
-func (e *InternalCallExpectation) WillRepeatedly(a Action) Expectation {
+func (e *InternalExpectation) WillRepeatedly(a Action) Expectation {
 	// It is illegal to call this twice.
 	if e.FallbackAction != nil {
 		panic("WillRepeatedly called more than once.")
