@@ -87,6 +87,10 @@ func (t *CallExpectationTest) TimesN() {
 }
 
 func (t *CallExpectationTest) NoActions() {
+	exp := InternalNewExpectation([]interface{}{}, "", 0)
+
+	ExpectThat(len(exp.OneTimeActions), Equals(0))
+	ExpectThat(exp.FallbackAction, Equals(nil))
 }
 
 func (t *CallExpectationTest) WillOnce() {
