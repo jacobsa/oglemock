@@ -97,10 +97,10 @@ func (t *CallExpectationTest) NoActions() {
 }
 
 func (t *CallExpectationTest) WillOnce() {
-	action0 := Return(17)
-	action1 := Return(19)
+	action0 := Return(17.0)
+	action1 := Return(19.0)
 
-	exp := InternalNewExpectation(emptyReturnSig, []interface{}{}, "", 0)
+	exp := InternalNewExpectation(float32ReturnSig, []interface{}{}, "", 0)
 	exp.WillOnce(action0).WillOnce(action1)
 
 	ExpectThat(len(exp.OneTimeActions), Equals(2))
@@ -109,20 +109,20 @@ func (t *CallExpectationTest) WillOnce() {
 }
 
 func (t *CallExpectationTest) WillRepeatedly() {
-	action := Return(17)
+	action := Return(17.0)
 
-	exp := InternalNewExpectation(emptyReturnSig, []interface{}{}, "", 0)
+	exp := InternalNewExpectation(float32ReturnSig, []interface{}{}, "", 0)
 	exp.WillRepeatedly(action)
 
 	ExpectThat(exp.FallbackAction, Equals(action))
 }
 
 func (t *CallExpectationTest) BothKindsOfAction() {
-	action0 := Return(17)
-	action1 := Return(19)
-	action2 := Return(23)
+	action0 := Return(17.0)
+	action1 := Return(19.0)
+	action2 := Return(23.0)
 
-	exp := InternalNewExpectation(emptyReturnSig, []interface{}{}, "", 0)
+	exp := InternalNewExpectation(float32ReturnSig, []interface{}{}, "", 0)
 	exp.WillOnce(action0).WillOnce(action1).WillRepeatedly(action2)
 
 	ExpectThat(len(exp.OneTimeActions), Equals(2))
