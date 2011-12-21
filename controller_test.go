@@ -163,7 +163,7 @@ func (t *ControllerTest) HandleMethodCallGivenWrongNumberOfArgs() {
 				112,
 				[]interface{}{17, 19, 23})
 			},
-		Panics(HasSubstr("arguments: expected 2, got 3")))
+		Panics(HasSubstr("arguments: expected 2; got 3")))
 }
 
 func (t *ControllerTest) ExpectThenNonMatchingCall() {
@@ -279,8 +279,7 @@ func (t *ControllerTest) ImplicitOneTimeActionCountNotSatisfied() {
 	ExpectThat(t.reporter.errorsReported[0].lineNumber, Equals(117))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("Unsatisfied")))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("StringToInt")))
-	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("has substring \"\"")))
-	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("called 3 times")))
+	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("at least 3 times")))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("called 2 times")))
 }
 
@@ -324,8 +323,7 @@ func (t *ControllerTest) ImplicitOneTimeActionLowerBoundNotSatisfied() {
 	ExpectThat(t.reporter.errorsReported[0].lineNumber, Equals(117))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("Unsatisfied")))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("StringToInt")))
-	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("has substring \"\"")))
-	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("called 3 times")))
+	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("at least 3 times")))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("called 2 times")))
 }
 
@@ -352,8 +350,7 @@ func (t *ControllerTest) ImplicitCardinalityOfOneNotSatisfied() {
 	ExpectThat(t.reporter.errorsReported[0].lineNumber, Equals(117))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("Unsatisfied")))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("StringToInt")))
-	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("has substring \"\"")))
-	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("called 1 time")))
+	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("at least 1 time")))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("called 0 times")))
 }
 
@@ -436,10 +433,8 @@ func (t *ControllerTest) ImplicitOneTimeActionCountOverrun() {
 	ExpectThat(t.reporter.errorsReported[0].lineNumber, Equals(117))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("Unexpected")))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("StringToInt")))
-	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("has substring \"\"")))
-	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("called 1 time")))
+	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("at most 1 time")))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("called 2 times")))
-	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("oversatisfied")))
 
 	// Finish should change nothing.
 	t.controller.Finish()
@@ -477,10 +472,8 @@ func (t *ControllerTest) ImplicitCardinalityOfOneOverrun() {
 	ExpectThat(t.reporter.errorsReported[0].lineNumber, Equals(117))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("Unexpected")))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("StringToInt")))
-	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("has substring \"\"")))
-	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("called 1 time")))
+	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("at most 1 time")))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("called 2 times")))
-	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("oversatisfied")))
 
 	// Finish should change nothing.
 	t.controller.Finish()

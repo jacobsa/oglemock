@@ -179,7 +179,7 @@ func (c *controllerImpl) Finish() {
 						errors.New(
 							fmt.Sprintf(
 								"Unsatisfied expectation; expected %s to be called " +
-								"at least %d times; called %d times",
+								"at least %d times; called %d times.",
 								methodName,
 								minCardinality,
 								exp.NumMatches)))
@@ -336,7 +336,7 @@ func (c *controllerImpl) HandleMethodCall(
 			errors.New(
 				fmt.Sprintf(
 					"Unexpected call to %s: " +
-						"expected to be called at most %d times; called %d times",
+						"expected to be called at most %d times; called %d times.",
 					methodName,
 					maxCardinality,
 					expectation.NumMatches)))
