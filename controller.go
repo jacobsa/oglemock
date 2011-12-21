@@ -81,5 +81,32 @@ type Controller interface {
 // NewController sets up a fresh controller, without any expectations set, and
 // configures the controller to use the supplied error reporter.
 func NewController(reporter ErrorReporter) Controller {
+	return &controllerImpl{reporter}
+}
+
+type controllerImpl struct {
+	reporter ErrorReporter
+}
+
+func (c *controllerImpl) ExpectCall(
+	o MockObject,
+	methodName string,
+	fileName string,
+	lineNumber int) PartialExpecation {
+	// TODO
+	return nil
+}
+
+func (c *controllerImpl) Finish() {
+	// TODO
+}
+
+func (c *controllerImpl) HandleMethodCall(
+	o MockObject,
+	methodName string,
+	fileName string,
+	lineNumber int,
+	args ...interface{}) []interface{} {
+	// TODO
 	return nil
 }
