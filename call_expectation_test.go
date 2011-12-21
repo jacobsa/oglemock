@@ -27,7 +27,7 @@ import (
 ////////////////////////////////////////////////////////////
 
 var emptyReturnSig reflect.Type = reflect.TypeOf(func(i int) {})
-var float64ReturnSig reflect.Type = reflect.TypeOf(func(i int) float32 { return 17.0 })
+var float64ReturnSig reflect.Type = reflect.TypeOf(func(i int) float64 { return 17.0 })
 
 type CallExpectationTest struct {
 }
