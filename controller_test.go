@@ -188,14 +188,14 @@ func (t *ControllerTest) ExplicitCardinalityNotSatisfied() {
 	// Call twice.
 	t.controller.HandleMethodCall(
 		t.mock1,
-		"TwoIntsToString",
+		"StringToInt",
 		"",
 		0,
 		[]interface{}{""})
 
 	t.controller.HandleMethodCall(
 		t.mock1,
-		"TwoIntsToString",
+		"StringToInt",
 		"",
 		0,
 		[]interface{}{""})
@@ -232,14 +232,14 @@ func (t *ControllerTest) ImplicitOneTimeActionCountNotSatisfied() {
 	// Call twice.
 	t.controller.HandleMethodCall(
 		t.mock1,
-		"TwoIntsToString",
+		"StringToInt",
 		"",
 		0,
 		[]interface{}{""})
 
 	t.controller.HandleMethodCall(
 		t.mock1,
-		"TwoIntsToString",
+		"StringToInt",
 		"",
 		0,
 		[]interface{}{""})
@@ -277,14 +277,14 @@ func (t *ControllerTest) ImplicitOneTimeActionLowerBoundNotSatisfied() {
 	// Call twice.
 	t.controller.HandleMethodCall(
 		t.mock1,
-		"TwoIntsToString",
+		"StringToInt",
 		"",
 		0,
 		[]interface{}{""})
 
 	t.controller.HandleMethodCall(
 		t.mock1,
-		"TwoIntsToString",
+		"StringToInt",
 		"",
 		0,
 		[]interface{}{""})
@@ -347,21 +347,21 @@ func (t *ControllerTest) ExplicitCardinalityOverrun() {
 	// Call three times.
 	t.controller.HandleMethodCall(
 		t.mock1,
-		"TwoIntsToString",
+		"StringToInt",
 		"",
 		0,
 		[]interface{}{""})
 
 	t.controller.HandleMethodCall(
 		t.mock1,
-		"TwoIntsToString",
+		"StringToInt",
 		"",
 		0,
 		[]interface{}{""})
 
 	t.controller.HandleMethodCall(
 		t.mock1,
-		"TwoIntsToString",
+		"StringToInt",
 		"",
 		0,
 		[]interface{}{""})
@@ -396,14 +396,14 @@ func (t *ControllerTest) ImplicitOneTimeActionCountOverrun() {
 	// Call twice.
 	t.controller.HandleMethodCall(
 		t.mock1,
-		"TwoIntsToString",
+		"StringToInt",
 		"",
 		0,
 		[]interface{}{""})
 
 	t.controller.HandleMethodCall(
 		t.mock1,
-		"TwoIntsToString",
+		"StringToInt",
 		"",
 		0,
 		[]interface{}{""})
@@ -437,14 +437,14 @@ func (t *ControllerTest) ImplicitCardinalityOfOneOverrun() {
 	// Call twice.
 	t.controller.HandleMethodCall(
 		t.mock1,
-		"TwoIntsToString",
+		"StringToInt",
 		"",
 		0,
 		[]interface{}{""})
 
 	t.controller.HandleMethodCall(
 		t.mock1,
-		"TwoIntsToString",
+		"StringToInt",
 		"",
 		0,
 		[]interface{}{""})
@@ -479,14 +479,14 @@ func (t *ControllerTest) ExplicitCardinalitySatisfied() {
 	// Call twice.
 	t.controller.HandleMethodCall(
 		t.mock1,
-		"TwoIntsToString",
+		"StringToInt",
 		"",
 		0,
 		[]interface{}{""})
 
 	t.controller.HandleMethodCall(
 		t.mock1,
-		"TwoIntsToString",
+		"StringToInt",
 		"",
 		0,
 		[]interface{}{""})
@@ -511,14 +511,14 @@ func (t *ControllerTest) ImplicitOneTimeActionCountSatisfied() {
 	// Call twice.
 	t.controller.HandleMethodCall(
 		t.mock1,
-		"TwoIntsToString",
+		"StringToInt",
 		"",
 		0,
 		[]interface{}{""})
 
 	t.controller.HandleMethodCall(
 		t.mock1,
-		"TwoIntsToString",
+		"StringToInt",
 		"",
 		0,
 		[]interface{}{""})
@@ -544,14 +544,14 @@ func (t *ControllerTest) ImplicitOneTimeActionLowerBoundJustSatisfied() {
 	// Call twice.
 	t.controller.HandleMethodCall(
 		t.mock1,
-		"TwoIntsToString",
+		"StringToInt",
 		"",
 		0,
 		[]interface{}{""})
 
 	t.controller.HandleMethodCall(
 		t.mock1,
-		"TwoIntsToString",
+		"StringToInt",
 		"",
 		0,
 		[]interface{}{""})
@@ -577,28 +577,28 @@ func (t *ControllerTest) ImplicitOneTimeActionLowerBoundMoreThanSatisfied() {
 	// Call four times.
 	t.controller.HandleMethodCall(
 		t.mock1,
-		"TwoIntsToString",
+		"StringToInt",
 		"",
 		0,
 		[]interface{}{""})
 
 	t.controller.HandleMethodCall(
 		t.mock1,
-		"TwoIntsToString",
+		"StringToInt",
 		"",
 		0,
 		[]interface{}{""})
 
 	t.controller.HandleMethodCall(
 		t.mock1,
-		"TwoIntsToString",
+		"StringToInt",
 		"",
 		0,
 		[]interface{}{""})
 
 	t.controller.HandleMethodCall(
 		t.mock1,
-		"TwoIntsToString",
+		"StringToInt",
 		"",
 		0,
 		[]interface{}{""})
@@ -640,14 +640,14 @@ func (t *ControllerTest) FallbackActionConfiguredWithMultipleCalls() {
 	// Call twice.
 	t.controller.HandleMethodCall(
 		t.mock1,
-		"TwoIntsToString",
+		"StringToInt",
 		"",
 		0,
 		[]interface{}{""})
 
 	t.controller.HandleMethodCall(
 		t.mock1,
-		"TwoIntsToString",
+		"StringToInt",
 		"",
 		0,
 		[]interface{}{""})
@@ -670,7 +670,7 @@ func (t *ControllerTest) ImplicitCardinalityOfOneSatisfied() {
 	// Call once.
 	t.controller.HandleMethodCall(
 		t.mock1,
-		"TwoIntsToString",
+		"StringToInt",
 		"",
 		0,
 		[]interface{}{""})
@@ -697,7 +697,7 @@ func (t *ControllerTest) InvokesOneTimeActions() {
 	// Call 0
 	res = t.controller.HandleMethodCall(
 		t.mock1,
-		"TwoIntsToString",
+		"StringToInt",
 		"",
 		0,
 		[]interface{}{""})
@@ -708,7 +708,7 @@ func (t *ControllerTest) InvokesOneTimeActions() {
 	// Call 1
 	res = t.controller.HandleMethodCall(
 		t.mock1,
-		"TwoIntsToString",
+		"StringToInt",
 		"",
 		0,
 		[]interface{}{""})
@@ -735,7 +735,7 @@ func (t *ControllerTest) InvokesFallbackActionAfterOneTimes() {
 	// Call 0
 	res = t.controller.HandleMethodCall(
 		t.mock1,
-		"TwoIntsToString",
+		"StringToInt",
 		"",
 		0,
 		[]interface{}{""})
@@ -746,7 +746,7 @@ func (t *ControllerTest) InvokesFallbackActionAfterOneTimes() {
 	// Call 1
 	res = t.controller.HandleMethodCall(
 		t.mock1,
-		"TwoIntsToString",
+		"StringToInt",
 		"",
 		0,
 		[]interface{}{""})
@@ -757,7 +757,7 @@ func (t *ControllerTest) InvokesFallbackActionAfterOneTimes() {
 	// Call 2
 	res = t.controller.HandleMethodCall(
 		t.mock1,
-		"TwoIntsToString",
+		"StringToInt",
 		"",
 		0,
 		[]interface{}{""})
@@ -768,7 +768,7 @@ func (t *ControllerTest) InvokesFallbackActionAfterOneTimes() {
 	// Call 3
 	res = t.controller.HandleMethodCall(
 		t.mock1,
-		"TwoIntsToString",
+		"StringToInt",
 		"",
 		0,
 		[]interface{}{""})
@@ -793,7 +793,7 @@ func (t *ControllerTest) InvokesFallbackActionWithoutOneTimes() {
 	// Call 0
 	res = t.controller.HandleMethodCall(
 		t.mock1,
-		"TwoIntsToString",
+		"StringToInt",
 		"",
 		0,
 		[]interface{}{""})
@@ -804,7 +804,7 @@ func (t *ControllerTest) InvokesFallbackActionWithoutOneTimes() {
 	// Call 1
 	res = t.controller.HandleMethodCall(
 		t.mock1,
-		"TwoIntsToString",
+		"StringToInt",
 		"",
 		0,
 		[]interface{}{""})
@@ -815,7 +815,7 @@ func (t *ControllerTest) InvokesFallbackActionWithoutOneTimes() {
 	// Call 2
 	res = t.controller.HandleMethodCall(
 		t.mock1,
-		"TwoIntsToString",
+		"StringToInt",
 		"",
 		0,
 		[]interface{}{""})
@@ -840,7 +840,7 @@ func (t *ControllerTest) InvokesImplicitActions() {
 	// Call 0
 	res = t.controller.HandleMethodCall(
 		t.mock1,
-		"TwoIntsToString",
+		"StringToInt",
 		"",
 		0,
 		[]interface{}{""})
@@ -852,7 +852,7 @@ func (t *ControllerTest) InvokesImplicitActions() {
 	// Call 1
 	res = t.controller.HandleMethodCall(
 		t.mock1,
-		"TwoIntsToString",
+		"StringToInt",
 		"",
 		0,
 		[]interface{}{""})
