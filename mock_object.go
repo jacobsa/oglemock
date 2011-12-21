@@ -24,7 +24,7 @@ type MockObject interface {
 	// collected.
 	Oglemock_Id() uintptr
 
-	// String returns a description of the mock object that may be helpful in
-	// test failure messages.
-	Oglemock_String() string
+	// Oglemock_Description returns a description of the mock object that may be
+	// helpful in test failure messages.
+	Oglemock_Description() string
 }

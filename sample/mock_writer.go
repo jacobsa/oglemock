@@ -30,6 +30,10 @@ func (w *mockWriter) Oglemock_Id() uintptr {
 	return uintptr(unsafe.Pointer(w))
 }
 
+func (w *mockWriter) Oglemock_Description() string {
+	return "TODO"
+}
+
 func (w *mockWriter) Write(p []byte) (n int, err error) {
 	retVals := w.controller.HandleMethodCall(w, "Write")
 	if len(returnVals) != 2 {
