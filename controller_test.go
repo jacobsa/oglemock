@@ -40,14 +40,33 @@ func (r *fakeErrorReporter) ReportError(fileName string, lineNumber int, err err
 	r.errorsReported = append(r.errorsReported, report)
 }
 
+type trivialMockObject struct {
+	id uintptr
+	desc string
+}
+
+func (o *trivialMockObject) Oglemock_Id() uintptr {
+	return o.id
+}
+
+func (o *trivialMockObject) Oglemock_Description() string {
+	return o.desc
+}
+
 type ControllerTest struct {
 	reporter fakeErrorReporter
 	controller Controller
+
+	mock1 MockObject
+	mock2 MockObject
 }
 
 func (t *ControllerTest) SetUp() {
 	t.reporter.errorsReported = make([]errorReport, 0)
 	t.controller = NewController(&t.reporter)
+
+	t.mock1 = &trivialMockObject{17, "taco"}
+	t.mock2 = &trivialMockObject{19, "burrito"}
 }
 
 func init() { RegisterTestSuite(&ControllerTest{}) }
