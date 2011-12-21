@@ -27,6 +27,10 @@ import (
 // a mock method, and a set of actions to be taken when those calls are
 // received.
 type InternalCallExpectation struct {
+	// The signature of the method to which this expectation is bound, for
+	// checking action types.
+	methodSignature reflect.Type
+
 	// Matchers that the arguments to the mock method must satisfy in order to
 	// match this expectation.
 	ArgMatchers []oglematchers.Matcher
@@ -57,7 +61,29 @@ func InternalNewExpectation(
 	args []interface{},
 	fileName string,
 	lineNumber int) *InternalCallExpectation {
-	return nil
+	result := &InternalCallExpectation{}
+
+	// Store fields that can be stored directly.
+	result.methodSignature = methodSignature
+	result.FileName = fileName
+	result.LineNumber = lineNumber
+
+	// Set up defaults.
+	result.ExpectedNumMatches = -1
+	result.OneTimeActions = make([]Action, 0)
+
+	// Set up the ArgMatchers slice, using Equals(x) for each x that is not a
+	// matcher itself.
+	result.ArgMatchers = make([]oglematchers.Matcher, len(args))
+	for i, x := range args {
+		if matcher, ok := x.(oglematchers.Matcher); ok {
+			result.ArgMatchers[i] = matcher
+		} else {
+			result.ArgMatchers[i] = oglematchers.Equals(x)
+		}
+	}
+
+	return result
 }
 
 func (e *InternalCallExpectation) Times(n uint) Expectation {
