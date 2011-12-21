@@ -16,6 +16,7 @@
 package oglemock_test
 
 import (
+	. "github.com/jacobsa/oglematchers"
 	. "github.com/jacobsa/oglemock"
 	. "github.com/jacobsa/ogletest"
 )
@@ -56,6 +57,8 @@ func init() { RegisterTestSuite(&ControllerTest{}) }
 ////////////////////////////////////////////////////////////
 
 func (t *ControllerTest) FinishWithoutAnyEvents() {
+	t.controller.Finish()
+	ExpectThat(len(t.reporter.errorsReported), Equals(0))
 }
 
 func (t *ControllerTest) HandleCallForUnknownObject() {
