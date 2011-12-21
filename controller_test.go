@@ -777,6 +777,50 @@ func (t *ControllerTest) InvokesFallbackActionAfterOneTimes() {
 }
 
 func (t *ControllerTest) InvokesFallbackActionWithoutOneTimes() {
+	var res []interface{}
+
+	// Expectation -- set up only a fallback action.
+	partial := t.controller.ExpectCall(
+		t.mock1,
+		"StringToInt",
+		"burrito.go",
+		117)
+
+	exp := partial(HasSubstr(""))
+	exp.WillRepeatedly(Return(2))
+
+	// Call 0
+	res = t.controller.HandleMethodCall(
+		t.mock1,
+		"TwoIntsToString",
+		"",
+		0,
+		[]interface{}{""})
+
+  ExpectThat(len(res), Equals(1))
+  ExpectThat(res[0], Equals(2))
+
+	// Call 1
+	res = t.controller.HandleMethodCall(
+		t.mock1,
+		"TwoIntsToString",
+		"",
+		0,
+		[]interface{}{""})
+
+  ExpectThat(len(res), Equals(1))
+  ExpectThat(res[0], Equals(2))
+
+	// Call 2
+	res = t.controller.HandleMethodCall(
+		t.mock1,
+		"TwoIntsToString",
+		"",
+		0,
+		[]interface{}{""})
+
+  ExpectThat(len(res), Equals(1))
+  ExpectThat(res[0], Equals(2))
 }
 
 func (t *ControllerTest) InvokesImplicitActions() {
