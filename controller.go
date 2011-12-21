@@ -83,7 +83,7 @@ type Controller interface {
 		methodName string,
 		fileName string,
 		lineNumber int,
-		args ...interface{}) []interface{}
+		args []interface{}) []interface{}
 }
 
 // NewController sets up a fresh controller, without any expectations set, and
@@ -252,7 +252,7 @@ func (c *controllerImpl) HandleMethodCall(
 	methodName string,
 	fileName string,
 	lineNumber int,
-	args ...interface{}) []interface{} {
+	args []interface{}) []interface{} {
 	// Find the signature for the requested method.
 	oType := reflect.TypeOf(o)
 	method, ok := oType.MethodByName(methodName)
