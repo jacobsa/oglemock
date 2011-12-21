@@ -17,6 +17,7 @@ package oglemock
 
 import (
 	"fmt"
+	"github.com/jacobsa/oglematchers"
 	"reflect"
 )
 
@@ -135,8 +136,24 @@ func (c *controllerImpl) Finish() {
 // expectationMatches checks the matchers for the expectation against the
 // supplied arguments.
 func expectationMatches(exp *InternalExpectation, args []interface{}) bool {
-	// TODO
-	return false
+	matchers := exp.ArgMatchers
+	if len(args) != len(matchers) {
+		panic(
+			fmt.Sprintf(
+				"Wrong number of arguments: expected %d; got %d",
+				len(matchers),
+				len(args)))
+	}
+
+	// Check each matcher.
+	for i, matcher := range matchers {
+		res, _ := matcher.Matches(args[i])
+		if res != oglematchers.MATCH_TRUE {
+			return false
+		}
+	}
+
+	return true
 }
 
 // chooseExpectation returns the expectation in the supplied list that matches
