@@ -106,6 +106,10 @@ func (t *ControllerTest) HandleCallForUnknownObject() {
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("Unexpected")))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("Read")))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("[255]")))
+
+	// Finish should change nothing.
+	t.controller.Finish()
+	ExpectThat(len(t.reporter.errorsReported), Equals(1))
 }
 
 func (t *ControllerTest) ExpectCallForUnknownMethod() {
@@ -135,6 +139,30 @@ func (t *ControllerTest) PartialExpectationCalledTwice() {
 }
 
 func (t *ControllerTest) ExpectThenNonMatchingCall() {
+	p := []byte{255}
+	t.controller.ExpectCall(t.mock1, "TwoIntsToString")(LessThan(10), Equals(2))
+	t.controller.HandleMethodCall(
+		t.mock1,
+		"TwoIntsToString",
+		"taco.go",
+		112,
+		[]interface{}{8, 1})
+
+
+	// The error should be reported immediately.
+	ExpectThat(len(t.reporter.errorsReported), Equals(1))
+	ExpectThat(t.reporter.errorsReported[0].fileName, Equals("taco.go"))
+	ExpectThat(t.reporter.errorsReported[0].lineNumber, Equals(112))
+	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("Unexpected")))
+	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("Tried")))
+	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("burrito.go:117")))
+	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("arg 1")))
+	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("Expected: 2")))
+	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("Actual:   1")))
+
+	// Finish should change nothing.
+	t.controller.Finish()
+	ExpectThat(len(t.reporter.errorsReported), Equals(1))
 }
 
 func (t *ControllerTest) ExplicitCardinalityNotSatisfied() {

@@ -32,6 +32,9 @@ type Controller interface {
 	// should be called with the expected arguments, matchers for the arguments,
 	// or a mix of both.
 	//
+	// fileName and lineNumber should indicate the line on which the expectation
+	// was made, if known.
+	//
 	// For example:
 	//
 	//     mockWriter := [...]
@@ -40,7 +43,11 @@ type Controller interface {
 	//
 	// If the mock object doesn't have a method of the supplied name, the
 	// function panics.
-	ExpectCall(o MockObject, methodName string) PartialExpecation
+	ExpectCall(
+		o MockObject,
+		methodName string,
+		fileName string,
+		lineNumber int) PartialExpecation
 
 	// Finish causes the controller to check for any unsatisfied expectations,
 	// and report them as errors if they exist.
