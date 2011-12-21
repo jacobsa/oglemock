@@ -32,5 +32,59 @@ func init() { RegisterTestSuite(&ControllerTest{}) }
 // Tests
 ////////////////////////////////////////////////////////////
 
-func (t *ControllerTest) DoesFoo() {
+func (t *ControllerTest) FinishWithoutAnyEvents() {
+}
+
+func (t *ControllerTest) HandleCallForUnknownObject() {
+}
+
+func (t *ControllerTest) ExpectCallForUnknownMethod() {
+}
+
+func (t *ControllerTest) PartialExpectationGivenWrongNumberOfArgs() {
+}
+
+func (t *ControllerTest) PartialExpectationCalledTwice() {
+}
+
+func (t *ControllerTest) ExpectThenNonMatchingCall() {
+}
+
+func (t *ControllerTest) ExplicitCardinalityNotSatisfied() {
+}
+
+func (t *ControllerTest) ImplicitOneTimeActionCountNotSatisfied() {
+}
+
+func (t *ControllerTest) ImplicitOneTimeActionLowerBoundNotSatisfied() {
+}
+
+func (t *ControllerTest) ImplicitCardinalityOfOneNotSatisfied() {
+}
+
+func (t *ControllerTest) ExplicitCardinalitySatisfied() {
+}
+
+func (t *ControllerTest) ImplicitOneTimeActionCountSatisfied() {
+}
+
+func (t *ControllerTest) ImplicitOneTimeActionLowerBoundSatisfied() {
+}
+
+func (t *ControllerTest) FallbackActionConfiguredWithZeroCalls() {
+}
+
+func (t *ControllerTest) FallbackActionConfiguredWithMultipleCalls() {
+}
+
+func (t *ControllerTest) ImplicitCardinalityOfOneSatisfied() {
+}
+
+func (t *ControllerTest) InvokesOneTimeActions() {
+}
+
+func (t *ControllerTest) InvokesFallbackActions() {
+}
+
+func (t *ControllerTest) InvokesImplicitActions() {
 }
