@@ -22,7 +22,7 @@ type MockObject interface {
 	// Oglemock_Id returns an identifier for the mock object that is guaranteed
 	// to be unique within the process at least until the mock object is garbage
 	// collected.
-	Oglemock_Id() uint64
+	Oglemock_Id() uintptr
 
 	// String returns a description of the mock object that may be helpful in
 	// test failure messages.

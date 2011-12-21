@@ -19,10 +19,15 @@ import (
 	"fmt"
 	"github.com/jacobsa/oglemock"
 	"reflect"
+	"unsafe"
 )
 
 type mockWriter struct {
 	controller oglemock.Controller
+}
+
+func (w *mockWriter) Oglemock_Id() uintptr {
+	return uintptr(unsafe.Pointer(w))
 }
 
 func (w *mockWriter) Write(p []byte) (n int, err error) {
