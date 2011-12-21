@@ -86,19 +86,60 @@ type Controller interface {
 		args []interface{}) []interface{}
 }
 
+// methodMap represents a map from method name to set of expectations for that
+// method.
+type methodMap map[string][]*InternalExpectation
+
+// objectMap represents a map from mock object ID to a methodMap for that object.
+type objectMap map[uintptr]methodMap
+
 // NewController sets up a fresh controller, without any expectations set, and
 // configures the controller to use the supplied error reporter.
 func NewController(reporter ErrorReporter) Controller {
-	return &controllerImpl{reporter, map[string][]*InternalExpectation{}}
+	return &controllerImpl{reporter, objectMap{}}
 }
 
 type controllerImpl struct {
 	reporter ErrorReporter
-	expectations map[string][]*InternalExpectation
+	expectationsByObject objectMap
 }
 
-func getMapKey(o MockObject, methodName string) string {
-  return fmt.Sprintf("%016x%s-", o.Oglemock_Id(), methodName)
+// getExpectations returns the list of registered expectations for the named
+// method of the supplied object, or an empty slice if none have been
+// registered. When this method returns, it is guaranteed that
+// c.expectationsByObject has an entry for the object.
+func (c *controllerImpl) getExpectations(
+	o MockObject,
+	methodName string) []*InternalExpectation {
+	id := o.Oglemock_Id()
+
+	// Look up the mock object.
+	expectationsByMethod, ok := c.expectationsByObject[id]
+	if !ok {
+		expectationsByMethod = methodMap{}
+		c.expectationsByObject[id] = expectationsByMethod
+	}
+
+	result, ok := expectationsByMethod[methodName]
+	if !ok {
+		return []*InternalExpectation{}
+	}
+
+	return result
+}
+
+// addExpectation adds an expectation to the list registered for the named
+// method of the supplied mock object.
+func (c *controllerImpl) addExpectation(
+	o MockObject,
+	methodName string,
+	exp *InternalExpectation) {
+	// Get the existing list.
+	existing := c.getExpectations(o, methodName)
+
+	// Store a modified list.
+	id := o.Oglemock_Id()
+	c.expectationsByObject[id][methodName] = append(existing, exp)
 }
 
 func (c *controllerImpl) ExpectCall(
@@ -117,14 +158,7 @@ func (c *controllerImpl) ExpectCall(
 		exp := InternalNewExpectation(method.Type, args, fileName, lineNumber)
 
 		// Insert the expectation into the map.
-		key := getMapKey(o, methodName)
-		expList, ok := c.expectations[key]
-		if !ok {
-			expList = make([]*InternalExpectation, 0)
-		}
-
-		expList = append(expList, exp)
-		c.expectations[key] = expList
+		c.addExpectation(o, methodName, exp)
 
 		// Return the expectation to the user.
 		return exp
@@ -134,20 +168,22 @@ func (c *controllerImpl) ExpectCall(
 func (c *controllerImpl) Finish() {
 	// Check whether the minimum cardinality for each registered expectation has
 	// been satisfied.
-	for _, expectations := range c.expectations {
-		for _, exp := range expectations {
-			minCardinality, _ := computeCardinality(exp)
-			if exp.NumMatches < minCardinality {
-				c.reporter.ReportError(
-					exp.FileName,
-					exp.LineNumber,
-					errors.New(
-						fmt.Sprintf(
-							"Unsatisfied expectation; expected %s to be called " +
+	for _, expectationsByMethod := range c.expectationsByObject {
+		for methodName, expectations := range expectationsByMethod {
+			for _, exp := range expectations {
+				minCardinality, _ := computeCardinality(exp)
+				if exp.NumMatches < minCardinality {
+					c.reporter.ReportError(
+						exp.FileName,
+						exp.LineNumber,
+						errors.New(
+							fmt.Sprintf(
+								"Unsatisfied expectation; expected %s to be called " +
 								"at least %d times; called %d times",
-							"TODO",
-							minCardinality,
-							exp.NumMatches)))
+								methodName,
+								minCardinality,
+								exp.NumMatches)))
+				}
 			}
 		}
 	}
@@ -184,10 +220,9 @@ func (c *controllerImpl) chooseExpectation(
 	o MockObject,
 	methodName string,
 	args []interface{}) *InternalExpectation {
-	// Do we have any expectations for this object?
-	mapKey := getMapKey(o, methodName)
-	expectations, ok := c.expectations[mapKey]
-	if !ok || len(expectations) == 0 {
+	// Do we have any expectations for this method?
+	expectations := c.getExpectations(o, methodName)
+	if len(expectations) == 0 {
 		return nil
 	}
 
