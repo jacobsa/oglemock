@@ -63,7 +63,12 @@ type Controller interface {
 	//
 	// HandleMethodCall is exported for the sake of mock implementations, and
 	// should not be used directly.
-	HandleMethodCall(o MockObject, methodName string, args ...interface{}) []interface{}
+	HandleMethodCall(
+		o MockObject,
+		methodName string,
+		fileName string,
+		lineNumber int,
+		args ...interface{}) []interface{}
 }
 
 // NewController sets up a fresh controller, without any expectations set, and

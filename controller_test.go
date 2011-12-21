@@ -81,6 +81,21 @@ func (t *ControllerTest) FinishWithoutAnyEvents() {
 }
 
 func (t *ControllerTest) HandleCallForUnknownObject() {
+	p := []byte{255}
+	t.controller.HandleMethodCall(
+		t.mock1,
+		"Read",
+		"taco.go",
+		112,
+		[]interface{}{p})
+
+	// The error should be reported immediately.
+	ExpectThat(len(t.reporter.errorsReported), Equals(1))
+	ExpectThat(t.reporter.errorsReported[0].fileName, Equals("taco.go"))
+	ExpectThat(t.reporter.errorsReported[0].lineNumber, Equals(112))
+	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("Unexpected")))
+	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("Read")))
+	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("[255]")))
 }
 
 func (t *ControllerTest) ExpectCallForUnknownMethod() {
@@ -132,4 +147,13 @@ func (t *ControllerTest) InvokesFallbackActions() {
 }
 
 func (t *ControllerTest) InvokesImplicitActions() {
+}
+
+func (t *ControllerTest) ExpectationsAreMatchedLastToFirst() {
+}
+
+func (t *ControllerTest) ExpectationsAreSegregatedByMockObject() {
+}
+
+func (t *ControllerTest) ExpectationsAreSegregatedByMethodName() {
 }
