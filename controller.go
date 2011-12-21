@@ -154,10 +154,17 @@ func (c *controllerImpl) ExpectCall(
 		panic("Unknown method: " + methodName)
 	}
 
+	partialAlreadyCalled := false
 	return func(args ...interface{}) Expectation {
-		exp := InternalNewExpectation(method.Type, args, fileName, lineNumber)
+		// This function should only be called once.
+		if partialAlreadyCalled {
+			panic("Partial expectation called more than once.")
+		}
 
-		// Insert the expectation into the map.
+		partialAlreadyCalled = true
+
+		// Create an expectation and insert it into the controller's map.
+		exp := InternalNewExpectation(method.Type, args, fileName, lineNumber)
 		c.addExpectation(o, methodName, exp)
 
 		// Return the expectation to the user.
