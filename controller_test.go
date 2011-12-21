@@ -608,12 +608,75 @@ func (t *ControllerTest) ImplicitOneTimeActionLowerBoundMoreThanSatisfied() {
 }
 
 func (t *ControllerTest) FallbackActionConfiguredWithZeroCalls() {
+	// Expectation -- set up a fallback action.
+	partial := t.controller.ExpectCall(
+		t.mock1,
+		"StringToInt",
+		"burrito.go",
+		117)
+
+	exp := partial(HasSubstr(""))
+	exp.WillRepeatedly(Return(0))
+
+	// Don't call.
+
+	// There should be no errors.
+	t.controller.Finish()
+	ExpectThat(len(t.reporter.errorsReported), Equals(0))
 }
 
 func (t *ControllerTest) FallbackActionConfiguredWithMultipleCalls() {
+	// Expectation -- set up a fallback action.
+	partial := t.controller.ExpectCall(
+		t.mock1,
+		"StringToInt",
+		"burrito.go",
+		117)
+
+	exp := partial(HasSubstr(""))
+	exp.WillRepeatedly(Return(0))
+
+	// Call twice.
+	t.controller.HandleMethodCall(
+		t.mock1,
+		"TwoIntsToString",
+		"",
+		0,
+		[]interface{}{""})
+
+	t.controller.HandleMethodCall(
+		t.mock1,
+		"TwoIntsToString",
+		"",
+		0,
+		[]interface{}{""})
+
+	// There should be no errors.
+	t.controller.Finish()
+	ExpectThat(len(t.reporter.errorsReported), Equals(0))
 }
 
 func (t *ControllerTest) ImplicitCardinalityOfOneSatisfied() {
+	// Expectation -- don't add actions.
+	partial := t.controller.ExpectCall(
+		t.mock1,
+		"StringToInt",
+		"burrito.go",
+		117)
+
+	exp := partial(HasSubstr(""))
+
+	// Call once.
+	t.controller.HandleMethodCall(
+		t.mock1,
+		"TwoIntsToString",
+		"",
+		0,
+		[]interface{}{""})
+
+	// There should be no errors.
+	t.controller.Finish()
+	ExpectThat(len(t.reporter.errorsReported), Equals(0))
 }
 
 func (t *ControllerTest) InvokesOneTimeActions() {
