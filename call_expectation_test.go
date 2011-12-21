@@ -16,6 +16,8 @@
 package oglemock_test
 
 import (
+	. "github.com/jacobsa/oglematchers"
+	. "github.com/jacobsa/oglemock"
 	. "github.com/jacobsa/ogletest"
 )
 
@@ -34,10 +36,10 @@ func init() { RegisterTestSuite(&CallExpectationTest{}) }
 ////////////////////////////////////////////////////////////
 
 func (t *CallExpectationTest) StoresFileNameAndLineNumber() {
-	exp := newExpecation([]interface{}, "taco", 17)
+	exp := InternalNewExpectation([]interface{}{}, "taco", 17)
 
-	ExpectThat(exp.fileName, Equals("taco"))
-	ExpectThat(exp.lineNumber, Equals(17))
+	ExpectThat(exp.FileName, Equals("taco"))
+	ExpectThat(exp.LineNumber, Equals(17))
 }
 
 func (t *CallExpectationTest) NoArgs() {

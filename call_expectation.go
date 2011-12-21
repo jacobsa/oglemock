@@ -19,37 +19,41 @@ import (
 	"github.com/jacobsa/oglematchers"
 )
 
-// callExpectation represents an expectation for zero or more calls to a mock
-// method, and a set of actions to be taken when those calls are received.
-type callExpectation struct {
+// InternalCallExpectation is exported for purposes of testing only. You should
+// not touch it.
+//
+// InternalCallExpectation represents an expectation for zero or more calls to
+// a mock method, and a set of actions to be taken when those calls are
+// received.
+type InternalCallExpectation struct {
 	// Matchers that the arguments to the mock method must satisfy in order to
 	// match this expectation.
-	argMatchers []oglematchers.Matcher
+	ArgMatchers []oglematchers.Matcher
 
 	// The name of the file in which this expectation was expressed.
-	fileName string
+	FileName string
 
 	// The line number at which this expectation was expressed.
-	lineNumber int
+	LineNumber int
 
 	// The number of times this expectation should be matched, as explicitly
 	// listed by the user. If there was no explicit number expressed, this is -1.
-	expectedNumMatches int
+	ExpectedNumMatches int
 
 	// Actions to be taken for the first N calls, one per call in order, where N
 	// is the length of this slice.
-	oneTimeActions []Action
+	OneTimeActions []Action
 
 	// An action to be taken when the one-time actions have expired, or nil if
 	// there is no such action.
-	fallbackAction Action
+	FallbackAction Action
 }
 
-// newExpectation creates an expectation with the supplied info that is
-// otherwise conceptually empty.
-func newExpecation(
+// InternalNewExpectation is exported for purposes of testing only. You should
+// not touch it.
+func InternalNewExpectation(
 	args []interface{},
 	fileName string,
-	lineNumber int) Expectation {
+	lineNumber int) *InternalCallExpectation {
 	return nil
 }
