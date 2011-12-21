@@ -105,7 +105,7 @@ func (t *ControllerTest) HandleCallForUnknownObject() {
 	ExpectThat(t.reporter.errorsReported[0].fileName, Equals("taco.go"))
 	ExpectThat(t.reporter.errorsReported[0].lineNumber, Equals(112))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("Unexpected")))
-	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("Read")))
+	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("StringToInt")))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("[255]")))
 
 	// Finish should change nothing.
