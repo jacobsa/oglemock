@@ -106,9 +106,20 @@ func (t *CallExpectationTest) WillOnce() {
 }
 
 func (t *CallExpectationTest) WillRepeatedly() {
+	action := Return(17)
+
+	exp := InternalNewExpectation([]interface{}{}, "", 0)
+	exp.WillRepeatedly(action)
+
+	ExpectThat(exp.FallbackAction, Equals(action))
 }
 
 func (t *CallExpectationTest) TimesCalledTwice() {
+	exp := InternalNewExpectation([]interface{}{}, "", 0)
+
+	ExpectThat(
+		func() { exp.Times(17).Times(17) },
+		Panics(Error(HasSubstr("Times called"))))
 }
 
 func (t *CallExpectationTest) TimesCalledAfterWillOnce() {
