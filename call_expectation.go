@@ -47,6 +47,9 @@ type callExpectation struct {
 
 // newExpectation creates an expectation with the supplied info that is
 // otherwise conceptually empty.
-func newExpecation(args []interface{}, fileName string, lineNumber int) Expectation {
+func newExpecation(
+	args []interface{},
+	fileName string,
+	lineNumber int) Expectation {
 	return nil
 }

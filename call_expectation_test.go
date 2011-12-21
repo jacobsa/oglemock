@@ -27,13 +27,17 @@ type CallExpectationTest struct {
 
 }
 
-func init()                     { RegisterTestSuite(&CallExpectationTest{}) }
+func init() { RegisterTestSuite(&CallExpectationTest{}) }
 
 ////////////////////////////////////////////////////////////
 // Tests
 ////////////////////////////////////////////////////////////
 
 func (t *CallExpectationTest) StoresFileNameAndLineNumber() {
+	exp := newExpecation([]interface{}, "taco", 17)
+
+	ExpectThat(exp.fileName, Equals("taco"))
+	ExpectThat(exp.lineNumber, Equals(17))
 }
 
 func (t *CallExpectationTest) NoArgs() {
