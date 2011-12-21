@@ -143,7 +143,9 @@ func (c *controllerImpl) Finish() {
 					exp.LineNumber,
 					errors.New(
 						fmt.Sprintf(
-							"Expected to be called at least %d times; called %d times",
+							"Unsatisfied expectation; expected %s to be called " +
+								"at least %d times; called %d times",
+							"TODO",
 							minCardinality,
 							exp.NumMatches)))
 			}
