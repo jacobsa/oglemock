@@ -40,7 +40,7 @@ type Controller interface {
 	//
 	// If the mock object doesn't have a method of the supplied name, the
 	// function panics.
-	ExpectCall(o interface{}, methodName string) PartialExpecation
+	ExpectCall(o MockObject, methodName string) PartialExpecation
 
 	// HandleMethodCall looks for a registered expectation matching the call of
 	// the given method on mock object o, invokes the appropriate action (if
@@ -56,5 +56,5 @@ type Controller interface {
 	//
 	// HandleMethodCall is exported for the sake of mock implementations, and
 	// should not be used directly.
-	HandleMethodCall(o interface{}, methodName string, args ...interface{}) []interface{}
+	HandleMethodCall(o MockObject, methodName string, args ...interface{}) []interface{}
 }
