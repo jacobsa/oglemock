@@ -86,12 +86,12 @@ type Controller interface {
 // NewController sets up a fresh controller, without any expectations set, and
 // configures the controller to use the supplied error reporter.
 func NewController(reporter ErrorReporter) Controller {
-	return &controllerImpl{reporter, map[string][]InternalExpectation{}}
+	return &controllerImpl{reporter, map[string][]*InternalExpectation{}}
 }
 
 type controllerImpl struct {
 	reporter ErrorReporter
-	expectations map[string][]InternalExpectation
+	expectations map[string][]*InternalExpectation
 }
 
 func getMapKey(o MockObject, methodName string) string {
@@ -111,7 +111,20 @@ func (c *controllerImpl) ExpectCall(
 	}
 
 	return func(args ...interface{}) Expectation {
-		return InternalNewExpectation(method.Type, args, fileName, lineNumber)
+		exp := InternalNewExpectation(method.Type, args, fileName, lineNumber)
+
+		// Insert the expectation into the map.
+		key := getMapKey(o, methodName)
+		expList, ok := c.expectations[key]
+		if !ok {
+			expList = make([]*InternalExpectation, 0)
+		}
+
+		expList = append(expList, exp)
+		c.expectations[key] = expList
+
+		// Return the expectation to the user.
+		return exp
 	}
 }
 
