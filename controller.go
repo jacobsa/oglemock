@@ -132,6 +132,32 @@ func (c *controllerImpl) Finish() {
 	// TODO
 }
 
+// expectationMatches checks the matchers for the expectation against the
+// supplied arguments.
+func expectationMatches(exp *InternalExpectation, args []interface{}) bool {
+	// TODO
+	return false
+}
+
+// chooseExpectation returns the expectation in the supplied list that matches
+// the supplied arguments. If there is more than one such expectation, the one
+// furthest along in the list is returned. If there is no such expectation, nil
+// is returned.
+func chooseExpectation(expectations []*InternalExpectation, args []interface{}) *InternalExpectation {
+	numExpectations := len(expectations)
+	if numExpectations == 0 {
+		return nil
+	}
+
+	for i := numExpectations - 1; i >= 0; i-- {
+		if (expectationMatches(expectations[i], args)) {
+			return expectations[i]
+		}
+	}
+
+	return nil
+}
+
 func (c *controllerImpl) HandleMethodCall(
 	o MockObject,
 	methodName string,
