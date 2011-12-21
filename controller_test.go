@@ -53,6 +53,16 @@ func (o *trivialMockObject) Oglemock_Description() string {
 	return o.desc
 }
 
+// Method being mocked
+func (o *trivialMockObject) StringToInt(s string) int {
+	return 0
+}
+
+// Method being mocked
+func (o *trivialMockObject) TwoIntsToString(i, j int) string {
+	return ""
+}
+
 type ControllerTest struct {
 	reporter fakeErrorReporter
 	controller Controller
@@ -84,7 +94,7 @@ func (t *ControllerTest) HandleCallForUnknownObject() {
 	p := []byte{255}
 	t.controller.HandleMethodCall(
 		t.mock1,
-		"Read",
+		"StringToInt",
 		"taco.go",
 		112,
 		[]interface{}{p})
