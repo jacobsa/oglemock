@@ -235,8 +235,7 @@ func (t *ControllerTest) ExplicitCardinalityNotSatisfied() {
 	ExpectThat(t.reporter.errorsReported[0].lineNumber, Equals(117))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("Unsatisfied")))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("StringToInt")))
-	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("has substring \"\"")))
-	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("called 3 times")))
+	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("at least 3 times")))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("called 2 times")))
 }
 
