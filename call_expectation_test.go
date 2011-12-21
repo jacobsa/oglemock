@@ -173,7 +173,18 @@ func (t *CallExpectationTest) OneTimeActionRejectsSignature() {
 }
 
 func (t *CallExpectationTest) WillRepeatedlyCalledTwice() {
+	exp := InternalNewExpectation(emptyReturnSig, []interface{}{}, "", 0)
+
+	ExpectThat(
+		func() { exp.WillRepeatedly(Return()).WillRepeatedly(Return()) },
+		Panics(Error(HasSubstr("WillRepeatedly called more than once"))))
 }
 
 func (t *CallExpectationTest) FallbackActionRejectsSignature() {
+	action := Return("taco")
+	exp := InternalNewExpectation(float32ReturnSig, []interface{}{}, "", 0)
+
+	ExpectThat(
+		func() { exp.WillRepeatedly(action) },
+		Panics(Error(HasSubstr("arg 0; expected float32"))))
 }
