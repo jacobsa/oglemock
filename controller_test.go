@@ -732,7 +732,7 @@ func (t *ControllerTest) InvokesOneTimeActions() {
   ExpectThat(res[0], Equals(1))
 }
 
-func (t *ControllerTest) InvokesFallbackActionAfterOneTimes() {
+func (t *ControllerTest) InvokesFallbackActionAfterOneTimeActions() {
 	var res []interface{}
 
 	// Expectation -- set up two one-time actions and a fallback.
@@ -745,7 +745,7 @@ func (t *ControllerTest) InvokesFallbackActionAfterOneTimes() {
 	exp := partial(HasSubstr(""))
 	exp.WillOnce(Return(0))
 	exp.WillOnce(Return(1))
-	exp.WillOnce(Return(2))
+	exp.WillRepeatedly(Return(2))
 
 	// Call 0
 	res = t.controller.HandleMethodCall(
@@ -792,7 +792,7 @@ func (t *ControllerTest) InvokesFallbackActionAfterOneTimes() {
   ExpectThat(res[0], Equals(2))
 }
 
-func (t *ControllerTest) InvokesFallbackActionWithoutOneTimes() {
+func (t *ControllerTest) InvokesFallbackActionWithoutOneTimeActions() {
 	var res []interface{}
 
 	// Expectation -- set up only a fallback action.
