@@ -43,6 +43,9 @@ func (t *CallExpectationTest) StoresFileNameAndLineNumber() {
 }
 
 func (t *CallExpectationTest) NoArgs() {
+	exp := InternalNewExpectation([]interface{}{}, "", 0)
+
+	ExpectThat(len(exp.ArgMatchers), Equals(0))
 }
 
 func (t *CallExpectationTest) MixOfMatchersAndNonMatchers() {
