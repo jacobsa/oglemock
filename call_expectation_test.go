@@ -94,6 +94,15 @@ func (t *CallExpectationTest) NoActions() {
 }
 
 func (t *CallExpectationTest) WillOnce() {
+	action0 := Return(17)
+	action1 := Return(19)
+
+	exp := InternalNewExpectation([]interface{}{}, "", 0)
+	exp.WillOnce(action0).WillOnce(action1)
+
+	ExpectThat(len(exp.OneTimeActions), Equals(2))
+	ExpectThat(exp.OneTimeActions[0], Equals(action0))
+	ExpectThat(exp.OneTimeActions[1], Equals(action1))
 }
 
 func (t *CallExpectationTest) WillRepeatedly() {
