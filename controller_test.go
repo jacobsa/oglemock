@@ -115,7 +115,7 @@ func (t *ControllerTest) HandleCallForUnknownObject() {
 func (t *ControllerTest) ExpectCallForUnknownMethod() {
 	ExpectThat(
 		func() {
-			t.controller.ExpectCall(t.mock1, "Frobnicate")
+			t.controller.ExpectCall(t.mock1, "Frobnicate", "", 0)
 		},
 		Panics(HasSubstr("Unknown method: Frobnicate")))
 }
@@ -123,7 +123,7 @@ func (t *ControllerTest) ExpectCallForUnknownMethod() {
 func (t *ControllerTest) PartialExpectationGivenWrongNumberOfArgs() {
 	ExpectThat(
 		func() {
-			t.controller.ExpectCall(t.mock1, "TwoIntsToString")(17, 19, 23)
+			t.controller.ExpectCall(t.mock1, "TwoIntsToString", "", 0)(17, 19, 23)
 		},
 		Panics(HasSubstr("arguments: expected 2, got 3")))
 }
@@ -131,7 +131,7 @@ func (t *ControllerTest) PartialExpectationGivenWrongNumberOfArgs() {
 func (t *ControllerTest) PartialExpectationCalledTwice() {
 	ExpectThat(
 		func() {
-			partial := t.controller.ExpectCall(t.mock1, "StringToInt")
+			partial := t.controller.ExpectCall(t.mock1, "StringToInt", "", 0)
 			partial("taco")
 			partial("taco")
 		},
@@ -139,8 +139,16 @@ func (t *ControllerTest) PartialExpectationCalledTwice() {
 }
 
 func (t *ControllerTest) ExpectThenNonMatchingCall() {
-	p := []byte{255}
-	t.controller.ExpectCall(t.mock1, "TwoIntsToString")(LessThan(10), Equals(2))
+	// Expectation
+	partial := t.controller.ExpectCall(
+		t.mock1,
+		"TwoIntsToString",
+		"burrito.go",
+		117)
+
+	partial(LessThan(10), Equals(2))
+
+	// Call
 	t.controller.HandleMethodCall(
 		t.mock1,
 		"TwoIntsToString",
