@@ -396,10 +396,8 @@ func (t *ControllerTest) ExplicitCardinalityOverrun() {
 	ExpectThat(t.reporter.errorsReported[0].lineNumber, Equals(117))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("Unexpected")))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("StringToInt")))
-	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("has substring \"\"")))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("at most 2 times")))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("called 3 times")))
-	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("oversatisfied")))
 
 	// Finish should change nothing.
 	t.controller.Finish()

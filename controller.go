@@ -335,8 +335,9 @@ func (c *controllerImpl) HandleMethodCall(
 			expectation.LineNumber,
 			errors.New(
 				fmt.Sprintf(
-					"Expectation oversatisfied: " +
+					"Unexpected call to %s: " +
 						"expected to be called at most %d times; called %d times",
+					methodName,
 					maxCardinality,
 					expectation.NumMatches)))
 
