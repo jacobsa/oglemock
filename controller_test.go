@@ -664,7 +664,7 @@ func (t *ControllerTest) ImplicitCardinalityOfOneSatisfied() {
 		"burrito.go",
 		117)
 
-	exp := partial(HasSubstr(""))
+	partial(HasSubstr(""))
 
 	// Call once.
 	t.controller.HandleMethodCall(
