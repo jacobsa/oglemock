@@ -99,6 +99,11 @@ func (t *ControllerTest) HandleCallForUnknownObject() {
 }
 
 func (t *ControllerTest) ExpectCallForUnknownMethod() {
+	ExpectThat(
+		func() {
+			t.controller.ExpectCall(t.mock1, "Frobnicate")
+		},
+		Panics(HasSubstr("Unknown method: Frobnicate")))
 }
 
 func (t *ControllerTest) PartialExpectationGivenWrongNumberOfArgs() {
