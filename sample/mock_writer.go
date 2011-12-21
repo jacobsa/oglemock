@@ -52,7 +52,7 @@ func (w *mockWriter) Write(p []byte) (n int, err error) {
 	// err error
 	v = reflect.ValueOf(retVals[1])
 	if v.Type() != reflect.TypeOf(err) {
-		panic(fmt.Sprintf("mockWriter.Write: invalid return value 0: %v", v))
+		panic(fmt.Sprintf("mockWriter.Write: invalid return value 1: %v", v))
 	}
 	err = v.Interface().(error)
 
