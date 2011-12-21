@@ -139,7 +139,20 @@ func (t *ControllerTest) PartialExpectationCalledTwice() {
 		Panics(HasSubstr("called more than once")))
 }
 
-func (t *ControllerTest) MethodCallGivenWrongNumberOfArgs() {
+func (t *ControllerTest) HandleMethodCallForUnknownMethod() {
+	ExpectThat(
+		func() {
+			t.controller.HandleMethodCall(
+				t.mock1,
+				"Frobnicate",
+				"",
+				0,
+				[]interface{}{})
+		},
+		Panics(HasSubstr("Unknown method: Frobnicate")))
+}
+
+func (t *ControllerTest) HandleMethodCallGivenWrongNumberOfArgs() {
 	ExpectThat(
 		func() {
 			t.controller.ExpectCall(t.mock1, "TwoIntsToString", "", 0)(17, 19)
