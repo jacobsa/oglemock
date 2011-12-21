@@ -305,6 +305,31 @@ func (t *ControllerTest) ImplicitOneTimeActionLowerBoundNotSatisfied() {
 }
 
 func (t *ControllerTest) ImplicitCardinalityOfOneNotSatisfied() {
+	// Expectation -- add no actions.
+	partial := t.controller.ExpectCall(
+		t.mock1,
+		"StringToInt",
+		"burrito.go",
+		117)
+
+	partial(HasSubstr(""))
+
+	// Don't call.
+
+	// The error should not yet be reported.
+	ExpectThat(len(t.reporter.errorsReported), Equals(0))
+
+	// Finish should cause the error to be reported.
+	t.controller.Finish()
+
+	ExpectThat(len(t.reporter.errorsReported), Equals(1))
+	ExpectThat(t.reporter.errorsReported[0].fileName, Equals("burrito.go"))
+	ExpectThat(t.reporter.errorsReported[0].lineNumber, Equals(117))
+	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("Unsatisfied")))
+	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("StringToInt")))
+	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("has substring \"\"")))
+	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("called 1 time")))
+	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("called 0 times")))
 }
 
 func (t *ControllerTest) ExplicitCardinalityOverrun() {
