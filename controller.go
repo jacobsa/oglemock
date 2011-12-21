@@ -17,6 +17,7 @@ package oglemock
 
 import (
 	"fmt"
+	"reflect"
 )
 
 // PartialExpecation is a function that should be called exactly once with
@@ -102,8 +103,16 @@ func (c *controllerImpl) ExpectCall(
 	methodName string,
 	fileName string,
 	lineNumber int) PartialExpecation {
-	// TODO
-	return nil
+	// Find the signature for the requested method.
+	oType := reflect.TypeOf(o)
+	method, ok := oType.MethodByName(methodName)
+	if !ok {
+		panic("Unknown method: " + methodName)
+	}
+
+	return func(args ...interface{}) Expectation {
+		return InternalNewExpectation(method.Type, args, fileName, lineNumber)
+	}
 }
 
 func (c *controllerImpl) Finish() {
