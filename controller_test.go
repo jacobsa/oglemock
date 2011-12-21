@@ -680,6 +680,40 @@ func (t *ControllerTest) ImplicitCardinalityOfOneSatisfied() {
 }
 
 func (t *ControllerTest) InvokesOneTimeActions() {
+	var res []interface{}
+
+	// Expectation -- set up two one-time actions.
+	partial := t.controller.ExpectCall(
+		t.mock1,
+		"StringToInt",
+		"burrito.go",
+		117)
+
+	exp := partial(HasSubstr(""))
+	exp.WillOnce(Return(0))
+	exp.WillOnce(Return(1))
+
+	// Call 0
+	res = t.controller.HandleMethodCall(
+		t.mock1,
+		"TwoIntsToString",
+		"",
+		0,
+		[]interface{}{""})
+
+  ExpectThat(len(res), Equals(1))
+  ExpectThat(res[0], Equals(0))
+
+	// Call 1
+	res = t.controller.HandleMethodCall(
+		t.mock1,
+		"TwoIntsToString",
+		"",
+		0,
+		[]interface{}{""})
+
+  ExpectThat(len(res), Equals(1))
+  ExpectThat(res[0], Equals(1))
 }
 
 func (t *ControllerTest) InvokesFallbackActions() {
