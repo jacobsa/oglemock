@@ -51,7 +51,7 @@ func (t *CallExpectationTest) NoArgs() {
 }
 
 func (t *CallExpectationTest) MixOfMatchersAndNonMatchers() {
-	args := []interface{}{ Equals(17), 19, Equals(23) }
+	args := []interface{}{Equals(17), 19, Equals(23)}
 	exp := InternalNewExpectation(args, "", 0)
 
 	// Matcher args
