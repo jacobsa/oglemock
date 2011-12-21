@@ -36,19 +36,41 @@ func init() { RegisterTestSuite(&CallExpectationTest{}) }
 ////////////////////////////////////////////////////////////
 
 func (t *CallExpectationTest) StoresFileNameAndLineNumber() {
-	exp := InternalNewExpectation([]interface{}{}, "taco", 17)
+	args := []interface{}{}
+	exp := InternalNewExpectation(args, "taco", 17)
 
 	ExpectThat(exp.FileName, Equals("taco"))
 	ExpectThat(exp.LineNumber, Equals(17))
 }
 
 func (t *CallExpectationTest) NoArgs() {
-	exp := InternalNewExpectation([]interface{}{}, "", 0)
+	args := []interface{}{}
+	exp := InternalNewExpectation(args, "", 0)
 
 	ExpectThat(len(exp.ArgMatchers), Equals(0))
 }
 
 func (t *CallExpectationTest) MixOfMatchersAndNonMatchers() {
+	args := []interface{}{ Equals(17), 19, Equals(23) }
+	exp := InternalNewExpectation(args, "", 0)
+
+	// Matcher args
+	ExpectThat(len(exp.ArgMatchers), Equals(3))
+	ExpectThat(exp.ArgMatchers[0], Equals(args[0]))
+	ExpectThat(exp.ArgMatchers[2], Equals(args[2]))
+
+	// Non-matcher arg
+	var res MatchResult
+	matcher1 := exp.ArgMatchers[1]
+
+	res, _ = matcher1.Matches(17)
+	ExpectThat(res, Equals(MATCH_FALSE))
+
+	res, _ = matcher1.Matches(19)
+	ExpectThat(res, Equals(MATCH_TRUE))
+
+	res, _ = matcher1.Matches(23)
+	ExpectThat(res, Equals(MATCH_FALSE))
 }
 
 func (t *CallExpectationTest) NoTimes() {
