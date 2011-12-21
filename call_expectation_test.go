@@ -69,5 +69,11 @@ func (t *CallExpectationTest) TimesCalledAfterWillRepeatedly() {
 func (t *CallExpectationTest) WillOnceCalledAfterWillRepeatedly() {
 }
 
+func (t *CallExpectationTest) OneTimeActionRejectsSignature() {
+}
+
 func (t *CallExpectationTest) WillRepeatedlyCalledTwice() {
+}
+
+func (t *CallExpectationTest) FallbackActionRejectsSignature() {
 }
