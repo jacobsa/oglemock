@@ -234,6 +234,19 @@ func computeCardinality(exp *InternalExpectation) (min, max uint) {
 	return
 }
 
+// chooseAction returns the action that should be invoked for the i'th match to
+// the supplied expectation (counting from zero). If the implicit "return zero
+// values" action should be used, it returns nil.
+func chooseAction(i uint, exp *InternalExpectation) Action {
+	// Exhaust one-time actions first.
+	if i < uint(len(exp.OneTimeActions)) {
+		return exp.OneTimeActions[i]
+	}
+
+	// Fallback action (or nil if none is configured).
+	return exp.FallbackAction
+}
+
 func (c *controllerImpl) HandleMethodCall(
 	o MockObject,
 	methodName string,
@@ -254,6 +267,21 @@ func (c *controllerImpl) HandleMethodCall(
 		return makeZeroReturnValues(method)
 	}
 
-	// TODO
-	return nil
+	// Increase the number of matches recorded, and check whether we're over the
+	// number expected.
+	expectation.NumMatches++
+	_, maxCardinality := computeCardinality(expectation)
+	if expectation.NumMatches > maxCardinality {
+		c.reporter.ReportError(fileName, lineNumber, errors.New("TODO"))
+		return makeZeroReturnValues(method)
+	}
+
+	// Choose an action to invoke. If there is none, just return zero values.
+	action := chooseAction(expectation.NumMatches - 1, expectation)
+	if action == nil {
+		return makeZeroReturnValues(method)
+	}
+
+	// Let the action take over.
+	return action.Invoke(args)
 }
