@@ -167,14 +167,15 @@ func (t *ControllerTest) HandleMethodCallGivenWrongNumberOfArgs() {
 }
 
 func (t *ControllerTest) ExpectThenNonMatchingCall() {
-	// Expectation
+	// Expectation -- set up a fallback action to make it optional.
 	partial := t.controller.ExpectCall(
 		t.mock1,
 		"TwoIntsToString",
 		"burrito.go",
 		117)
 
-	partial(LessThan(10), Equals(2))
+	exp := partial(LessThan(10), Equals(2))
+	exp.WillRepeatedly(Return(""))
 
 	// Call
 	t.controller.HandleMethodCall(
