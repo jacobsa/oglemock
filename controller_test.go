@@ -382,6 +382,45 @@ func (t *ControllerTest) ExplicitCardinalityOverrun() {
 }
 
 func (t *ControllerTest) ImplicitOneTimeActionCountOverrun() {
+	// Expectation -- add a one-time action.
+	partial := t.controller.ExpectCall(
+		t.mock1,
+		"StringToInt",
+		"burrito.go",
+		117)
+
+	exp := partial(HasSubstr(""))
+	exp.WillOnce(Return(0))
+
+	// Call twice.
+	t.controller.HandleMethodCall(
+		t.mock1,
+		"TwoIntsToString",
+		"",
+		0,
+		[]interface{}{""})
+
+	t.controller.HandleMethodCall(
+		t.mock1,
+		"TwoIntsToString",
+		"",
+		0,
+		[]interface{}{""})
+
+	// The error should be reported immediately.
+	ExpectThat(len(t.reporter.errorsReported), Equals(1))
+	ExpectThat(t.reporter.errorsReported[0].fileName, Equals("burrito.go"))
+	ExpectThat(t.reporter.errorsReported[0].lineNumber, Equals(117))
+	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("Unexpected")))
+	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("StringToInt")))
+	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("has substring \"\"")))
+	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("called 1 time")))
+	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("called 2 times")))
+	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("oversatisfied")))
+
+	// Finish should change nothing.
+	t.controller.Finish()
+	ExpectThat(len(t.reporter.errorsReported), Equals(1))
 }
 
 func (t *ControllerTest) ImplicitCardinalityOfOneOverrun() {
