@@ -851,7 +851,7 @@ func (t *ControllerTest) InvokesFallbackActionWithoutOneTimes() {
   ExpectThat(res[0], Equals(2))
 }
 
-func (t *ControllerTest) InvokesImplicitActions() {
+func (t *ControllerTest) ImplicitActionReturnsZeroInts() {
 	var res []interface{}
 
 	// Expectation -- set up a cardinality of two.
@@ -887,6 +887,42 @@ func (t *ControllerTest) InvokesImplicitActions() {
   ExpectThat(len(res), Equals(1))
 	ExpectThat(reflect.TypeOf(res[0]), Equals(reflect.TypeOf(int(0))))
   ExpectThat(res[0], Equals(0))
+}
+
+func (t *ControllerTest) ImplicitActionReturnsEmptyStrings() {
+	var res []interface{}
+
+	// Expectation -- set up a cardinality of two.
+	partial := t.controller.ExpectCall(
+		t.mock1,
+		"TwoIntsToString",
+		"burrito.go",
+		117)
+
+  exp := partial(LessThan(100), LessThan(100))
+	exp.Times(2)
+
+	// Call 0
+	res = t.controller.HandleMethodCall(
+		t.mock1,
+		"TwoIntsToString",
+		"",
+		0,
+		[]interface{}{0, 0})
+
+  ExpectThat(len(res), Equals(1))
+  ExpectThat(res[0], Equals(""))
+
+	// Call 1
+	res = t.controller.HandleMethodCall(
+		t.mock1,
+		"TwoIntsToString",
+		"",
+		0,
+		[]interface{}{0, 0})
+
+  ExpectThat(len(res), Equals(1))
+  ExpectThat(res[0], Equals(""))
 }
 
 func (t *ControllerTest) ExpectationsAreMatchedLastToFirst() {

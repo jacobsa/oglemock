@@ -16,6 +16,7 @@
 package oglemock
 
 import (
+	"errors"
 	"fmt"
 	"github.com/jacobsa/oglematchers"
 	"reflect"
@@ -180,16 +181,29 @@ func (c *controllerImpl) chooseExpectation(
 	return nil
 }
 
+// makeZeroReturnValues creates a []interface{} containing appropriate zero
+// values for returning from the supplied method type.
+func makeZeroReturnValues(method reflect.Method) []interface{} {
+}
+
 func (c *controllerImpl) HandleMethodCall(
 	o MockObject,
 	methodName string,
 	fileName string,
 	lineNumber int,
 	args ...interface{}) []interface{} {
+	// Find the signature for the requested method.
+	oType := reflect.TypeOf(o)
+	method, ok := oType.MethodByName(methodName)
+	if !ok {
+		panic("Unknown method: " + methodName)
+	}
+
 	// Find an expectation matching this call.
 	expectation := c.chooseExpectation(o, methodName, args)
 	if expectation == nil {
-		// TODO: Report an error and return zero values.
+		c.reporter.ReportError(fileName, lineNumber, errors.New("TODO"))
+		return makeZeroReturnValues(method)
 	}
 
 	// TODO
