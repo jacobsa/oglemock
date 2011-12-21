@@ -156,17 +156,22 @@ func expectationMatches(exp *InternalExpectation, args []interface{}) bool {
 	return true
 }
 
-// chooseExpectation returns the expectation in the supplied list that matches
-// the supplied arguments. If there is more than one such expectation, the one
-// furthest along in the list is returned. If there is no such expectation, nil
-// is returned.
-func chooseExpectation(expectations []*InternalExpectation, args []interface{}) *InternalExpectation {
-	numExpectations := len(expectations)
-	if numExpectations == 0 {
+// chooseExpectation returns the expectation that matches the supplied
+// arguments. If there is more than one such expectation, the one furthest
+// along in the list for the method is returned. If there is no such
+// expectation, nil is returned.
+func (c *controllerImpl) chooseExpectation(
+	o MockObject,
+	methodName string,
+	args []interface{}) *InternalExpectation {
+	// Do we have any expectations for this object?
+	mapKey := getMapKey(o, methodName)
+	expectations, ok := c.expectations[mapKey]
+	if !ok || len(expectations) == 0 {
 		return nil
 	}
 
-	for i := numExpectations - 1; i >= 0; i-- {
+	for i := len(expectations) - 1; i >= 0; i-- {
 		if (expectationMatches(expectations[i], args)) {
 			return expectations[i]
 		}
