@@ -191,7 +191,7 @@ func (t *ControllerTest) ExpectThenNonMatchingCall() {
 	ExpectThat(t.reporter.errorsReported[0].lineNumber, Equals(112))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("Unexpected")))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("TwoIntsToString")))
-	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("[8, 1]")))
+	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("[8 1]")))
 
 	// Finish should change nothing.
 	t.controller.Finish()
