@@ -114,21 +114,50 @@ func (t *CallExpectationTest) WillRepeatedly() {
 	ExpectThat(exp.FallbackAction, Equals(action))
 }
 
+func (t *CallExpectationTest) BothKindsOfAction() {
+	action0 := Return(17)
+	action1 := Return(19)
+	action2 := Return(23)
+
+	exp := InternalNewExpectation([]interface{}{}, "", 0)
+	exp.WillOnce(action0).WillOnce(action1).WillRepeatedly(action2)
+
+	ExpectThat(len(exp.OneTimeActions), Equals(2))
+	ExpectThat(exp.OneTimeActions[0], Equals(action0))
+	ExpectThat(exp.OneTimeActions[1], Equals(action1))
+	ExpectThat(exp.FallbackAction, Equals(action2))
+}
+
 func (t *CallExpectationTest) TimesCalledTwice() {
 	exp := InternalNewExpectation([]interface{}{}, "", 0)
 
 	ExpectThat(
 		func() { exp.Times(17).Times(17) },
-		Panics(Error(HasSubstr("Times called"))))
+		Panics(Error(HasSubstr("Times called more than"))))
 }
 
 func (t *CallExpectationTest) TimesCalledAfterWillOnce() {
+	exp := InternalNewExpectation([]interface{}{}, "", 0)
+
+	ExpectThat(
+		func() { exp.WillOnce(Return()).Times(17) },
+		Panics(Error(HasSubstr("Times called after WillOnce"))))
 }
 
 func (t *CallExpectationTest) TimesCalledAfterWillRepeatedly() {
+	exp := InternalNewExpectation([]interface{}{}, "", 0)
+
+	ExpectThat(
+		func() { exp.WillRepeatedly(Return()).Times(17) },
+		Panics(Error(HasSubstr("Times called after WillRepeatedly"))))
 }
 
 func (t *CallExpectationTest) WillOnceCalledAfterWillRepeatedly() {
+	exp := InternalNewExpectation([]interface{}{}, "", 0)
+
+	ExpectThat(
+		func() { exp.WillRepeatedly(Return()).WillOnce(Return()) },
+		Panics(Error(HasSubstr("WillOnce called after WillRepeatedly"))))
 }
 
 func (t *CallExpectationTest) OneTimeActionRejectsSignature() {
