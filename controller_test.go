@@ -16,6 +16,7 @@
 package oglemock_test
 
 import (
+	. "github.com/jacobsa/oglemock"
 	. "github.com/jacobsa/ogletest"
 )
 
@@ -23,7 +24,29 @@ import (
 // Helpers
 ////////////////////////////////////////////////////////////
 
+type errorReport struct {
+	fileName string
+	lineNumber int
+	err error
+}
+
+type fakeErrorReporter struct {
+	errorsReported []errorReport
+}
+
+func (r *fakeErrorReporter) ReportError(fileName string, lineNumber int, err error) {
+	report := errorReport{fileName, lineNumber, err}
+	r.errorsReported = append(r.errorsReported, report)
+}
+
 type ControllerTest struct {
+	reporter fakeErrorReporter
+	controller Controller
+}
+
+func (t *ControllerTest) SetUp() {
+	t.reporter.errorsReported = make([]errorReport, 0)
+	t.controller = NewController(&t.reporter)
 }
 
 func init() { RegisterTestSuite(&ControllerTest{}) }
