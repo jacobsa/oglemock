@@ -194,5 +194,5 @@ func (t *CallExpectationTest) FallbackActionRejectsSignature() {
 
 	ExpectThat(
 		func() { exp.WillRepeatedly(action) },
-		Panics(Error(HasSubstr("arg 0; expected float64"))))
+		Panics(HasSubstr("arg 0; expected float64")))
 }
