@@ -177,7 +177,7 @@ func (t *CallExpectationTest) OneTimeActionRejectsSignature() {
 
 	ExpectThat(
 		func() { exp.WillOnce(action) },
-		Panics(Error(HasSubstr("arg 0; expected float32"))))
+		Panics(Error(HasSubstr("arg 0; expected float64"))))
 }
 
 func (t *CallExpectationTest) WillRepeatedlyCalledTwice() {
@@ -194,5 +194,5 @@ func (t *CallExpectationTest) FallbackActionRejectsSignature() {
 
 	ExpectThat(
 		func() { exp.WillRepeatedly(action) },
-		Panics(Error(HasSubstr("arg 0; expected float32"))))
+		Panics(Error(HasSubstr("arg 0; expected float64"))))
 }
