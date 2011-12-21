@@ -496,12 +496,115 @@ func (t *ControllerTest) ExplicitCardinalitySatisfied() {
 }
 
 func (t *ControllerTest) ImplicitOneTimeActionCountSatisfied() {
+	// Expectation -- set up two one-time actions.
+	partial := t.controller.ExpectCall(
+		t.mock1,
+		"StringToInt",
+		"burrito.go",
+		117)
+
+	exp := partial(HasSubstr(""))
+	exp.WillOnce(Return(0))
+	exp.WillOnce(Return(1))
+
+	// Call twice.
+	t.controller.HandleMethodCall(
+		t.mock1,
+		"TwoIntsToString",
+		"",
+		0,
+		[]interface{}{""})
+
+	t.controller.HandleMethodCall(
+		t.mock1,
+		"TwoIntsToString",
+		"",
+		0,
+		[]interface{}{""})
+
+	// There should be no errors.
+	t.controller.Finish()
+	ExpectThat(len(t.reporter.errorsReported), Equals(0))
 }
 
 func (t *ControllerTest) ImplicitOneTimeActionLowerBoundJustSatisfied() {
+	// Expectation -- set up two one-time actions and a fallback.
+	partial := t.controller.ExpectCall(
+		t.mock1,
+		"StringToInt",
+		"burrito.go",
+		117)
+
+	exp := partial(HasSubstr(""))
+	exp.WillOnce(Return(0))
+	exp.WillOnce(Return(1))
+	exp.WillRepeatedly(Return(2))
+
+	// Call twice.
+	t.controller.HandleMethodCall(
+		t.mock1,
+		"TwoIntsToString",
+		"",
+		0,
+		[]interface{}{""})
+
+	t.controller.HandleMethodCall(
+		t.mock1,
+		"TwoIntsToString",
+		"",
+		0,
+		[]interface{}{""})
+
+	// There should be no errors.
+	t.controller.Finish()
+	ExpectThat(len(t.reporter.errorsReported), Equals(0))
 }
 
 func (t *ControllerTest) ImplicitOneTimeActionLowerBoundMoreThanSatisfied() {
+	// Expectation -- set up two one-time actions and a fallback.
+	partial := t.controller.ExpectCall(
+		t.mock1,
+		"StringToInt",
+		"burrito.go",
+		117)
+
+	exp := partial(HasSubstr(""))
+	exp.WillOnce(Return(0))
+	exp.WillOnce(Return(1))
+	exp.WillRepeatedly(Return(2))
+
+	// Call four times.
+	t.controller.HandleMethodCall(
+		t.mock1,
+		"TwoIntsToString",
+		"",
+		0,
+		[]interface{}{""})
+
+	t.controller.HandleMethodCall(
+		t.mock1,
+		"TwoIntsToString",
+		"",
+		0,
+		[]interface{}{""})
+
+	t.controller.HandleMethodCall(
+		t.mock1,
+		"TwoIntsToString",
+		"",
+		0,
+		[]interface{}{""})
+
+	t.controller.HandleMethodCall(
+		t.mock1,
+		"TwoIntsToString",
+		"",
+		0,
+		[]interface{}{""})
+
+	// There should be no errors.
+	t.controller.Finish()
+	ExpectThat(len(t.reporter.errorsReported), Equals(0))
 }
 
 func (t *ControllerTest) FallbackActionConfiguredWithZeroCalls() {
