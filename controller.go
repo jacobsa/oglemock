@@ -15,6 +15,10 @@
 
 package oglemock
 
+import (
+	"fmt"
+)
+
 // PartialExpecation is a function that should be called exactly once with
 // expected arguments or matchers in order to set up an expected method call.
 // See Controller.ExpectMethodCall below. It returns an expectation that can be
@@ -81,11 +85,16 @@ type Controller interface {
 // NewController sets up a fresh controller, without any expectations set, and
 // configures the controller to use the supplied error reporter.
 func NewController(reporter ErrorReporter) Controller {
-	return &controllerImpl{reporter}
+	return &controllerImpl{reporter, map[string]*InternalExpectation{}}
 }
 
 type controllerImpl struct {
 	reporter ErrorReporter
+	expectations map[string]*InternalExpectation
+}
+
+func getMapKey(o MockObject, methodName string) string {
+  return fmt.Sprintf("%016x%s-", o.Oglemock_Id(), methodName)
 }
 
 func (c *controllerImpl) ExpectCall(
