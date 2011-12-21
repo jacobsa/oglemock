@@ -123,5 +123,13 @@ func (e *InternalCallExpectation) WillOnce(a Action) Expectation {
 }
 
 func (e *InternalCallExpectation) WillRepeatedly(a Action) Expectation {
+	// It is illegal to call this twice.
+	if e.FallbackAction != nil {
+		panic("WillRepeatedly called more than once.")
+	}
+
+	// Store the action.
+	e.FallbackAction = a
+
 	return e
 }
