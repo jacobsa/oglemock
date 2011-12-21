@@ -21,7 +21,7 @@ package oglemock
 // further modified (e.g. by calling WillOnce).
 //
 // If the arguments are of the wrong type, the function panics.
-type PartialExpecation func([]interface{}) Expectation
+type PartialExpecation func(...interface{}) Expectation
 
 // Controller represents an object that implements the central logic of
 // oglemock: recording and verifying expectations, responding to mock method

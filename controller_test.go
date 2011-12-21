@@ -117,6 +117,11 @@ func (t *ControllerTest) ExpectCallForUnknownMethod() {
 }
 
 func (t *ControllerTest) PartialExpectationGivenWrongNumberOfArgs() {
+	ExpectThat(
+		func() {
+			t.controller.ExpectCall(t.mock1, "TwoIntsToString")(17, 19, 23)
+		},
+		Panics(HasSubstr("arguments: expected 2, got 3")))
 }
 
 func (t *ControllerTest) PartialExpectationCalledTwice() {
