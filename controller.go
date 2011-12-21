@@ -132,7 +132,23 @@ func (c *controllerImpl) ExpectCall(
 }
 
 func (c *controllerImpl) Finish() {
-	// TODO
+	// Check whether the minimum cardinality for each registered expectation has
+	// been satisfied.
+	for _, expectations := range c.expectations {
+		for _, exp := range expectations {
+			minCardinality, _ := computeCardinality(exp)
+			if exp.NumMatches < minCardinality {
+				c.reporter.ReportError(
+					exp.FileName,
+					exp.LineNumber,
+					errors.New(
+						fmt.Sprintf(
+							"Expected to be called at least %u times; called %u times",
+							minCardinality,
+							exp.NumMatches)))
+			}
+		}
+	}
 }
 
 // expectationMatches checks the matchers for the expectation against the
