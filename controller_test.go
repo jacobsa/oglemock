@@ -909,7 +909,93 @@ func (t *ControllerTest) ExpectationsAreMatchedLastToFirst() {
 }
 
 func (t *ControllerTest) ExpectationsAreSegregatedByMockObject() {
+	var res []interface{}
+
+	// Expectation for mock1 -- return 17.
+	partial := t.controller.ExpectCall(
+		t.mock1,
+		"StringToInt",
+		"burrito.go",
+		117)
+
+	exp := partial(HasSubstr(""))
+	exp.WillRepeatedly(Return(17))
+
+	// Expectation for mock2 -- return 19.
+	partial = t.controller.ExpectCall(
+		t.mock2,
+		"StringToInt",
+		"burrito.go",
+		117)
+
+	exp = partial(HasSubstr(""))
+	exp.WillRepeatedly(Return(19))
+
+	// Call mock1.
+	res = t.controller.HandleMethodCall(
+		t.mock1,
+		"StringToInt",
+		"",
+		0,
+		[]interface{}{""})
+
+  ExpectThat(len(res), Equals(1))
+  ExpectThat(res[0], Equals(17))
+
+	// Call mock2.
+	res = t.controller.HandleMethodCall(
+		t.mock2,
+		"StringToInt",
+		"",
+		0,
+		[]interface{}{""})
+
+  ExpectThat(len(res), Equals(1))
+  ExpectThat(res[0], Equals(19))
 }
 
 func (t *ControllerTest) ExpectationsAreSegregatedByMethodName() {
+	var res []interface{}
+
+	// Expectation for StringToInt
+	partial := t.controller.ExpectCall(
+		t.mock1,
+		"StringToInt",
+		"burrito.go",
+		117)
+
+	exp := partial(HasSubstr(""))
+	exp.WillRepeatedly(Return(17))
+
+	// Expectation for TwoIntsToString
+	partial = t.controller.ExpectCall(
+		t.mock1,
+		"TwoIntsToString",
+		"burrito.go",
+		117)
+
+	exp = partial(1, 2)
+	exp.WillRepeatedly(Return("taco"))
+
+	// Call StringToInt.
+	res = t.controller.HandleMethodCall(
+		t.mock1,
+		"StringToInt",
+		"",
+		0,
+		[]interface{}{""})
+
+  ExpectThat(len(res), Equals(1))
+  ExpectThat(res[0], Equals(17))
+
+	// Call TwoIntsToString.
+	res = t.controller.HandleMethodCall(
+		t.mock1,
+		"TwoIntsToString",
+		"",
+		0,
+		[]interface{}{1, 2})
+
+  ExpectThat(len(res), Equals(1))
+  ExpectThat(res[0], Equals("taco"))
 }
