@@ -863,6 +863,49 @@ func (t *ControllerTest) InvokesImplicitActions() {
 }
 
 func (t *ControllerTest) ExpectationsAreMatchedLastToFirst() {
+	var res []interface{}
+
+	// General expectation
+	partial := t.controller.ExpectCall(
+		t.mock1,
+		"StringToInt",
+		"burrito.go",
+		117)
+
+	exp := partial(HasSubstr(""))
+	exp.WillRepeatedly(Return(17))
+
+	// More specific expectation
+	partial = t.controller.ExpectCall(
+		t.mock1,
+		"StringToInt",
+		"burrito.go",
+		117)
+
+	exp = partial(Equals("taco"))
+	exp.WillRepeatedly(Return(19))
+
+	// Call -- the second expectation should match.
+	res = t.controller.HandleMethodCall(
+		t.mock1,
+		"StringToInt",
+		"",
+		0,
+		[]interface{}{"taco"})
+
+  ExpectThat(len(res), Equals(1))
+  ExpectThat(res[0], Equals(19))
+
+	// Call -- the first expectation should match because the second doesn't.
+	res = t.controller.HandleMethodCall(
+		t.mock1,
+		"StringToInt",
+		"",
+		0,
+		[]interface{}{"burrito"})
+
+  ExpectThat(len(res), Equals(1))
+  ExpectThat(res[0], Equals(17))
 }
 
 func (t *ControllerTest) ExpectationsAreSegregatedByMockObject() {
