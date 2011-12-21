@@ -131,6 +131,14 @@ func (t *CallExpectationTest) BothKindsOfAction() {
 	ExpectThat(exp.FallbackAction, Equals(action2))
 }
 
+func (t *CallExpectationTest) TimesCalledWithHugeNumber() {
+	exp := InternalNewExpectation(emptyReturnSig, []interface{}{}, "", 0)
+
+	ExpectThat(
+		func() { exp.Times(1 << 30) },
+		Panics(Error(HasSubstr("Times: N must be at most 1000"))))
+}
+
 func (t *CallExpectationTest) TimesCalledTwice() {
 	exp := InternalNewExpectation(emptyReturnSig, []interface{}{}, "", 0)
 

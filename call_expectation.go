@@ -87,10 +87,38 @@ func InternalNewExpectation(
 }
 
 func (e *InternalCallExpectation) Times(n uint) Expectation {
+	// It is illegal to call this more than once.
+	if e.ExpectedNumMatches != -1 {
+		panic("Times called more than once.")
+	}
+
+	// It is illegal to call this after any actions are configured.
+	if len(e.OneTimeActions) != 0 {
+		panic("Times called after WillOnce.")
+	}
+
+	if e.FallbackAction != nil {
+		panic("Times called after WillRepeatedly.")
+	}
+
+	// Make sure the number is reasonable (and will fit in an int).
+	if n > 1000 {
+		panic("N must be at most 1000")
+	}
+
+	e.ExpectedNumMatches = int(n)
 	return e
 }
 
 func (e *InternalCallExpectation) WillOnce(a Action) Expectation {
+	// It is illegal to call this after WillRepeatedly.
+	if e.FallbackAction != nil {
+		panic("WillOnce called after WillRepeatedly.")
+	}
+
+	// Store the action.
+	e.OneTimeActions = append(e.OneTimeActions, a)
+
 	return e
 }
 
