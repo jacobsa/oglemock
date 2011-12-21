@@ -27,7 +27,7 @@ import (
 ////////////////////////////////////////////////////////////
 
 var emptyReturnSig reflect.Type = reflect.TypeOf(func(i int) {})
-var float32ReturnSig reflect.Type = reflect.TypeOf(func(i int) float32 { return 17.0 })
+var float64ReturnSig reflect.Type = reflect.TypeOf(func(i int) float32 { return 17.0 })
 
 type CallExpectationTest struct {
 }
@@ -100,7 +100,7 @@ func (t *CallExpectationTest) WillOnce() {
 	action0 := Return(17.0)
 	action1 := Return(19.0)
 
-	exp := InternalNewExpectation(float32ReturnSig, []interface{}{}, "", 0)
+	exp := InternalNewExpectation(float64ReturnSig, []interface{}{}, "", 0)
 	exp.WillOnce(action0).WillOnce(action1)
 
 	ExpectThat(len(exp.OneTimeActions), Equals(2))
@@ -111,7 +111,7 @@ func (t *CallExpectationTest) WillOnce() {
 func (t *CallExpectationTest) WillRepeatedly() {
 	action := Return(17.0)
 
-	exp := InternalNewExpectation(float32ReturnSig, []interface{}{}, "", 0)
+	exp := InternalNewExpectation(float64ReturnSig, []interface{}{}, "", 0)
 	exp.WillRepeatedly(action)
 
 	ExpectThat(exp.FallbackAction, Equals(action))
@@ -122,7 +122,7 @@ func (t *CallExpectationTest) BothKindsOfAction() {
 	action1 := Return(19.0)
 	action2 := Return(23.0)
 
-	exp := InternalNewExpectation(float32ReturnSig, []interface{}{}, "", 0)
+	exp := InternalNewExpectation(float64ReturnSig, []interface{}{}, "", 0)
 	exp.WillOnce(action0).WillOnce(action1).WillRepeatedly(action2)
 
 	ExpectThat(len(exp.OneTimeActions), Equals(2))
@@ -173,7 +173,7 @@ func (t *CallExpectationTest) WillOnceCalledAfterWillRepeatedly() {
 
 func (t *CallExpectationTest) OneTimeActionRejectsSignature() {
 	action := Return("taco")
-	exp := InternalNewExpectation(float32ReturnSig, []interface{}{}, "", 0)
+	exp := InternalNewExpectation(float64ReturnSig, []interface{}{}, "", 0)
 
 	ExpectThat(
 		func() { exp.WillOnce(action) },
@@ -190,7 +190,7 @@ func (t *CallExpectationTest) WillRepeatedlyCalledTwice() {
 
 func (t *CallExpectationTest) FallbackActionRejectsSignature() {
 	action := Return("taco")
-	exp := InternalNewExpectation(float32ReturnSig, []interface{}{}, "", 0)
+	exp := InternalNewExpectation(float64ReturnSig, []interface{}{}, "", 0)
 
 	ExpectThat(
 		func() { exp.WillRepeatedly(action) },
