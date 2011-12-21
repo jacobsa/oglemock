@@ -331,14 +331,12 @@ func (c *controllerImpl) HandleMethodCall(
 	_, maxCardinality := computeCardinality(expectation)
 	if expectation.NumMatches > maxCardinality {
 		c.reporter.ReportError(
-			fileName,
-			lineNumber,
+			expectation.FileName,
+			expectation.LineNumber,
 			errors.New(
 				fmt.Sprintf(
-					"Expectation from %s:%d: " +
-						"expected to be called %d times; called %d times",
-					expectation.FileName,
-					expectation.LineNumber,
+					"Expectation oversatisfied: " +
+						"expected to be called at most %d times; called %d times",
 					maxCardinality,
 					expectation.NumMatches)))
 
