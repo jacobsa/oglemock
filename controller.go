@@ -19,6 +19,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/jacobsa/oglematchers"
+	"math"
 	"reflect"
 )
 
@@ -194,6 +195,43 @@ func makeZeroReturnValues(method reflect.Method) []interface{} {
 	}
 
 	return result
+}
+
+// computeCardinality decides on the [min, max] range of the number of expected
+// matches for the supplied expectations, according to the rules documented in
+// expectation.go.
+func computeCardinality(exp *InternalExpectation) (min, max uint) {
+	// Explicit cardinality.
+	if exp.ExpectedNumMatches >= 0 {
+		min = uint(exp.ExpectedNumMatches)
+		max = min
+		return
+	}
+
+	// Implicit count based on one-time actions.
+	if len(exp.OneTimeActions) != 0 {
+		min = uint(len(exp.OneTimeActions))
+		max = min
+
+		// If there is a fallback action, this is only a lower bound.
+		if exp.FallbackAction != nil {
+			max = math.MaxUint32
+		}
+
+		return
+	}
+
+	// Implicit lack of restriction based on a fallback action being configured.
+	if exp.FallbackAction != nil {
+		min = 0
+		max = math.MaxUint32
+		return
+	}
+
+	// Implicit cardinality of one.
+	min = 1
+	max = 1
+	return
 }
 
 func (c *controllerImpl) HandleMethodCall(
