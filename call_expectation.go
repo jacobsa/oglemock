@@ -30,7 +30,7 @@ type callExpectation struct {
 	fileName string
 
 	// The line number at which this expectation was expressed.
-	lineNumber string
+	lineNumber int
 
 	// The number of times this expectation should be matched, as explicitly
 	// listed by the user. If there was no explicit number expressed, this is -1.
@@ -43,4 +43,10 @@ type callExpectation struct {
 	// An action to be taken when the one-time actions have expired, or nil if
 	// there is no such action.
 	fallbackAction Action
+}
+
+// newExpectation creates an expectation with the supplied info that is
+// otherwise empty.
+func newExpecation(args []interface{}, fileName string, lineNumber int) Expectation {
+	return nil
 }
