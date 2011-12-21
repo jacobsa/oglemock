@@ -19,6 +19,7 @@ import (
 	. "github.com/jacobsa/oglematchers"
 	. "github.com/jacobsa/oglemock"
 	. "github.com/jacobsa/ogletest"
+	"reflect"
 )
 
 ////////////////////////////////////////////////////////////
@@ -824,6 +825,41 @@ func (t *ControllerTest) InvokesFallbackActionWithoutOneTimes() {
 }
 
 func (t *ControllerTest) InvokesImplicitActions() {
+	var res []interface{}
+
+	// Expectation -- set up a cardinality of two.
+	partial := t.controller.ExpectCall(
+		t.mock1,
+		"StringToInt",
+		"burrito.go",
+		117)
+
+	exp := partial(HasSubstr(""))
+	exp.Times(2)
+
+	// Call 0
+	res = t.controller.HandleMethodCall(
+		t.mock1,
+		"TwoIntsToString",
+		"",
+		0,
+		[]interface{}{""})
+
+  ExpectThat(len(res), Equals(1))
+	ExpectThat(reflect.TypeOf(res[0]), Equals(reflect.TypeOf(int(0))))
+  ExpectThat(res[0], Equals(0))
+
+	// Call 1
+	res = t.controller.HandleMethodCall(
+		t.mock1,
+		"TwoIntsToString",
+		"",
+		0,
+		[]interface{}{""})
+
+  ExpectThat(len(res), Equals(1))
+	ExpectThat(reflect.TypeOf(res[0]), Equals(reflect.TypeOf(int(0))))
+  ExpectThat(res[0], Equals(0))
 }
 
 func (t *ControllerTest) ExpectationsAreMatchedLastToFirst() {
