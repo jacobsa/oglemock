@@ -139,6 +139,20 @@ func (t *ControllerTest) PartialExpectationCalledTwice() {
 		Panics(HasSubstr("called more than once")))
 }
 
+func (t *ControllerTest) MethodCallGivenWrongNumberOfArgs() {
+	ExpectThat(
+		func() {
+			t.controller.ExpectCall(t.mock1, "TwoIntsToString", "", 0)(17, 19)
+			t.controller.HandleMethodCall(
+				t.mock1,
+				"TwoIntsToString",
+				"taco.go",
+				112,
+				[]interface{}{17, 19, 23})
+			},
+		Panics(HasSubstr("arguments: expected 2, got 3")))
+}
+
 func (t *ControllerTest) ExpectThenNonMatchingCall() {
 	// Expectation
 	partial := t.controller.ExpectCall(
