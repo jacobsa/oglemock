@@ -184,8 +184,16 @@ func (c *controllerImpl) chooseExpectation(
 // makeZeroReturnValues creates a []interface{} containing appropriate zero
 // values for returning from the supplied method type.
 func makeZeroReturnValues(method reflect.Method) []interface{} {
-	// TODO
-	return []interface{}{}
+	methodType := method.Type
+	result := make([]interface{}, methodType.NumOut())
+
+	for i, _ := range result {
+		outType := methodType.Out(i)
+		zeroVal := reflect.Zero(outType)
+		result[i] = zeroVal.Interface()
+	}
+
+	return result
 }
 
 func (c *controllerImpl) HandleMethodCall(
