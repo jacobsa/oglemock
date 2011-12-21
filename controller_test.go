@@ -716,7 +716,10 @@ func (t *ControllerTest) InvokesOneTimeActions() {
   ExpectThat(res[0], Equals(1))
 }
 
-func (t *ControllerTest) InvokesFallbackActions() {
+func (t *ControllerTest) InvokesFallbackActionAfterOneTimes() {
+}
+
+func (t *ControllerTest) InvokesFallbackActionWithoutOneTimes() {
 }
 
 func (t *ControllerTest) InvokesImplicitActions() {
