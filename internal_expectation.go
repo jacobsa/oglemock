@@ -52,6 +52,9 @@ type InternalExpectation struct {
 	// An action to be taken when the one-time actions have expired, or nil if
 	// there is no such action.
 	FallbackAction Action
+
+	// The number of times this expectation has been matched so far.
+	NumMatches uint
 }
 
 // InternalNewExpectation is exported for purposes of testing only. You should
