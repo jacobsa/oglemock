@@ -136,7 +136,7 @@ func (t *CallExpectationTest) TimesCalledWithHugeNumber() {
 
 	ExpectThat(
 		func() { exp.Times(1 << 30) },
-		Panics(Error(HasSubstr("Times: N must be at most 1000"))))
+		Panics(HasSubstr("Times: N must be at most 1000")))
 }
 
 func (t *CallExpectationTest) TimesCalledTwice() {
@@ -144,7 +144,7 @@ func (t *CallExpectationTest) TimesCalledTwice() {
 
 	ExpectThat(
 		func() { exp.Times(17).Times(17) },
-		Panics(Error(HasSubstr("Times called more than"))))
+		Panics(HasSubstr("Times called more than")))
 }
 
 func (t *CallExpectationTest) TimesCalledAfterWillOnce() {
@@ -152,7 +152,7 @@ func (t *CallExpectationTest) TimesCalledAfterWillOnce() {
 
 	ExpectThat(
 		func() { exp.WillOnce(Return()).Times(17) },
-		Panics(Error(HasSubstr("Times called after WillOnce"))))
+		Panics(HasSubstr("Times called after WillOnce")))
 }
 
 func (t *CallExpectationTest) TimesCalledAfterWillRepeatedly() {
@@ -160,7 +160,7 @@ func (t *CallExpectationTest) TimesCalledAfterWillRepeatedly() {
 
 	ExpectThat(
 		func() { exp.WillRepeatedly(Return()).Times(17) },
-		Panics(Error(HasSubstr("Times called after WillRepeatedly"))))
+		Panics(HasSubstr("Times called after WillRepeatedly")))
 }
 
 func (t *CallExpectationTest) WillOnceCalledAfterWillRepeatedly() {
@@ -168,7 +168,7 @@ func (t *CallExpectationTest) WillOnceCalledAfterWillRepeatedly() {
 
 	ExpectThat(
 		func() { exp.WillRepeatedly(Return()).WillOnce(Return()) },
-		Panics(Error(HasSubstr("WillOnce called after WillRepeatedly"))))
+		Panics(HasSubstr("WillOnce called after WillRepeatedly")))
 }
 
 func (t *CallExpectationTest) OneTimeActionRejectsSignature() {
@@ -177,7 +177,7 @@ func (t *CallExpectationTest) OneTimeActionRejectsSignature() {
 
 	ExpectThat(
 		func() { exp.WillOnce(action) },
-		Panics(Error(HasSubstr("arg 0; expected float64"))))
+		Panics(HasSubstr("arg 0; expected float64")))
 }
 
 func (t *CallExpectationTest) WillRepeatedlyCalledTwice() {
@@ -185,7 +185,7 @@ func (t *CallExpectationTest) WillRepeatedlyCalledTwice() {
 
 	ExpectThat(
 		func() { exp.WillRepeatedly(Return()).WillRepeatedly(Return()) },
-		Panics(Error(HasSubstr("WillRepeatedly called more than once"))))
+		Panics(HasSubstr("WillRepeatedly called more than once")))
 }
 
 func (t *CallExpectationTest) FallbackActionRejectsSignature() {
