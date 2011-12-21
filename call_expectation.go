@@ -36,8 +36,8 @@ type callExpectation struct {
 	// listed by the user. If there was no explicit number expressed, this is -1.
 	expectedNumMatches int
 
-	// Actions to be taken for the first N calls, one per call in order, where N is the
-	// length of this slice.
+	// Actions to be taken for the first N calls, one per call in order, where N
+	// is the length of this slice.
 	oneTimeActions []Action
 
 	// An action to be taken when the one-time actions have expired, or nil if
@@ -46,7 +46,7 @@ type callExpectation struct {
 }
 
 // newExpectation creates an expectation with the supplied info that is
-// otherwise empty.
+// otherwise conceptually empty.
 func newExpecation(args []interface{}, fileName string, lineNumber int) Expectation {
 	return nil
 }

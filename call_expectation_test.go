@@ -33,6 +33,41 @@ func init()                     { RegisterTestSuite(&CallExpectationTest{}) }
 // Tests
 ////////////////////////////////////////////////////////////
 
-func (t *CallExpectationTest) DoesFoo() {
+func (t *CallExpectationTest) StoresFileNameAndLineNumber() {
 }
 
+func (t *CallExpectationTest) NoArgs() {
+}
+
+func (t *CallExpectationTest) MixOfMatchersAndNonMatchers() {
+}
+
+func (t *CallExpectationTest) NoTimes() {
+}
+
+func (t *CallExpectationTest) TimesN() {
+}
+
+func (t *CallExpectationTest) NoActions() {
+}
+
+func (t *CallExpectationTest) WillOnce() {
+}
+
+func (t *CallExpectationTest) WillRepeatedly() {
+}
+
+func (t *CallExpectationTest) TimesCalledTwice() {
+}
+
+func (t *CallExpectationTest) TimesCalledAfterWillOnce() {
+}
+
+func (t *CallExpectationTest) TimesCalledAfterWillRepeatedly() {
+}
+
+func (t *CallExpectationTest) WillOnceCalledAfterWillRepeatedly() {
+}
+
+func (t *CallExpectationTest) WillRepeatedlyCalledTwice() {
+}
