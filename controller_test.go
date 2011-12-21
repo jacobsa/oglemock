@@ -224,6 +224,15 @@ func (t *ControllerTest) ImplicitOneTimeActionLowerBoundNotSatisfied() {
 func (t *ControllerTest) ImplicitCardinalityOfOneNotSatisfied() {
 }
 
+func (t *ControllerTest) ExplicitCardinalityOverrun() {
+}
+
+func (t *ControllerTest) ImplicitOneTimeActionCountOverrun() {
+}
+
+func (t *ControllerTest) ImplicitCountOfOneOverrun() {
+}
+
 func (t *ControllerTest) ExplicitCardinalitySatisfied() {
 }
 
