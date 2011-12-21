@@ -16,6 +16,7 @@
 package oglemock
 
 import (
+	"fmt"
 	"github.com/jacobsa/oglematchers"
 	"reflect"
 )
@@ -116,6 +117,11 @@ func (e *InternalCallExpectation) WillOnce(a Action) Expectation {
 		panic("WillOnce called after WillRepeatedly.")
 	}
 
+	// Make sure the action is okay with the mock method's signature.
+	if err := a.CheckType(e.methodSignature); err != nil {
+		panic(fmt.Sprintf("WillOnce given invalid action: %v", err))
+	}
+
 	// Store the action.
 	e.OneTimeActions = append(e.OneTimeActions, a)
 
@@ -126,6 +132,11 @@ func (e *InternalCallExpectation) WillRepeatedly(a Action) Expectation {
 	// It is illegal to call this twice.
 	if e.FallbackAction != nil {
 		panic("WillRepeatedly called more than once.")
+	}
+
+	// Make sure the action is okay with the mock method's signature.
+	if err := a.CheckType(e.methodSignature); err != nil {
+		panic(fmt.Sprintf("WillRepeatedly given invalid action: %v", err))
 	}
 
 	// Store the action.
