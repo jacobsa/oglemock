@@ -65,3 +65,9 @@ type Controller interface {
 	// should not be used directly.
 	HandleMethodCall(o MockObject, methodName string, args ...interface{}) []interface{}
 }
+
+// NewController sets up a fresh controller, without any expectations set, and
+// configures the controller to use the supplied error reporter.
+func NewController(reporter ErrorReporter) Controller {
+	return nil
+}
