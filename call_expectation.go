@@ -104,7 +104,7 @@ func (e *InternalCallExpectation) Times(n uint) Expectation {
 
 	// Make sure the number is reasonable (and will fit in an int).
 	if n > 1000 {
-		panic("N must be at most 1000")
+		panic("Expectation.Times: N must be at most 1000")
 	}
 
 	e.ExpectedNumMatches = int(n)
