@@ -263,7 +263,12 @@ func (c *controllerImpl) HandleMethodCall(
 	// Find an expectation matching this call.
 	expectation := c.chooseExpectation(o, methodName, args)
 	if expectation == nil {
-		c.reporter.ReportError(fileName, lineNumber, errors.New("TODO"))
+		c.reporter.ReportError(
+			fileName,
+			lineNumber,
+			errors.New(
+				fmt.Sprintf("Unexpected call to %s with args: %v", methodName, args)))
+
 		return makeZeroReturnValues(method)
 	}
 

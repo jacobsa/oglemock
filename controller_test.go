@@ -190,11 +190,8 @@ func (t *ControllerTest) ExpectThenNonMatchingCall() {
 	ExpectThat(t.reporter.errorsReported[0].fileName, Equals("taco.go"))
 	ExpectThat(t.reporter.errorsReported[0].lineNumber, Equals(112))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("Unexpected")))
-	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("Tried")))
-	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("burrito.go:117")))
-	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("arg 1")))
-	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("Expected: 2")))
-	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("Actual:   1")))
+	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("TwoIntsToString")))
+	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("[8, 1]")))
 
 	// Finish should change nothing.
 	t.controller.Finish()
