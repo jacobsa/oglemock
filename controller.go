@@ -42,6 +42,13 @@ type Controller interface {
 	// function panics.
 	ExpectCall(o MockObject, methodName string) PartialExpecation
 
+	// Finish causes the controller to check for any unsatisfied expectations,
+	// and report them as errors if they exist.
+	//
+	// The controller may panic if any of its methods (including this one) are
+	// called after Finish is called.
+	Finish()
+
 	// HandleMethodCall looks for a registered expectation matching the call of
 	// the given method on mock object o, invokes the appropriate action (if
 	// any), and returns the values returned by that action (if any).
