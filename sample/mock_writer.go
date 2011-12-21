@@ -36,7 +36,7 @@ func (w *mockWriter) Oglemock_Description() string {
 
 func (w *mockWriter) Write(p []byte) (n int, err error) {
 	retVals := w.controller.HandleMethodCall(w, "Write")
-	if len(returnVals) != 2 {
+	if len(retVals) != 2 {
 		panic(fmt.Sprintf("mockWriter.Write: invalid values: %v", retVals))
 	}
 
@@ -47,14 +47,14 @@ func (w *mockWriter) Write(p []byte) (n int, err error) {
 	if v.Type() != reflect.TypeOf(n) {
 		panic(fmt.Sprintf("mockWriter.Write: invalid return value 0: %v", v))
 	}
-	n = v.Int()
+	n = int(v.Int())
 
 	// err error
 	v = reflect.ValueOf(retVals[1])
 	if v.Type() != reflect.TypeOf(err) {
 		panic(fmt.Sprintf("mockWriter.Write: invalid return value 0: %v", v))
 	}
-	err = v.Interface.(error)
+	err = v.Interface().(error)
 
 	return
 }
