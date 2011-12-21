@@ -125,6 +125,13 @@ func (t *ControllerTest) PartialExpectationGivenWrongNumberOfArgs() {
 }
 
 func (t *ControllerTest) PartialExpectationCalledTwice() {
+	ExpectThat(
+		func() {
+			partial := t.controller.ExpectCall(t.mock1, "StringToInt")
+			partial("taco")
+			partial("taco")
+		},
+		Panics(HasSubstr("called more than once")))
 }
 
 func (t *ControllerTest) ExpectThenNonMatchingCall() {
