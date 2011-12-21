@@ -186,6 +186,12 @@ func (c *controllerImpl) HandleMethodCall(
 	fileName string,
 	lineNumber int,
 	args ...interface{}) []interface{} {
+	// Find an expectation matching this call.
+	expectation := c.chooseExpectation(o, methodName, args)
+	if expectation == nil {
+		// TODO: Report an error and return zero values.
+	}
+
 	// TODO
 	return nil
 }
