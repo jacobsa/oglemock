@@ -19,14 +19,17 @@ import (
 	. "github.com/jacobsa/oglematchers"
 	. "github.com/jacobsa/oglemock"
 	. "github.com/jacobsa/ogletest"
+	"reflect"
 )
 
 ////////////////////////////////////////////////////////////
 // Helpers
 ////////////////////////////////////////////////////////////
 
-type CallExpectationTest struct {
+var emptyReturnSig reflect.Type = reflect.TypeOf(func(i int) {})
+var float32ReturnSig reflect.Type = reflect.TypeOf(func(i int) float32 { return 17.0 })
 
+type CallExpectationTest struct {
 }
 
 func init() { RegisterTestSuite(&CallExpectationTest{}) }
@@ -37,7 +40,7 @@ func init() { RegisterTestSuite(&CallExpectationTest{}) }
 
 func (t *CallExpectationTest) StoresFileNameAndLineNumber() {
 	args := []interface{}{}
-	exp := InternalNewExpectation(args, "taco", 17)
+	exp := InternalNewExpectation(emptyReturnSig, args, "taco", 17)
 
 	ExpectThat(exp.FileName, Equals("taco"))
 	ExpectThat(exp.LineNumber, Equals(17))
@@ -45,14 +48,14 @@ func (t *CallExpectationTest) StoresFileNameAndLineNumber() {
 
 func (t *CallExpectationTest) NoArgs() {
 	args := []interface{}{}
-	exp := InternalNewExpectation(args, "", 0)
+	exp := InternalNewExpectation(emptyReturnSig, args, "", 0)
 
 	ExpectThat(len(exp.ArgMatchers), Equals(0))
 }
 
 func (t *CallExpectationTest) MixOfMatchersAndNonMatchers() {
 	args := []interface{}{Equals(17), 19, Equals(23)}
-	exp := InternalNewExpectation(args, "", 0)
+	exp := InternalNewExpectation(emptyReturnSig, args, "", 0)
 
 	// Matcher args
 	ExpectThat(len(exp.ArgMatchers), Equals(3))
@@ -74,20 +77,20 @@ func (t *CallExpectationTest) MixOfMatchersAndNonMatchers() {
 }
 
 func (t *CallExpectationTest) NoTimes() {
-	exp := InternalNewExpectation([]interface{}{}, "", 0)
+	exp := InternalNewExpectation(emptyReturnSig, []interface{}{}, "", 0)
 
 	ExpectThat(exp.ExpectedNumMatches, Equals(-1))
 }
 
 func (t *CallExpectationTest) TimesN() {
-	exp := InternalNewExpectation([]interface{}{}, "", 0)
+	exp := InternalNewExpectation(emptyReturnSig, []interface{}{}, "", 0)
 	exp.Times(17)
 
 	ExpectThat(exp.ExpectedNumMatches, Equals(17))
 }
 
 func (t *CallExpectationTest) NoActions() {
-	exp := InternalNewExpectation([]interface{}{}, "", 0)
+	exp := InternalNewExpectation(emptyReturnSig, []interface{}{}, "", 0)
 
 	ExpectThat(len(exp.OneTimeActions), Equals(0))
 	ExpectThat(exp.FallbackAction, Equals(nil))
@@ -97,7 +100,7 @@ func (t *CallExpectationTest) WillOnce() {
 	action0 := Return(17)
 	action1 := Return(19)
 
-	exp := InternalNewExpectation([]interface{}{}, "", 0)
+	exp := InternalNewExpectation(emptyReturnSig, []interface{}{}, "", 0)
 	exp.WillOnce(action0).WillOnce(action1)
 
 	ExpectThat(len(exp.OneTimeActions), Equals(2))
@@ -108,7 +111,7 @@ func (t *CallExpectationTest) WillOnce() {
 func (t *CallExpectationTest) WillRepeatedly() {
 	action := Return(17)
 
-	exp := InternalNewExpectation([]interface{}{}, "", 0)
+	exp := InternalNewExpectation(emptyReturnSig, []interface{}{}, "", 0)
 	exp.WillRepeatedly(action)
 
 	ExpectThat(exp.FallbackAction, Equals(action))
@@ -119,7 +122,7 @@ func (t *CallExpectationTest) BothKindsOfAction() {
 	action1 := Return(19)
 	action2 := Return(23)
 
-	exp := InternalNewExpectation([]interface{}{}, "", 0)
+	exp := InternalNewExpectation(emptyReturnSig, []interface{}{}, "", 0)
 	exp.WillOnce(action0).WillOnce(action1).WillRepeatedly(action2)
 
 	ExpectThat(len(exp.OneTimeActions), Equals(2))
@@ -129,7 +132,7 @@ func (t *CallExpectationTest) BothKindsOfAction() {
 }
 
 func (t *CallExpectationTest) TimesCalledTwice() {
-	exp := InternalNewExpectation([]interface{}{}, "", 0)
+	exp := InternalNewExpectation(emptyReturnSig, []interface{}{}, "", 0)
 
 	ExpectThat(
 		func() { exp.Times(17).Times(17) },
@@ -137,7 +140,7 @@ func (t *CallExpectationTest) TimesCalledTwice() {
 }
 
 func (t *CallExpectationTest) TimesCalledAfterWillOnce() {
-	exp := InternalNewExpectation([]interface{}{}, "", 0)
+	exp := InternalNewExpectation(emptyReturnSig, []interface{}{}, "", 0)
 
 	ExpectThat(
 		func() { exp.WillOnce(Return()).Times(17) },
@@ -145,7 +148,7 @@ func (t *CallExpectationTest) TimesCalledAfterWillOnce() {
 }
 
 func (t *CallExpectationTest) TimesCalledAfterWillRepeatedly() {
-	exp := InternalNewExpectation([]interface{}{}, "", 0)
+	exp := InternalNewExpectation(emptyReturnSig, []interface{}{}, "", 0)
 
 	ExpectThat(
 		func() { exp.WillRepeatedly(Return()).Times(17) },
@@ -153,7 +156,7 @@ func (t *CallExpectationTest) TimesCalledAfterWillRepeatedly() {
 }
 
 func (t *CallExpectationTest) WillOnceCalledAfterWillRepeatedly() {
-	exp := InternalNewExpectation([]interface{}{}, "", 0)
+	exp := InternalNewExpectation(emptyReturnSig, []interface{}{}, "", 0)
 
 	ExpectThat(
 		func() { exp.WillRepeatedly(Return()).WillOnce(Return()) },

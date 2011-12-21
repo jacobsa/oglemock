@@ -17,6 +17,7 @@ package oglemock
 
 import (
 	"github.com/jacobsa/oglematchers"
+	"reflect"
 )
 
 // InternalCallExpectation is exported for purposes of testing only. You should
@@ -52,6 +53,7 @@ type InternalCallExpectation struct {
 // InternalNewExpectation is exported for purposes of testing only. You should
 // not touch it.
 func InternalNewExpectation(
+	methodSignature reflect.Type,
 	args []interface{},
 	fileName string,
 	lineNumber int) *InternalCallExpectation {
