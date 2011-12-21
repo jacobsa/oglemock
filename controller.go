@@ -277,7 +277,18 @@ func (c *controllerImpl) HandleMethodCall(
 	expectation.NumMatches++
 	_, maxCardinality := computeCardinality(expectation)
 	if expectation.NumMatches > maxCardinality {
-		c.reporter.ReportError(fileName, lineNumber, errors.New("TODO"))
+		c.reporter.ReportError(
+			fileName,
+			lineNumber,
+			errors.New(
+				fmt.Sprintf(
+					"Expectation from %s:%d: " +
+						"expected to be called %d times; called %d times",
+					expectation.FileName,
+					expectation.LineNumber,
+					maxCardinality,
+					expectation.NumMatches)))
+
 		return makeZeroReturnValues(method)
 	}
 
