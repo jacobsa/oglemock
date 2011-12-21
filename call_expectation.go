@@ -57,3 +57,15 @@ func InternalNewExpectation(
 	lineNumber int) *InternalCallExpectation {
 	return nil
 }
+
+func (e *InternalCallExpectation) Times(n uint) Expectation {
+	return e
+}
+
+func (e *InternalCallExpectation) WillOnce(a Action) Expectation {
+	return e
+}
+
+func (e *InternalCallExpectation) WillRepeatedly(a Action) Expectation {
+	return e
+}

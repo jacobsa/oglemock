@@ -37,7 +37,7 @@ type Expectation interface {
 	//
 	//  4. Otherwise, the implicit cardinality is one.
 	//
-	Times(n uint)
+	Times(n uint) Expectation
 
 	// WillOnce configures a "one-time action". WillOnce can be called zero or
 	// more times, but must be called after any call to Times and before any call
@@ -46,7 +46,7 @@ type Expectation interface {
 	// When matching method calls are made on the mock object, one-time actions
 	// are invoked one per matching call in the order that they were set up until
 	// they are exhausted. Afterward the fallback action, if any, will be used.
-	WillOnce(a Action)
+	WillOnce(a Action) Expectation
 
 	// WillRepeatedly configures a "fallback action". WillRepeatedly can be
 	// called zero or one times, and must not be called before Times or WillOnce.
@@ -55,5 +55,5 @@ type Expectation interface {
 	// will be invoked for any further method calls. If WillRepeatedly is not
 	// called, the fallback action is implicitly an action that returns zero
 	// values for the method's return values.
-	WillRepeatedly(a Action)
+	WillRepeatedly(a Action) Expectation
 }

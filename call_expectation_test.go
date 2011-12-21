@@ -74,9 +74,16 @@ func (t *CallExpectationTest) MixOfMatchersAndNonMatchers() {
 }
 
 func (t *CallExpectationTest) NoTimes() {
+	exp := InternalNewExpectation([]interface{}{}, "", 0)
+
+	ExpectThat(exp.ExpectedNumMatches, Equals(-1))
 }
 
 func (t *CallExpectationTest) TimesN() {
+	exp := InternalNewExpectation([]interface{}{}, "", 0)
+	exp.Times(17)
+
+	ExpectThat(exp.ExpectedNumMatches, Equals(17))
 }
 
 func (t *CallExpectationTest) NoActions() {
