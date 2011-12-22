@@ -163,6 +163,18 @@ func (c *controllerImpl) ExpectCall(
 
 		partialAlreadyCalled = true
 
+		// Make sure that the number of args is legal. Keep in mind that the
+		// method's type has an extra receiver arg.
+		if len(args) != method.Type.NumIn() - 1 {
+			panic(
+				fmt.Sprintf(
+					"Expectation for %s given wrong number of arguments: " +
+						"expected %d, got %d.",
+					methodName,
+					method.Type.NumIn() - 1,
+					len(args)))
+		}
+
 		// Create an expectation and insert it into the controller's map.
 		exp := InternalNewExpectation(method.Type, args, fileName, lineNumber)
 		c.addExpectation(o, methodName, exp)
