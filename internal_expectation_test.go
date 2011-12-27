@@ -63,17 +63,17 @@ func (t *InternalExpectationTest) MixOfMatchersAndNonMatchers() {
 	ExpectThat(exp.ArgMatchers[2], Equals(args[2]))
 
 	// Non-matcher arg
-	var res MatchResult
+	var res bool
 	matcher1 := exp.ArgMatchers[1]
 
 	res, _ = matcher1.Matches(17)
-	ExpectThat(res, Equals(MATCH_FALSE))
+	ExpectFalse(res)
 
 	res, _ = matcher1.Matches(19)
-	ExpectThat(res, Equals(MATCH_TRUE))
+	ExpectTrue(res)
 
 	res, _ = matcher1.Matches(23)
-	ExpectThat(res, Equals(MATCH_FALSE))
+	ExpectFalse(res)
 }
 
 func (t *InternalExpectationTest) NoTimes() {
