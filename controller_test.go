@@ -72,7 +72,7 @@ type ControllerTest struct {
 	mock2 MockObject
 }
 
-func (t *ControllerTest) SetUp() {
+func (t *ControllerTest) SetUp(c *TestInfo) {
 	t.reporter.errorsReported = make([]errorReport, 0)
 	t.controller = NewController(&t.reporter)
 
