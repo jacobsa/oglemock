@@ -18,7 +18,6 @@ package oglemock
 import (
 	"errors"
 	"fmt"
-	"github.com/jacobsa/oglematchers"
 	"math"
 	"reflect"
 )
@@ -223,7 +222,7 @@ func expectationMatches(exp *InternalExpectation, args []interface{}) bool {
 	// Check each matcher.
 	for i, matcher := range matchers {
 		res, _ := matcher.Matches(args[i])
-		if res != oglematchers.MATCH_TRUE {
+		if !res {
 			return false
 		}
 	}
