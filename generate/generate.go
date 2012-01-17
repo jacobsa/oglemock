@@ -63,6 +63,11 @@ import (
 	func (m *{{$structName}}) Oglemock_Description() string {
 		return m.description
 	}
+
+	{{range getMethods .}}
+		func (m *{{$structName}}) {{.Name}}() {
+		}
+	{{end}}
 {{end}}
 `
 

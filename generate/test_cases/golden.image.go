@@ -27,6 +27,15 @@ func (m *mockImage) Oglemock_Description() string {
 	return m.description
 }
 
+func (m *mockImage) At() {
+}
+
+func (m *mockImage) Bounds() {
+}
+
+func (m *mockImage) ColorModel() {
+}
+
 type mockPalettedImage struct {
 	controller	oglemock.Controller
 	description	string
@@ -46,4 +55,16 @@ func (m *mockPalettedImage) Oglemock_Id() uintptr {
 
 func (m *mockPalettedImage) Oglemock_Description() string {
 	return m.description
+}
+
+func (m *mockPalettedImage) At() {
+}
+
+func (m *mockPalettedImage) Bounds() {
+}
+
+func (m *mockPalettedImage) ColorIndexAt() {
+}
+
+func (m *mockPalettedImage) ColorModel() {
 }

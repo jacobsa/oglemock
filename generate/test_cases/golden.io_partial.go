@@ -25,6 +25,9 @@ func (m *mockReader) Oglemock_Description() string {
 	return m.description
 }
 
+func (m *mockReader) Read() {
+}
+
 type mockWriter struct {
 	controller	oglemock.Controller
 	description	string
@@ -44,4 +47,7 @@ func (m *mockWriter) Oglemock_Id() uintptr {
 
 func (m *mockWriter) Oglemock_Description() string {
 	return m.description
+}
+
+func (m *mockWriter) Write() {
 }
