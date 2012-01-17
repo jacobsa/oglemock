@@ -65,9 +65,22 @@ import (
 	}
 
 	{{range getMethods .}}
-		func (m *{{$structName}}) {{.Name}}({{range $i, $type := getInputs .Type}}p{{$i}} {{printf "%v" $type}}, {{end}}
-		) ({{range $i, $type := getOutputs .Type}}o{{$i}} {{printf "%v" $type}}, {{end}}
+	  {{$inputTypes := getInputs .Type}}
+	  {{$outputTypes := getOutputs .Type}}
+
+		func (m *{{$structName}}) {{.Name}}({{range $i, $type := $inputTypes}}p{{$i}} {{getTypeString $type}}, {{end}}
+		) ({{range $i, $type := $outputTypes}}o{{$i}} {{getTypeString $type}}, {{end}}
 		){
+			// Hand the call off to the controller, which does most of the work.
+			retVals := m.controller.HandleMethodCall(m, "{{.Name}}")
+			if len(retVals != {{len $outputTypes}}) {
+				panic(fmt.Sprintf("{{$structName}}.{{.Name}}: invalid return values: %v", retVals))
+			}
+
+			var v reflect.Value
+			{{range $i, $type := $outputTypes}}
+				// o{{$i}} {{getTypeString $type}}
+			{{end}}
 		}
 	{{end}}
 {{end}}
@@ -80,10 +93,15 @@ func init() {
 	extraFuncs["getMethods"] = getMethods
 	extraFuncs["getInputs"] = getInputs
 	extraFuncs["getOutputs"] = getOutputs
+	extraFuncs["getTypeString"] = getTypeString
 
 	tmpl = template.New("code")
 	tmpl.Funcs(extraFuncs)
 	tmpl.Parse(tmplStr)
+}
+
+func getTypeString(t reflect.Type) string {
+	return t.String()
 }
 
 func getMethods(it reflect.Type) []reflect.Method {

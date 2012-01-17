@@ -24,6 +24,14 @@ func (m *mockReader) Oglemock_Description() string {
 }
 
 func (m *mockReader) Read(p0 []uint8) (o0 int, o1 error) {
+
+	retVals := m.controller.HandleMethodCall(m, "Read")
+	if len(retVals != 2) {
+		panic(fmt.Sprintf("mockReader.Read: invalid return values: %v", retVals))
+	}
+
+	var v reflect.Value
+
 }
 
 type mockWriter struct {
@@ -48,4 +56,12 @@ func (m *mockWriter) Oglemock_Description() string {
 }
 
 func (m *mockWriter) Write(p0 []uint8) (o0 int, o1 error) {
+
+	retVals := m.controller.HandleMethodCall(m, "Write")
+	if len(retVals != 2) {
+		panic(fmt.Sprintf("mockWriter.Write: invalid return values: %v", retVals))
+	}
+
+	var v reflect.Value
+
 }
