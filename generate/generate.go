@@ -24,6 +24,32 @@ import (
 	"reflect"
 )
 
+const templateStr = `
+package {{.Pkg}}
+
+import (
+	{{$identifier, $import := range .Imports}}
+	{{$identifier}} {{"$import"}}
+	{{end}}
+)
+`
+
+type templateArg struct {
+	// The package of the generated code.
+	Pkg string
+
+	// A map from import identifier to package to use that identifier for,
+	// containing elements for each import needed by the mocked interfaces.
+	Imports map[string]string
+}
+
+// Given a set of interfaces, return a map from import identifier to package to
+// use that identifier for, containing elements for each import needed by the
+// interfaces.
+func getImports(interfaces []reflect.Type) map[string]string {
+	return nil
+}
+
 // Given a set of interfaces to mock, write out source code for a package named
 // `pkg` that contains mock implementations of those interfaces.
 func GenerateMockSource(w io.Writer, pkg string, interfaces []reflect.Type) error {
