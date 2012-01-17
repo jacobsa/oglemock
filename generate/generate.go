@@ -25,14 +25,18 @@ import (
 	"text/template"
 )
 
-const tmplStr = `
-package {{.Pkg}}
+const tmplStr =
+`package {{.Pkg}}
 
-import (
-	{{$identifier, $import := range .Imports}}
-	{{$identifier}} {{"$import"}}
-	{{end}}
+import ({{range $identifier, $import := .Imports}}
+	{{$identifier}} "{{$import}}"{{end}}
 )
+
+{{range .Interfaces}}
+type mock{{.Name}} struct {
+	controller oglemock.Controller
+}
+{{end}}
 `
 
 var tmpl = template.Must(template.New("code").Parse(tmplStr))
@@ -47,6 +51,9 @@ type tmplArg struct {
 
 	// Imports needed by the interfaces.
 	Imports importMap
+
+	// The set of interfaces to mock.
+	Interfaces []reflect.Type
 }
 
 // Add an import for the supplied type, without recursing.
@@ -117,6 +124,7 @@ func GenerateMockSource(w io.Writer, pkg string, interfaces []reflect.Type) erro
 	var arg tmplArg
 	arg.Pkg = pkg
 	arg.Imports = getImports(interfaces)
+	arg.Interfaces = interfaces
 
 	return tmpl.Execute(w, arg)
 }

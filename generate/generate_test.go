@@ -1,0 +1,115 @@
+// Copyright 2012 Aaron Jacobs. All Rights Reserved.
+// Author: aaronjjacobs@gmail.com (Aaron Jacobs)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package generate_test
+
+import (
+	. "github.com/jacobsa/ogletest"
+	"bytes"
+	"flag"
+	"github.com/jacobsa/oglemock/generate"
+	"image"
+	"io"
+	"io/ioutil"
+	"path"
+	"reflect"
+	"testing"
+)
+
+var dumpNew = flag.Bool("dump_new", false, "Dump new golden files.")
+
+////////////////////////////////////////////////////////////
+// Helpers
+////////////////////////////////////////////////////////////
+
+type GenerateTest struct {
+}
+
+func TestOgletest(t *testing.T) { RunTests(t) }
+func init() { RegisterTestSuite(&GenerateTest{}) }
+
+func (t *GenerateTest) runGoldenTest(
+	caseName string,
+	nilPtrs ...interface{}) {
+  // Make a slice of interface types to give to GenerateMockSource.
+	interfaces := make([]reflect.Type, len(nilPtrs))
+	for i, ptr := range nilPtrs {
+		interfaces[i] = reflect.TypeOf(ptr).Elem()
+	}
+
+	// Create the mock source.
+	buf := new(bytes.Buffer)
+	err := generate.GenerateMockSource(buf, "some_pkg", interfaces)
+	AssertEq(nil, err, "Error from GenerateMockSource: %v", err)
+
+	// Read the golden file.
+	goldenPath := path.Join("test_cases", "golden." + caseName + ".go")
+	goldenData := readFileOrDie(goldenPath)
+
+	// Compare the two.
+	identical := (buf.String() == string(goldenData))
+	ExpectTrue(identical, "Output doesn't match for case '%s'.", caseName)
+
+	// Write out a new golden file if requested.
+	if !identical && *dumpNew {
+		writeContentsToFileOrDie(buf.Bytes(), goldenPath)
+	}
+}
+
+func writeContentsToFileOrDie(contents []byte, path string) {
+	if err := ioutil.WriteFile(path, contents, 0600); err != nil {
+		panic("ioutil.WriteFile: " + err.Error())
+	}
+}
+
+func readFileOrDie(path string) []byte {
+	contents, err := ioutil.ReadFile(path)
+	if err != nil {
+		panic("ioutil.ReadFile: " + err.Error())
+	}
+
+	return contents
+}
+
+////////////////////////////////////////////////////////////
+// Tests
+////////////////////////////////////////////////////////////
+
+func (t *GenerateTest) EmptySet() {
+	ExpectEq("TODO", 17)
+}
+
+func (t *GenerateTest) InvalidType() {
+	ExpectEq("TODO", 17)
+}
+
+func (t *GenerateTest) NonInterfaceType() {
+	ExpectEq("TODO", 17)
+}
+
+func (t *GenerateTest) SomeOfPkgIo() {
+	// Mock io.Reader and io.Writer.
+	t.runGoldenTest(
+		"io_partial",
+		(*io.Reader)(nil),
+		(*io.Writer)(nil))
+}
+
+func (t *GenerateTest) Image() {
+	t.runGoldenTest(
+		"image",
+		(*image.Image)(nil),
+		(*image.PalettedImage)(nil))
+}
