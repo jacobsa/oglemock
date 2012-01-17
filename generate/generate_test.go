@@ -110,19 +110,6 @@ func (t *GenerateTest) EmptySetOfInterfaces() {
   ExpectThat(err, Error(HasSubstr("non-empty")))
 }
 
-func (t *GenerateTest) InvalidType() {
-	err := generate.GenerateMockSource(
-		new(bytes.Buffer),
-		"foo",
-		[]reflect.Type{
-			reflect.TypeOf((*io.Reader)(nil)).Elem(),
-			reflect.TypeOf(nil),
-			reflect.TypeOf((*io.Writer)(nil)).Elem(),
-		})
-
-  ExpectThat(err, Error(HasSubstr("Invalid type")))
-}
-
 func (t *GenerateTest) NonInterfaceType() {
 	err := generate.GenerateMockSource(
 		new(bytes.Buffer),
