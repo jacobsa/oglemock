@@ -19,7 +19,11 @@
 package generate
 
 import (
+	"bytes"
 	"errors"
+	"go/parser"
+	"go/printer"
+	"go/token"
 	"io"
 	"path"
 	"reflect"
@@ -29,33 +33,36 @@ import (
 const tmplStr =
 `package {{.Pkg}}
 
-import ({{range $identifier, $import := .Imports}}
-	{{$identifier}} "{{$import}}"{{end}}
+import (
+	{{range $identifier, $import := .Imports}}
+		{{$identifier}} "{{$import}}"
+	{{end}}
 )
 
 {{range .Interfaces}}
-{{$structName := printf "mock%s" .Name}}
-type {{$structName}} struct {
-	controller oglemock.Controller
-	description string
-}
+	{{$structName := printf "mock%s" .Name}}
 
-func New{{printf "Mock%s" .Name}}(
-	c oglemock.Controller,
-	desc string) *{{$structName}} {
-  return &{{$structName}}{
-		controller: c,
-		description: desc,
+	type {{$structName}} struct {
+		controller oglemock.Controller
+		description string
 	}
-}
-
-func (m *{{$structName}}) Oglemock_Id() uintptr {
-	return uintptr(unsafe.Pointer(m))
-}
-
-func (m *{{$structName}}) Oglemock_Description() string {
-	return m.description
-}
+	
+	func New{{printf "Mock%s" .Name}}(
+		c oglemock.Controller,
+		desc string) *{{$structName}} {
+	  return &{{$structName}}{
+			controller: c,
+			description: desc,
+		}
+	}
+	
+	func (m *{{$structName}}) Oglemock_Id() uintptr {
+		return uintptr(unsafe.Pointer(m))
+	}
+	
+	func (m *{{$structName}}) Oglemock_Description() string {
+		return m.description
+	}
 {{end}}
 `
 
@@ -157,11 +164,28 @@ func GenerateMockSource(w io.Writer, pkg string, interfaces []reflect.Type) erro
 		}
 	}
 
-	// Create an appropriate template arg, then execute the template.
+	// Create an appropriate template arg, then execute the template. Write the
+	// raw output into a buffer.
 	var arg tmplArg
 	arg.Pkg = pkg
 	arg.Imports = getImports(interfaces)
 	arg.Interfaces = interfaces
 
-	return tmpl.Execute(w, arg)
+	buf := new(bytes.Buffer)
+	if err := tmpl.Execute(buf, arg); err != nil {
+		return err
+	}
+
+	// Pretty-print the output.
+	fset := token.NewFileSet()
+	astFile, err := parser.ParseFile(fset, pkg + ".go", buf, 0)
+	if err != nil {
+		return errors.New("Error parsing generated code: " + err.Error())
+	}
+
+	if err = printer.Fprint(w, fset, astFile); err != nil {
+		return errors.New("Error pretty printing: " + err.Error())
+	}
+
+	return nil
 }

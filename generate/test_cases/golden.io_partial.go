@@ -4,19 +4,16 @@ import (
 	runtime "runtime"
 )
 
-
-
 type mockReader struct {
-	controller oglemock.Controller
-	description string
+	controller	oglemock.Controller
+	description	string
 }
 
-func NewMockReader(
-	c oglemock.Controller,
+func NewMockReader(c oglemock.Controller,
 	desc string) *mockReader {
-  return &mockReader{
-		controller: c,
-		description: desc,
+	return &mockReader{
+		controller:	c,
+		description:	desc,
 	}
 }
 
@@ -28,18 +25,16 @@ func (m *mockReader) Oglemock_Description() string {
 	return m.description
 }
 
-
 type mockWriter struct {
-	controller oglemock.Controller
-	description string
+	controller	oglemock.Controller
+	description	string
 }
 
-func NewMockWriter(
-	c oglemock.Controller,
+func NewMockWriter(c oglemock.Controller,
 	desc string) *mockWriter {
-  return &mockWriter{
-		controller: c,
-		description: desc,
+	return &mockWriter{
+		controller:	c,
+		description:	desc,
 	}
 }
 
@@ -50,4 +45,3 @@ func (m *mockWriter) Oglemock_Id() uintptr {
 func (m *mockWriter) Oglemock_Description() string {
 	return m.description
 }
-
