@@ -80,7 +80,14 @@ import (
 			var v reflect.Value
 			{{range $i, $type := $outputTypes}}
 				// o{{$i}} {{getTypeString $type}}
+				v = reflect.ValueOf(retVals[{{$i}}])
+				if v.Type() != reflect.TypeOf(o{{$i}}) {
+					panic(fmt.Sprintf("{{$structName}}.{{.Name}}: invalid return value {{$i}}: %v", v))
+				}
+				o{{$i}} = v.Interface().({{getTypeString $type}})
 			{{end}}
+
+			return
 		}
 	{{end}}
 {{end}}

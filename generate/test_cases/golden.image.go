@@ -37,7 +37,13 @@ func (m *mockImage) At(p0 int, p1 int) (o0 color.Color) {
 	var v reflect.Value
 
 	// o0 color.Color
+	v = reflect.ValueOf(retVals[0])
+	if v.Type() != reflect.TypeOf(o0) {
+		panic(fmt.Sprintf("mockImage.Color: invalid return value 0: %v", v))
+	}
+	o0 = v.Interface().(color.Color)
 
+	return
 }
 
 func (m *mockImage) Bounds() (o0 image.Rectangle) {
@@ -50,7 +56,13 @@ func (m *mockImage) Bounds() (o0 image.Rectangle) {
 	var v reflect.Value
 
 	// o0 image.Rectangle
+	v = reflect.ValueOf(retVals[0])
+	if v.Type() != reflect.TypeOf(o0) {
+		panic(fmt.Sprintf("mockImage.Rectangle: invalid return value 0: %v", v))
+	}
+	o0 = v.Interface().(image.Rectangle)
 
+	return
 }
 
 func (m *mockImage) ColorModel() (o0 color.Model) {
@@ -63,7 +75,13 @@ func (m *mockImage) ColorModel() (o0 color.Model) {
 	var v reflect.Value
 
 	// o0 color.Model
+	v = reflect.ValueOf(retVals[0])
+	if v.Type() != reflect.TypeOf(o0) {
+		panic(fmt.Sprintf("mockImage.Model: invalid return value 0: %v", v))
+	}
+	o0 = v.Interface().(color.Model)
 
+	return
 }
 
 type mockPalettedImage struct {
@@ -97,7 +115,13 @@ func (m *mockPalettedImage) At(p0 int, p1 int) (o0 color.Color) {
 	var v reflect.Value
 
 	// o0 color.Color
+	v = reflect.ValueOf(retVals[0])
+	if v.Type() != reflect.TypeOf(o0) {
+		panic(fmt.Sprintf("mockPalettedImage.Color: invalid return value 0: %v", v))
+	}
+	o0 = v.Interface().(color.Color)
 
+	return
 }
 
 func (m *mockPalettedImage) Bounds() (o0 image.Rectangle) {
@@ -110,7 +134,13 @@ func (m *mockPalettedImage) Bounds() (o0 image.Rectangle) {
 	var v reflect.Value
 
 	// o0 image.Rectangle
+	v = reflect.ValueOf(retVals[0])
+	if v.Type() != reflect.TypeOf(o0) {
+		panic(fmt.Sprintf("mockPalettedImage.Rectangle: invalid return value 0: %v", v))
+	}
+	o0 = v.Interface().(image.Rectangle)
 
+	return
 }
 
 func (m *mockPalettedImage) ColorIndexAt(p0 int, p1 int) (o0 uint8) {
@@ -123,7 +153,13 @@ func (m *mockPalettedImage) ColorIndexAt(p0 int, p1 int) (o0 uint8) {
 	var v reflect.Value
 
 	// o0 uint8
+	v = reflect.ValueOf(retVals[0])
+	if v.Type() != reflect.TypeOf(o0) {
+		panic(fmt.Sprintf("mockPalettedImage.uint8: invalid return value 0: %v", v))
+	}
+	o0 = v.Interface().(uint8)
 
+	return
 }
 
 func (m *mockPalettedImage) ColorModel() (o0 color.Model) {
@@ -136,5 +172,11 @@ func (m *mockPalettedImage) ColorModel() (o0 color.Model) {
 	var v reflect.Value
 
 	// o0 color.Model
+	v = reflect.ValueOf(retVals[0])
+	if v.Type() != reflect.TypeOf(o0) {
+		panic(fmt.Sprintf("mockPalettedImage.Model: invalid return value 0: %v", v))
+	}
+	o0 = v.Interface().(color.Model)
 
+	return
 }

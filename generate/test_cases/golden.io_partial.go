@@ -33,9 +33,20 @@ func (m *mockReader) Read(p0 []uint8) (o0 int, o1 error) {
 	var v reflect.Value
 
 	// o0 int
+	v = reflect.ValueOf(retVals[0])
+	if v.Type() != reflect.TypeOf(o0) {
+		panic(fmt.Sprintf("mockReader.int: invalid return value 0: %v", v))
+	}
+	o0 = v.Interface().(int)
 
 	// o1 error
+	v = reflect.ValueOf(retVals[1])
+	if v.Type() != reflect.TypeOf(o1) {
+		panic(fmt.Sprintf("mockReader.error: invalid return value 1: %v", v))
+	}
+	o1 = v.Interface().(error)
 
+	return
 }
 
 type mockWriter struct {
@@ -69,7 +80,18 @@ func (m *mockWriter) Write(p0 []uint8) (o0 int, o1 error) {
 	var v reflect.Value
 
 	// o0 int
+	v = reflect.ValueOf(retVals[0])
+	if v.Type() != reflect.TypeOf(o0) {
+		panic(fmt.Sprintf("mockWriter.int: invalid return value 0: %v", v))
+	}
+	o0 = v.Interface().(int)
 
 	// o1 error
+	v = reflect.ValueOf(retVals[1])
+	if v.Type() != reflect.TypeOf(o1) {
+		panic(fmt.Sprintf("mockWriter.error: invalid return value 1: %v", v))
+	}
+	o1 = v.Interface().(error)
 
+	return
 }
