@@ -18,6 +18,7 @@
 package complicated_pkg
 
 import (
+	"github.com/jacobsa/oglemock/generate/test_cases/renamed_pkg"
 	"image"
 	"io"
 	"net"
@@ -34,5 +35,6 @@ type ComplicatedThing interface {
 	Slices(a []string) ([]int, error)
 	NamedScalarType(a Byte) ([]Byte, error)
 	EmptyInterface(a interface{}) (interface{}, error)
+	RenamedPackage(a tony.SomeUint8Alias)
 	Variadic(a int, b ...net.Conn) int
 }

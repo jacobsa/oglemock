@@ -8,6 +8,8 @@ import (
 	complicated_pkg "github.com/jacobsa/oglemock/generate/test_cases/complicated_pkg"
 
 	image "image"
+
+	renamed_pkg "github.com/jacobsa/oglemock/generate/test_cases/renamed_pkg"
 )
 
 type mockComplicatedThing struct {
@@ -195,6 +197,18 @@ func (m *mockComplicatedThing) Pointers(p0 *int, p1 *net.Conn, p2 **io.Reader) (
 		panic(fmt.Sprintf("mockComplicatedThing.error: invalid return value 1: %v", v))
 	}
 	o1 = v.Interface().(error)
+
+	return
+}
+
+func (m *mockComplicatedThing) RenamedPackage(p0 tony.SomeUint8Alias) {
+	// Hand the call off to the controller, which does most of the work.
+	retVals := m.controller.HandleMethodCall(m, "RenamedPackage")
+	if len(retVals != 0) {
+		panic(fmt.Sprintf("mockComplicatedThing.RenamedPackage: invalid return values: %v", retVals))
+	}
+
+	var v reflect.Value
 
 	return
 }
