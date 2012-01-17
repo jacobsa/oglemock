@@ -66,7 +66,27 @@ import (
 {{end}}
 `
 
-var tmpl = template.Must(template.New("code").Parse(tmplStr))
+var tmpl *template.Template
+
+func init() {
+	extraFuncs := make(template.FuncMap)
+	extraFuncs["getMethods"] = getMethods
+
+	tmpl = template.New("code")
+	tmpl.Funcs(extraFuncs)
+	tmpl.Parse(tmplStr)
+}
+
+func getMethods(it reflect.Type) []reflect.Method {
+	numMethods := it.NumMethod()
+	methods := make([]reflect.Method, numMethods)
+
+	for i := 0; i < numMethods; i++ {
+		methods[i] = it.Method(i)
+	}
+
+	return methods
+}
 
 // A map from import identifier to package to use that identifier for,
 // containing elements for each import needed by a set of mocked interfaces.
