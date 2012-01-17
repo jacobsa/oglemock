@@ -106,8 +106,8 @@ func (t *GenerateTest) EmptySetOfInterfaces() {
 		"foo",
 		[]reflect.Type{})
 
-  ExpectThat(err, Error(HasSubstr("at least one")))
-  ExpectThat(err, Error(HasSubstr("interface")))
+  ExpectThat(err, Error(HasSubstr("interfaces")))
+  ExpectThat(err, Error(HasSubstr("non-empty")))
 }
 
 func (t *GenerateTest) InvalidType() {

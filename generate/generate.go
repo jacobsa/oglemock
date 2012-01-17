@@ -19,6 +19,7 @@
 package generate
 
 import (
+	"errors"
 	"io"
 	"path"
 	"reflect"
@@ -121,6 +122,23 @@ func getImports(interfaces []reflect.Type) importMap {
 // Given a set of interfaces to mock, write out source code for a package named
 // `pkg` that contains mock implementations of those interfaces.
 func GenerateMockSource(w io.Writer, pkg string, interfaces []reflect.Type) error {
+	// Sanity-check arguments.
+	if pkg == "" {
+		return errors.New("Package name must be non-empty.")
+	}
+
+	if len(interfaces) == 0 {
+		return errors.New("List of interfaces must be non-empty.")
+	}
+
+	// Make sure each type is indeed an interface.
+	for _, it := range interfaces {
+		if it.Kind() != reflect.Interface {
+			return errors.New("Invalid type: " + it.String())
+		}
+	}
+
+	// Create an appropriate template arg, then execute the template.
 	var arg tmplArg
 	arg.Pkg = pkg
 	arg.Imports = getImports(interfaces)
