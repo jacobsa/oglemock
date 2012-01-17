@@ -19,13 +19,13 @@
 package generate
 
 import (
-	"errors"
 	"io"
 	"path"
 	"reflect"
+	"text/template"
 )
 
-const templateStr = `
+const tmplStr = `
 package {{.Pkg}}
 
 import (
@@ -35,11 +35,13 @@ import (
 )
 `
 
+var tmpl = template.Must(template.New("code").Parse(tmplStr))
+
 // A map from import identifier to package to use that identifier for,
 // containing elements for each import needed by a set of mocked interfaces.
 type importMap map[string]string
 
-type templateArg struct {
+type tmplArg struct {
 	// The package of the generated code.
 	Pkg string
 
@@ -112,5 +114,9 @@ func getImports(interfaces []reflect.Type) importMap {
 // Given a set of interfaces to mock, write out source code for a package named
 // `pkg` that contains mock implementations of those interfaces.
 func GenerateMockSource(w io.Writer, pkg string, interfaces []reflect.Type) error {
-	return errors.New("Not implemented.")
+	var arg tmplArg
+	arg.Pkg = pkg
+	arg.Imports = getImports(interfaces)
+
+	return tmpl.Execute(w, arg)
 }
