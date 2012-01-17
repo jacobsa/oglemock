@@ -21,6 +21,7 @@ import (
 	"bytes"
 	"flag"
 	"github.com/jacobsa/oglemock/generate"
+	"github.com/jacobsa/oglemock/generate/test_cases/complicated_pkg"
 	"image"
 	"io"
 	"io/ioutil"
@@ -136,4 +137,10 @@ func (t *GenerateTest) Image() {
 		"image",
 		(*image.Image)(nil),
 		(*image.PalettedImage)(nil))
+}
+
+func (t *GenerateTest) ComplicatedPackage() {
+	t.runGoldenTest(
+		"complicated_pkg",
+		(*complicated_pkg.ComplicatedThing)(nil))
 }
