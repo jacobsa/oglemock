@@ -65,14 +65,8 @@ import (
 	}
 
 	{{range getMethods .}}
-		func (m *{{$structName}}) {{.Name}}(
-			{{range $i, $type := getInputs .Type}}
-				p{{$i}} {{printf "%v" $type}},
-			{{end}}
-		) (
-			{{range $i, $type := getOutputs .Type}}
-				o{{$i}} {{printf "%v" $type}},
-			{{end}}
+		func (m *{{$structName}}) {{.Name}}({{range $i, $type := getInputs .Type}}p{{$i}} {{printf "%v" $type}}, {{end}}
+		) ({{range $i, $type := getOutputs .Type}}o{{$i}} {{printf "%v" $type}}, {{end}}
 		){
 		}
 	{{end}}
