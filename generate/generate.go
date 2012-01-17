@@ -256,7 +256,7 @@ func GenerateMockSource(w io.Writer, pkg string, interfaces []reflect.Type) erro
 
 	// Pretty-print the output.
 	fset := token.NewFileSet()
-	astFile, err := parser.ParseFile(fset, pkg + ".go", buf, 0)
+	astFile, err := parser.ParseFile(fset, pkg + ".go", buf, parser.ParseComments)
 	if err != nil {
 		return errors.New("Error parsing generated code: " + err.Error())
 	}
