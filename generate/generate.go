@@ -21,6 +21,7 @@ package generate
 import (
 	"errors"
 	"io"
+	"path"
 	"reflect"
 )
 
@@ -34,20 +35,78 @@ import (
 )
 `
 
+// A map from import identifier to package to use that identifier for,
+// containing elements for each import needed by a set of mocked interfaces.
+type importMap map[string]string
+
 type templateArg struct {
 	// The package of the generated code.
 	Pkg string
 
-	// A map from import identifier to package to use that identifier for,
-	// containing elements for each import needed by the mocked interfaces.
-	Imports map[string]string
+	// Imports needed by the interfaces.
+	Imports importMap
+}
+
+// Add an import for the supplied type, without recursing.
+func addImportForType(imports importMap, t reflect.Type) {
+	// If there is no package path, this is a built-in type and we don't need an
+	// import.
+	pkgPath := t.PkgPath()
+	if pkgPath == "" {
+		return
+	}
+
+	// Use the package's base name as an identifier.
+	imports[path.Base(pkgPath)] = pkgPath
+}
+
+// Add all necessary imports for the type, recursing as appropriate.
+func addImportsForType(imports importMap, t reflect.Type) {
+	// Add any import needed for the type itself.
+	addImportForType(imports, t)
+
+	// Handle special cases where recursion is needed.
+	switch t.Kind() {
+	case reflect.Array, reflect.Chan, reflect.Ptr, reflect.Slice:
+		addImportsForType(imports, t.Elem())
+
+	case reflect.Func:
+		// Input parameters.
+		for i := 0; i < t.NumIn(); i++ {
+			addImportsForType(imports, t.In(i))
+		}
+
+		// Return values.
+		for i := 0; i < t.NumOut(); i++ {
+			addImportsForType(imports, t.Out(i))
+		}
+
+	case reflect.Map:
+		addImportsForType(imports, t.Key())
+		addImportsForType(imports, t.Elem())
+	}
+}
+
+// Add imports for each of the methods of the interface, but not the interface
+// itself.
+func addImportsForInterfaceMethods(imports importMap, it reflect.Type) {
+	// Handle each method.
+	for i := 0; i < it.NumMethod(); i++ {
+		m := it.Method(i)
+		addImportsForType(imports, m.Type)
+	}
 }
 
 // Given a set of interfaces, return a map from import identifier to package to
 // use that identifier for, containing elements for each import needed by the
-// interfaces.
-func getImports(interfaces []reflect.Type) map[string]string {
-	return nil
+// mock versions of those interfaces.
+func getImports(interfaces []reflect.Type) importMap {
+	imports := make(importMap)
+	for _, it := range interfaces {
+		addImportsForInterfaceMethods(imports, it)
+	}
+
+	return imports
 }
 
 // Given a set of interfaces to mock, write out source code for a package named
