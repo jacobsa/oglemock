@@ -34,8 +34,27 @@ import ({{range $identifier, $import := .Imports}}
 )
 
 {{range .Interfaces}}
-type mock{{.Name}} struct {
+{{$structName := printf "mock%s" .Name}}
+type {{$structName}} struct {
 	controller oglemock.Controller
+	description string
+}
+
+func New{{printf "Mock%s" .Name}}(
+	c oglemock.Controller,
+	desc string) *{{$structName}} {
+  return &{{$structName}}{
+		controller: c,
+		description: desc,
+	}
+}
+
+func (m *{{$structName}}) Oglemock_Id() uintptr {
+	return uintptr(unsafe.Pointer(m))
+}
+
+func (m *{{$structName}}) Oglemock_Description() string {
+	return m.description
 }
 {{end}}
 `
