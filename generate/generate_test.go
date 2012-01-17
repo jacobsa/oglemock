@@ -16,6 +16,7 @@
 package generate_test
 
 import (
+	. "github.com/jacobsa/oglematchers"
 	. "github.com/jacobsa/ogletest"
 	"bytes"
 	"flag"
@@ -87,16 +88,52 @@ func readFileOrDie(path string) []byte {
 // Tests
 ////////////////////////////////////////////////////////////
 
-func (t *GenerateTest) EmptySet() {
-	ExpectEq("TODO", 17)
+func (t *GenerateTest) EmptyPackageName() {
+	err := generate.GenerateMockSource(
+		new(bytes.Buffer),
+		"",
+		[]reflect.Type{
+			reflect.TypeOf((*io.Reader)(nil)).Elem(),
+		})
+
+  ExpectThat(err, Error(HasSubstr("Package name")))
+  ExpectThat(err, Error(HasSubstr("non-empty")))
+}
+
+func (t *GenerateTest) EmptySetOfInterfaces() {
+	err := generate.GenerateMockSource(
+		new(bytes.Buffer),
+		"foo",
+		[]reflect.Type{})
+
+  ExpectThat(err, Error(HasSubstr("at least one")))
+  ExpectThat(err, Error(HasSubstr("interface")))
 }
 
 func (t *GenerateTest) InvalidType() {
-	ExpectEq("TODO", 17)
+	err := generate.GenerateMockSource(
+		new(bytes.Buffer),
+		"foo",
+		[]reflect.Type{
+			reflect.TypeOf((*io.Reader)(nil)).Elem(),
+			reflect.TypeOf(nil),
+			reflect.TypeOf((*io.Writer)(nil)).Elem(),
+		})
+
+  ExpectThat(err, Error(HasSubstr("Invalid type")))
 }
 
 func (t *GenerateTest) NonInterfaceType() {
-	ExpectEq("TODO", 17)
+	err := generate.GenerateMockSource(
+		new(bytes.Buffer),
+		"foo",
+		[]reflect.Type{
+			reflect.TypeOf((*io.Reader)(nil)).Elem(),
+			reflect.TypeOf(17),
+			reflect.TypeOf((*io.Writer)(nil)).Elem(),
+		})
+
+  ExpectThat(err, Error(HasSubstr("Invalid type")))
 }
 
 func (t *GenerateTest) SomeOfPkgIo() {
