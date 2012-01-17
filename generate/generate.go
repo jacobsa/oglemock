@@ -25,7 +25,7 @@ import (
 )
 
 // Given a set of interfaces to mock, write out source code for a package named
-// `pkg` that
+// `pkg` that contains mock implementations of those interfaces.
 func GenerateMockSource(w io.Writer, pkg string, interfaces []reflect.Type) error {
 	return errors.New("Not implemented.")
 }
