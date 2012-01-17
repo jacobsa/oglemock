@@ -65,7 +65,11 @@ import (
 	}
 
 	{{range getMethods .}}
-		func (m *{{$structName}}) {{.Name}}() {
+		func (m *{{$structName}}) {{.Name}}(
+			{{range $i, $type := getInputs .Type}}
+				p{{$i}} {{printf "%v" $type}},
+			{{end}}
+		) {
 		}
 	{{end}}
 {{end}}
@@ -76,6 +80,7 @@ var tmpl *template.Template
 func init() {
 	extraFuncs := make(template.FuncMap)
 	extraFuncs["getMethods"] = getMethods
+	extraFuncs["getInputs"] = getInputs
 
 	tmpl = template.New("code")
 	tmpl.Funcs(extraFuncs)
@@ -91,6 +96,17 @@ func getMethods(it reflect.Type) []reflect.Method {
 	}
 
 	return methods
+}
+
+func getInputs(ft reflect.Type) []reflect.Type {
+	numIn := ft.NumIn()
+	inputs := make([]reflect.Type, numIn)
+
+	for i := 0; i < numIn; i++ {
+		inputs[i] = ft.In(i)
+	}
+
+	return inputs
 }
 
 // A map from import identifier to package to use that identifier for,

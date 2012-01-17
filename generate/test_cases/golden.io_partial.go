@@ -25,7 +25,7 @@ func (m *mockReader) Oglemock_Description() string {
 	return m.description
 }
 
-func (m *mockReader) Read() {
+func (m *mockReader) Read(p0 []uint8) {
 }
 
 type mockWriter struct {
@@ -49,5 +49,5 @@ func (m *mockWriter) Oglemock_Description() string {
 	return m.description
 }
 
-func (m *mockWriter) Write() {
+func (m *mockWriter) Write(p0 []uint8) {
 }

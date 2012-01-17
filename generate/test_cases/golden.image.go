@@ -27,7 +27,9 @@ func (m *mockImage) Oglemock_Description() string {
 	return m.description
 }
 
-func (m *mockImage) At() {
+func (m *mockImage) At(p0 int,
+
+	p1 int) {
 }
 
 func (m *mockImage) Bounds() {
@@ -57,13 +59,17 @@ func (m *mockPalettedImage) Oglemock_Description() string {
 	return m.description
 }
 
-func (m *mockPalettedImage) At() {
+func (m *mockPalettedImage) At(p0 int,
+
+	p1 int) {
 }
 
 func (m *mockPalettedImage) Bounds() {
 }
 
-func (m *mockPalettedImage) ColorIndexAt() {
+func (m *mockPalettedImage) ColorIndexAt(p0 int,
+
+	p1 int) {
 }
 
 func (m *mockPalettedImage) ColorModel() {
