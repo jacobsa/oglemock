@@ -143,6 +143,15 @@ func addImportForType(imports importMap, t reflect.Type) {
 		return
 	}
 
+	// Work around a bug in Go:
+	//
+	//     http://code.google.com/p/go/issues/detail?id=2660
+	//
+	var errorPtr *error
+	if t == reflect.TypeOf(errorPtr).Elem() {
+		return
+	}
+
 	// Use the package's base name as an identifier.
 	imports[path.Base(pkgPath)] = pkgPath
 }

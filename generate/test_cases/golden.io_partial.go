@@ -1,8 +1,6 @@
 package some_pkg
 
-import (
-	runtime "runtime"
-)
+import ()
 
 type mockReader struct {
 	controller	oglemock.Controller
