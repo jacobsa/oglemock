@@ -82,7 +82,7 @@ import (
 				line,
 				[]interface{}{ {{range $i, $type := $inputTypes}}p{{$i}}, {{end}} })
 
-			if len(retVals != {{len $outputTypes}}) {
+			if len(retVals) != {{len $outputTypes}} {
 				panic(fmt.Sprintf("{{$structName}}.{{.Name}}: invalid return values: %v", retVals))
 			}
 
@@ -241,6 +241,7 @@ func getImports(interfaces []reflect.Type) importMap {
 	imports["fmt"] = "fmt"
 	imports["oglemock"] = "github.com/jacobsa/oglemock"
 	imports["reflect"] = "reflect"
+	imports["runtime"] = "runtime"
 	imports["unsafe"] = "unsafe"
 
 	return imports

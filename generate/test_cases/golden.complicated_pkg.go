@@ -17,6 +17,8 @@ import (
 
 	renamed_pkg "github.com/jacobsa/oglemock/generate/test_cases/renamed_pkg"
 
+	runtime "runtime"
+
 	unsafe "unsafe"
 )
 
@@ -53,7 +55,7 @@ func (m *mockComplicatedThing) Arrays(p0 [3]string) (o0 [3]int, o1 error) {
 		line,
 		[]interface{}{p0})
 
-	if len(retVals != 2) {
+	if len(retVals) != 2 {
 		panic(fmt.Sprintf("mockComplicatedThing.Arrays: invalid return values: %v", retVals))
 	}
 
@@ -88,7 +90,7 @@ func (m *mockComplicatedThing) Channels(p0 chan chan<- <-chan net.Conn) (o0 chan
 		line,
 		[]interface{}{p0})
 
-	if len(retVals != 1) {
+	if len(retVals) != 1 {
 		panic(fmt.Sprintf("mockComplicatedThing.Channels: invalid return values: %v", retVals))
 	}
 
@@ -116,7 +118,7 @@ func (m *mockComplicatedThing) EmptyInterface(p0 interface{}) (o0 interface{}, o
 		line,
 		[]interface{}{p0})
 
-	if len(retVals != 2) {
+	if len(retVals) != 2 {
 		panic(fmt.Sprintf("mockComplicatedThing.EmptyInterface: invalid return values: %v", retVals))
 	}
 
@@ -151,7 +153,7 @@ func (m *mockComplicatedThing) Functions(p0 func(int, image.Image) int) (o0 func
 		line,
 		[]interface{}{p0})
 
-	if len(retVals != 1) {
+	if len(retVals) != 1 {
 		panic(fmt.Sprintf("mockComplicatedThing.Functions: invalid return values: %v", retVals))
 	}
 
@@ -179,7 +181,7 @@ func (m *mockComplicatedThing) Maps(p0 map[string]*int) (o0 map[int]*string, o1 
 		line,
 		[]interface{}{p0})
 
-	if len(retVals != 2) {
+	if len(retVals) != 2 {
 		panic(fmt.Sprintf("mockComplicatedThing.Maps: invalid return values: %v", retVals))
 	}
 
@@ -214,7 +216,7 @@ func (m *mockComplicatedThing) NamedScalarType(p0 complicated_pkg.Byte) (o0 []co
 		line,
 		[]interface{}{p0})
 
-	if len(retVals != 2) {
+	if len(retVals) != 2 {
 		panic(fmt.Sprintf("mockComplicatedThing.NamedScalarType: invalid return values: %v", retVals))
 	}
 
@@ -249,7 +251,7 @@ func (m *mockComplicatedThing) Pointers(p0 *int, p1 *net.Conn, p2 **io.Reader) (
 		line,
 		[]interface{}{p0, p1, p2})
 
-	if len(retVals != 2) {
+	if len(retVals) != 2 {
 		panic(fmt.Sprintf("mockComplicatedThing.Pointers: invalid return values: %v", retVals))
 	}
 
@@ -284,7 +286,7 @@ func (m *mockComplicatedThing) RenamedPackage(p0 tony.SomeUint8Alias) {
 		line,
 		[]interface{}{p0})
 
-	if len(retVals != 0) {
+	if len(retVals) != 0 {
 		panic(fmt.Sprintf("mockComplicatedThing.RenamedPackage: invalid return values: %v", retVals))
 	}
 
@@ -305,7 +307,7 @@ func (m *mockComplicatedThing) Slices(p0 []string) (o0 []int, o1 error) {
 		line,
 		[]interface{}{p0})
 
-	if len(retVals != 2) {
+	if len(retVals) != 2 {
 		panic(fmt.Sprintf("mockComplicatedThing.Slices: invalid return values: %v", retVals))
 	}
 
@@ -340,7 +342,7 @@ func (m *mockComplicatedThing) Variadic(p0 int, p1 []net.Conn) (o0 int) {
 		line,
 		[]interface{}{p0, p1})
 
-	if len(retVals != 1) {
+	if len(retVals) != 1 {
 		panic(fmt.Sprintf("mockComplicatedThing.Variadic: invalid return values: %v", retVals))
 	}
 

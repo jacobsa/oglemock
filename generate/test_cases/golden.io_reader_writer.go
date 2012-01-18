@@ -7,6 +7,8 @@ import (
 
 	reflect "reflect"
 
+	runtime "runtime"
+
 	unsafe "unsafe"
 )
 
@@ -43,7 +45,7 @@ func (m *mockReader) Read(p0 []uint8) (o0 int, o1 error) {
 		line,
 		[]interface{}{p0})
 
-	if len(retVals != 2) {
+	if len(retVals) != 2 {
 		panic(fmt.Sprintf("mockReader.Read: invalid return values: %v", retVals))
 	}
 
@@ -99,7 +101,7 @@ func (m *mockWriter) Write(p0 []uint8) (o0 int, o1 error) {
 		line,
 		[]interface{}{p0})
 
-	if len(retVals != 2) {
+	if len(retVals) != 2 {
 		panic(fmt.Sprintf("mockWriter.Write: invalid return values: %v", retVals))
 	}
 

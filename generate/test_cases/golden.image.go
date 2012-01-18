@@ -11,6 +11,8 @@ import (
 
 	reflect "reflect"
 
+	runtime "runtime"
+
 	unsafe "unsafe"
 )
 
@@ -47,7 +49,7 @@ func (m *mockImage) At(p0 int, p1 int) (o0 color.Color) {
 		line,
 		[]interface{}{p0, p1})
 
-	if len(retVals != 1) {
+	if len(retVals) != 1 {
 		panic(fmt.Sprintf("mockImage.At: invalid return values: %v", retVals))
 	}
 
@@ -75,7 +77,7 @@ func (m *mockImage) Bounds() (o0 image.Rectangle) {
 		line,
 		[]interface{}{})
 
-	if len(retVals != 1) {
+	if len(retVals) != 1 {
 		panic(fmt.Sprintf("mockImage.Bounds: invalid return values: %v", retVals))
 	}
 
@@ -103,7 +105,7 @@ func (m *mockImage) ColorModel() (o0 color.Model) {
 		line,
 		[]interface{}{})
 
-	if len(retVals != 1) {
+	if len(retVals) != 1 {
 		panic(fmt.Sprintf("mockImage.ColorModel: invalid return values: %v", retVals))
 	}
 
@@ -152,7 +154,7 @@ func (m *mockPalettedImage) At(p0 int, p1 int) (o0 color.Color) {
 		line,
 		[]interface{}{p0, p1})
 
-	if len(retVals != 1) {
+	if len(retVals) != 1 {
 		panic(fmt.Sprintf("mockPalettedImage.At: invalid return values: %v", retVals))
 	}
 
@@ -180,7 +182,7 @@ func (m *mockPalettedImage) Bounds() (o0 image.Rectangle) {
 		line,
 		[]interface{}{})
 
-	if len(retVals != 1) {
+	if len(retVals) != 1 {
 		panic(fmt.Sprintf("mockPalettedImage.Bounds: invalid return values: %v", retVals))
 	}
 
@@ -208,7 +210,7 @@ func (m *mockPalettedImage) ColorIndexAt(p0 int, p1 int) (o0 uint8) {
 		line,
 		[]interface{}{p0, p1})
 
-	if len(retVals != 1) {
+	if len(retVals) != 1 {
 		panic(fmt.Sprintf("mockPalettedImage.ColorIndexAt: invalid return values: %v", retVals))
 	}
 
@@ -236,7 +238,7 @@ func (m *mockPalettedImage) ColorModel() (o0 color.Model) {
 		line,
 		[]interface{}{})
 
-	if len(retVals != 1) {
+	if len(retVals) != 1 {
 		panic(fmt.Sprintf("mockPalettedImage.ColorModel: invalid return values: %v", retVals))
 	}
 
