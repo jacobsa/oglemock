@@ -20,6 +20,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"go/build"
 	"io/ioutil"
 	"log"
 	"os"
@@ -89,24 +90,27 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Create a temporary file to hold generated code.
-	codeFile, err := ioutil.TempFile("", "createmock-")
+	// Create a temporary directory inside of $GOPATH to hold generated code.
+	tree, _, err := build.FindTree("github.com/jacobsa/oglemock")
 	if err != nil {
-		log.Fatalf("Couldn't create a temporary file: %v", err)
+		log.Fatalf("Couldn't find oglemock in $GOPATH: %v", err)
 	}
 
-	codePath := codeFile.Name()
-	defer os.Remove(codePath)
-
-	// Create another temporary file to hold a compiled binary.
-	binaryFile, err := ioutil.TempFile("", "createmock-")
+	tmpDir, err := ioutil.TempDir(path.Join(tree.Path, "src"), "tmp-createmock-")
 	if err != nil {
-		log.Fatalf("Couldn't create a temporary file: %v", err)
+		log.Fatalf("Couldn't create a temporary directory: %v", err)
 	}
 
-	binaryPath := binaryFile.Name()
-	binaryFile.Close()
-	defer os.Remove(binaryPath)
+	defer os.RemoveAll(tmpDir)
+
+	// Create a file to hold generated code.
+	codeFile, err := os.Create(path.Join(tmpDir, "tool.go"))
+	if err != nil {
+		log.Fatalf("Couldn't create a file to hold code: %v", err)
+	}
+
+	// Create an appropriate path for the built binary.
+	binaryPath := path.Join(tmpDir, "tool")
 
 	// Create an appropriate template argument.
 	var arg tmplArg
@@ -124,12 +128,14 @@ func main() {
 	codeFile.Close()
 
 	// Attempt to build the code.
-	cmd := exec.Command("go", "build", "-o", binaryPath, codePath)
+	cmd := exec.Command("go", "build", "-o", binaryPath)
+	cmd.Dir = tmpDir
 	buildOutput, err := cmd.CombinedOutput()
+
 	if err != nil {
 		log.Fatalf(
 			"%s\n\nError building generated code:\n\n" +
-				"    %v\n\n. Please report this oglemock bug.",
+				"    %v\n\n Please report this oglemock bug.",
 			buildOutput,
 		err)
 	}
