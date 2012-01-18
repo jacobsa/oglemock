@@ -36,8 +36,17 @@ func (m *mockImage) Oglemock_Description() string {
 }
 
 func (m *mockImage) At(p0 int, p1 int) (o0 color.Color) {
+	// Get a file name and line number for the caller.
+	_, file, line, _ := runtime.Caller(1)
+
 	// Hand the call off to the controller, which does most of the work.
-	retVals := m.controller.HandleMethodCall(m, "At")
+	retVals := m.controller.HandleMethodCall(
+		m,
+		"At",
+		file,
+		line,
+		[]interface{}{p0, p1})
+
 	if len(retVals != 1) {
 		panic(fmt.Sprintf("mockImage.At: invalid return values: %v", retVals))
 	}
@@ -55,8 +64,17 @@ func (m *mockImage) At(p0 int, p1 int) (o0 color.Color) {
 }
 
 func (m *mockImage) Bounds() (o0 image.Rectangle) {
+	// Get a file name and line number for the caller.
+	_, file, line, _ := runtime.Caller(1)
+
 	// Hand the call off to the controller, which does most of the work.
-	retVals := m.controller.HandleMethodCall(m, "Bounds")
+	retVals := m.controller.HandleMethodCall(
+		m,
+		"Bounds",
+		file,
+		line,
+		[]interface{}{})
+
 	if len(retVals != 1) {
 		panic(fmt.Sprintf("mockImage.Bounds: invalid return values: %v", retVals))
 	}
@@ -74,8 +92,17 @@ func (m *mockImage) Bounds() (o0 image.Rectangle) {
 }
 
 func (m *mockImage) ColorModel() (o0 color.Model) {
+	// Get a file name and line number for the caller.
+	_, file, line, _ := runtime.Caller(1)
+
 	// Hand the call off to the controller, which does most of the work.
-	retVals := m.controller.HandleMethodCall(m, "ColorModel")
+	retVals := m.controller.HandleMethodCall(
+		m,
+		"ColorModel",
+		file,
+		line,
+		[]interface{}{})
+
 	if len(retVals != 1) {
 		panic(fmt.Sprintf("mockImage.ColorModel: invalid return values: %v", retVals))
 	}
@@ -114,8 +141,17 @@ func (m *mockPalettedImage) Oglemock_Description() string {
 }
 
 func (m *mockPalettedImage) At(p0 int, p1 int) (o0 color.Color) {
+	// Get a file name and line number for the caller.
+	_, file, line, _ := runtime.Caller(1)
+
 	// Hand the call off to the controller, which does most of the work.
-	retVals := m.controller.HandleMethodCall(m, "At")
+	retVals := m.controller.HandleMethodCall(
+		m,
+		"At",
+		file,
+		line,
+		[]interface{}{p0, p1})
+
 	if len(retVals != 1) {
 		panic(fmt.Sprintf("mockPalettedImage.At: invalid return values: %v", retVals))
 	}
@@ -133,8 +169,17 @@ func (m *mockPalettedImage) At(p0 int, p1 int) (o0 color.Color) {
 }
 
 func (m *mockPalettedImage) Bounds() (o0 image.Rectangle) {
+	// Get a file name and line number for the caller.
+	_, file, line, _ := runtime.Caller(1)
+
 	// Hand the call off to the controller, which does most of the work.
-	retVals := m.controller.HandleMethodCall(m, "Bounds")
+	retVals := m.controller.HandleMethodCall(
+		m,
+		"Bounds",
+		file,
+		line,
+		[]interface{}{})
+
 	if len(retVals != 1) {
 		panic(fmt.Sprintf("mockPalettedImage.Bounds: invalid return values: %v", retVals))
 	}
@@ -152,8 +197,17 @@ func (m *mockPalettedImage) Bounds() (o0 image.Rectangle) {
 }
 
 func (m *mockPalettedImage) ColorIndexAt(p0 int, p1 int) (o0 uint8) {
+	// Get a file name and line number for the caller.
+	_, file, line, _ := runtime.Caller(1)
+
 	// Hand the call off to the controller, which does most of the work.
-	retVals := m.controller.HandleMethodCall(m, "ColorIndexAt")
+	retVals := m.controller.HandleMethodCall(
+		m,
+		"ColorIndexAt",
+		file,
+		line,
+		[]interface{}{p0, p1})
+
 	if len(retVals != 1) {
 		panic(fmt.Sprintf("mockPalettedImage.ColorIndexAt: invalid return values: %v", retVals))
 	}
@@ -171,8 +225,17 @@ func (m *mockPalettedImage) ColorIndexAt(p0 int, p1 int) (o0 uint8) {
 }
 
 func (m *mockPalettedImage) ColorModel() (o0 color.Model) {
+	// Get a file name and line number for the caller.
+	_, file, line, _ := runtime.Caller(1)
+
 	// Hand the call off to the controller, which does most of the work.
-	retVals := m.controller.HandleMethodCall(m, "ColorModel")
+	retVals := m.controller.HandleMethodCall(
+		m,
+		"ColorModel",
+		file,
+		line,
+		[]interface{}{})
+
 	if len(retVals != 1) {
 		panic(fmt.Sprintf("mockPalettedImage.ColorModel: invalid return values: %v", retVals))
 	}

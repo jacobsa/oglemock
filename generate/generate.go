@@ -80,8 +80,7 @@ import (
 				"{{.Name}}",
 				file,
 				line,
-				[]interface{ {{range $i, $type := $inputTypes}}p{{$i}}, {{end}} }
-			)
+				[]interface{}{ {{range $i, $type := $inputTypes}}p{{$i}}, {{end}} })
 
 			if len(retVals != {{len $outputTypes}}) {
 				panic(fmt.Sprintf("{{$structName}}.{{.Name}}: invalid return values: %v", retVals))

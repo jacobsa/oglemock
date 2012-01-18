@@ -32,8 +32,17 @@ func (m *mockReader) Oglemock_Description() string {
 }
 
 func (m *mockReader) Read(p0 []uint8) (o0 int, o1 error) {
+	// Get a file name and line number for the caller.
+	_, file, line, _ := runtime.Caller(1)
+
 	// Hand the call off to the controller, which does most of the work.
-	retVals := m.controller.HandleMethodCall(m, "Read")
+	retVals := m.controller.HandleMethodCall(
+		m,
+		"Read",
+		file,
+		line,
+		[]interface{}{p0})
+
 	if len(retVals != 2) {
 		panic(fmt.Sprintf("mockReader.Read: invalid return values: %v", retVals))
 	}
@@ -79,8 +88,17 @@ func (m *mockWriter) Oglemock_Description() string {
 }
 
 func (m *mockWriter) Write(p0 []uint8) (o0 int, o1 error) {
+	// Get a file name and line number for the caller.
+	_, file, line, _ := runtime.Caller(1)
+
 	// Hand the call off to the controller, which does most of the work.
-	retVals := m.controller.HandleMethodCall(m, "Write")
+	retVals := m.controller.HandleMethodCall(
+		m,
+		"Write",
+		file,
+		line,
+		[]interface{}{p0})
+
 	if len(retVals != 2) {
 		panic(fmt.Sprintf("mockWriter.Write: invalid return values: %v", retVals))
 	}
