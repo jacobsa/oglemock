@@ -1,6 +1,8 @@
 package some_pkg
 
-import ()
+import (
+	oglemock "github.com/jacobsa/oglemock"
+)
 
 type mockReader struct {
 	controller	oglemock.Controller

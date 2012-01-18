@@ -9,6 +9,8 @@ import (
 
 	net "net"
 
+	oglemock "github.com/jacobsa/oglemock"
+
 	renamed_pkg "github.com/jacobsa/oglemock/generate/test_cases/renamed_pkg"
 )
 

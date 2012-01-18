@@ -4,6 +4,8 @@ import (
 	color "image/color"
 
 	image "image"
+
+	oglemock "github.com/jacobsa/oglemock"
 )
 
 type mockImage struct {
