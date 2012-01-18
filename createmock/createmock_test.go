@@ -127,3 +127,32 @@ func (t *CreateMockTest) IoPartial() {
 		"Reader",
 		"Writer")
 }
+
+func (t *CreateMockTest) NoPackage() {
+	t.runGoldenTest(
+		"no_package",
+		1);
+}
+
+func (t *CreateMockTest) NoInterfaces() {
+	t.runGoldenTest(
+		"no_interfaces",
+		1,
+		"io");
+}
+
+func (t *CreateMockTest) UnknownPackage() {
+	t.runGoldenTest(
+		"unknown_package",
+		1,
+		"foo/bar",
+		"Reader");
+}
+
+func (t *CreateMockTest) UnknownInterface() {
+	t.runGoldenTest(
+		"unknown_interface",
+		1,
+		"io",
+		"Frobnicator");
+}
