@@ -44,6 +44,7 @@ package main
 import (
 	"{{$inputPkg}}"
 	"github.com/jacobsa/oglemock/generate"
+	"log"
 	"os"
 	"reflect"
 )
@@ -138,5 +139,23 @@ func main() {
 				"    %v\n\n Please report this oglemock bug.",
 			buildOutput,
 		err)
+	}
+
+	// Run the binary.
+	cmd = exec.Command(binaryPath)
+	binaryOutput, err := cmd.CombinedOutput()
+
+	if err != nil {
+		log.Fatalf(
+			"%s\n\nError running generated code:\n\n" +
+				"    %v\n\n Please report this oglemock bug.",
+			binaryOutput,
+		err)
+	}
+
+	// Copy its output.
+	_, err = os.Stdout.Write(binaryOutput)
+	if err != nil {
+		log.Fatalf("Error copying binary output: %v", err)
 	}
 }
