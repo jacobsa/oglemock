@@ -71,8 +71,18 @@ import (
 		func (m *{{$structName}}) {{.Name}}({{range $i, $type := $inputTypes}}p{{$i}} {{getTypeString $type}}, {{end}}
 		) ({{range $i, $type := $outputTypes}}o{{$i}} {{getTypeString $type}}, {{end}}
 		){
+			// Get a file name and line number for the caller.
+			_, file, line, _ := runtime.Caller(1)
+
 			// Hand the call off to the controller, which does most of the work.
-			retVals := m.controller.HandleMethodCall(m, "{{.Name}}")
+			retVals := m.controller.HandleMethodCall(
+				m,
+				"{{.Name}}",
+				file,
+				line,
+				[]interface{ {{range $i, $type := $inputTypes}}p{{$i}}, {{end}} }
+			)
+
 			if len(retVals != {{len $outputTypes}}) {
 				panic(fmt.Sprintf("{{$structName}}.{{.Name}}: invalid return values: %v", retVals))
 			}
