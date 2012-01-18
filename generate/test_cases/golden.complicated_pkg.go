@@ -1,13 +1,13 @@
 package some_pkg
 
 import (
-	io "io"
-
-	net "net"
-
 	complicated_pkg "github.com/jacobsa/oglemock/generate/test_cases/complicated_pkg"
 
 	image "image"
+
+	io "io"
+
+	net "net"
 
 	renamed_pkg "github.com/jacobsa/oglemock/generate/test_cases/renamed_pkg"
 )
