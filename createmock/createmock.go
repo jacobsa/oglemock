@@ -18,9 +18,49 @@
 package main
 
 import (
+	"flag"
 	"fmt"
+	"os"
 )
 
+// A template for generated code that is used to print the result.
+const tmplStr =
+`
+package main
+
+import (
+	"{{.InputPkg}}"
+	"github.com/jacobsa/oglemock/generate"
+	"os"
+	"reflect"
+)
+
+func getTypeForPtr(ptr interface{}) reflect.Type {
+	return reflect.TypeOf(ptr).Elem()
+}
+
 func main() {
+	interfaces := []reflect.Type{
+		{{range $typeName := .TypeNames}}
+			(*{{$typeName}})(nil),
+		{{end}}
+	}
+
+	err := generate.GenerateMockSource(os.Stdout, "{{.OutputPkg}}", interfaces)
+	if err != nil {
+		log.Errorf("Error generating mock source: %v", err)
+		os.Exit(1)
+	}
+}
+`
+
+func main() {
+	flag.Parse()
+
+	if flag.NArg() < 2 {
+		fmt.Println("Usage: createmock [package] [interface ...]")
+		os.Exit(1)
+	}
+
 	fmt.Println("TODO: Implement me.")
 }
