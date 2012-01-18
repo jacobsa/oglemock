@@ -23,6 +23,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"os/exec"
 	"path"
 	"text/template"
 
@@ -89,12 +90,23 @@ func main() {
 	}
 
 	// Create a temporary file to hold generated code.
-	f, err := ioutil.TempFile("", "createmock-")
+	codeFile, err := ioutil.TempFile("", "createmock-")
 	if err != nil {
 		log.Fatalf("Couldn't create a temporary file: %v", err)
 	}
 
-	defer os.Remove(f.Name())
+	codePath := codeFile.Name()
+	defer os.Remove(codePath)
+
+	// Create another temporary file to hold a compiled binary.
+	binaryFile, err := ioutil.TempFile("", "createmock-")
+	if err != nil {
+		log.Fatalf("Couldn't create a temporary file: %v", err)
+	}
+
+	binaryPath := binaryFile.Name()
+	binaryFile.Close()
+	defer os.Remove(binaryPath)
 
 	// Create an appropriate template argument.
 	var arg tmplArg
@@ -105,11 +117,20 @@ func main() {
 	// Execute the template to generate code that will itself generate the mock
 	// code. Write the code to the temp file.
 	tmpl := template.Must(template.New("code").Parse(tmplStr))
-	if err := tmpl.Execute(f, arg); err != nil {
+	if err := tmpl.Execute(codeFile, arg); err != nil {
 		log.Fatalf("Error executing template: %v", err)
 	}
 
-	f.Close()
+	codeFile.Close()
 
-	log.Fatalf("Wrote to: %s", f.Name())
+	// Attempt to build the code.
+	cmd := exec.Command("go", "build", "-o", binaryPath, codePath)
+	buildOutput, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Fatalf(
+			"%s\n\nError building generated code:\n\n" +
+				"    %v\n\n. Please report this oglemock bug.",
+			buildOutput,
+		err)
+	}
 }
