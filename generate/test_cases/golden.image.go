@@ -2,17 +2,11 @@ package some_pkg
 
 import (
 	color "image/color"
-
 	fmt "fmt"
-
 	image "image"
-
 	oglemock "github.com/jacobsa/oglemock"
-
 	reflect "reflect"
-
 	runtime "runtime"
-
 	unsafe "unsafe"
 )
 

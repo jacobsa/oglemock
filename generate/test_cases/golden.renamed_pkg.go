@@ -2,13 +2,9 @@ package some_pkg
 
 import (
 	fmt "fmt"
-
 	oglemock "github.com/jacobsa/oglemock"
-
 	reflect "reflect"
-
 	runtime "runtime"
-
 	unsafe "unsafe"
 )
 

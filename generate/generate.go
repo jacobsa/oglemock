@@ -34,8 +34,7 @@ const tmplStr =
 `package {{.Pkg}}
 
 import (
-	{{range $identifier, $import := .Imports}}
-		{{$identifier}} "{{$import}}"
+	{{range $identifier, $import := .Imports}}{{$identifier}} "{{$import}}"
 	{{end}}
 )
 

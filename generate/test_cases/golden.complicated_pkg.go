@@ -2,23 +2,14 @@ package some_pkg
 
 import (
 	complicated_pkg "github.com/jacobsa/oglemock/generate/test_cases/complicated_pkg"
-
 	fmt "fmt"
-
 	image "image"
-
 	io "io"
-
 	net "net"
-
 	oglemock "github.com/jacobsa/oglemock"
-
 	reflect "reflect"
-
 	runtime "runtime"
-
 	tony "github.com/jacobsa/oglemock/generate/test_cases/renamed_pkg"
-
 	unsafe "unsafe"
 )
 
