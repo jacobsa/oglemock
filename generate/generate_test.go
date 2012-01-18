@@ -22,6 +22,7 @@ import (
 	"flag"
 	"github.com/jacobsa/oglemock/generate"
 	"github.com/jacobsa/oglemock/generate/test_cases/complicated_pkg"
+	"github.com/jacobsa/oglemock/generate/test_cases/renamed_pkg"
 	"image"
 	"io"
 	"io/ioutil"
@@ -143,4 +144,10 @@ func (t *GenerateTest) ComplicatedPackage() {
 	t.runGoldenTest(
 		"complicated_pkg",
 		(*complicated_pkg.ComplicatedThing)(nil))
+}
+
+func (t *GenerateTest) RenamedPackage() {
+	t.runGoldenTest(
+		"renamed_pkg",
+		(*tony.SomeInterface)(nil))
 }
