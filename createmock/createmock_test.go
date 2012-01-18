@@ -205,3 +205,9 @@ func (t *CreateMockTest) ComplicatedSamplePackage() {
 		"github.com/jacobsa/oglemock/generate/test_cases/complicated_pkg",
 		"ComplicatedThing")
 }
+
+func (t *CreateMockTest) RenamedSamplePackage() {
+	t.runCompilationTest(
+		"github.com/jacobsa/oglemock/generate/test_cases/renamed_pkg",
+		"SomeInterface")
+}

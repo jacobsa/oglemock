@@ -18,3 +18,7 @@
 package tony
 
 type SomeUint8Alias uint8
+
+type SomeInterface interface {
+	DoFoo(a int) int
+}
