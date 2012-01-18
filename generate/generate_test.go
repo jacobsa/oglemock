@@ -124,10 +124,10 @@ func (t *GenerateTest) NonInterfaceType() {
   ExpectThat(err, Error(HasSubstr("Invalid type")))
 }
 
-func (t *GenerateTest) SomeOfPkgIo() {
+func (t *GenerateTest) IoReaderAndWriter() {
 	// Mock io.Reader and io.Writer.
 	t.runGoldenTest(
-		"io_partial",
+		"io_reader_writer",
 		(*io.Reader)(nil),
 		(*io.Writer)(nil))
 }
