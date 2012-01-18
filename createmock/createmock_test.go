@@ -191,3 +191,11 @@ func (t *CreateMockTest) IoReaderAndWriter() {
 		"Reader",
 		"Writer")
 }
+
+func (t *CreateMockTest) OsFileInfo() {
+	// Note that os is also used by the code that createmock generates; there
+	// should be no conflict.
+	t.runCompilationTest(
+		"os",
+		"FileInfo")
+}
