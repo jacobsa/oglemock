@@ -79,8 +79,22 @@ type tmplArg struct {
 	TypeNames []string
 }
 
+var unknownPackageRegexp =
+	regexp.MustCompile(`(?s): import ([\pL_0-9/]+)\s+package could not be found`)
+
 var undefinedInterfaceRegexp =
 	regexp.MustCompile(`tool\.go:\d+: undefined: [\pL_0-9]+\.([\pL_0-9]+)`)
+
+// Does the 'go build' output indicate that a package wasn't found? If so,
+// return the name of the package.
+func findUnknownPackage(output []byte) *string {
+	if match := unknownPackageRegexp.FindSubmatch(output); match != nil {
+		res := string(match[1])
+		return &res
+	}
+
+	return nil
+}
 
 // Does the 'go build' output indicate that an interface wasn't found? If so,
 // return the name of the interface.
@@ -149,7 +163,12 @@ func main() {
 	buildOutput, err := cmd.CombinedOutput()
 
 	if err != nil {
-		// Did the tool fail due to an unknown interface?
+		// Did the compilation fail due to the user-specified package not being found?
+		if pkg := findUnknownPackage(buildOutput); pkg != nil && *pkg == arg.InputPkg {
+			log.Fatalf("Unknown package: %s", *pkg)
+		}
+
+		// Did the compilation fail due to an unknown interface?
 		if in := findUndefinedInterface(buildOutput); in != nil {
 			log.Fatalf("Unknown interface: %s", *in)
 		}
