@@ -52,7 +52,7 @@ func main() {
 
 	interfaces := []reflect.Type{
 		{{range $typeName := .TypeNames}}
-			(*{{$typeName}})(nil),
+			getTypeForPtr((*{{$typeName}})(nil)),
 		{{end}}
 	}
 
