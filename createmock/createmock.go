@@ -33,10 +33,13 @@ import (
 // A template for generated code that is used to print the result.
 const tmplStr =
 `
+{{$inputPkg := .InputPkg}}
+{{$outputPkg := .OutputPkg}}
+
 package main
 
 import (
-	"{{.InputPkg}}"
+	"{{$inputPkg}}"
 	"github.com/jacobsa/oglemock/generate"
 	"os"
 	"reflect"
@@ -52,11 +55,11 @@ func main() {
 
 	interfaces := []reflect.Type{
 		{{range $typeName := .TypeNames}}
-			getTypeForPtr((*{{$typeName}})(nil)),
+			getTypeForPtr((*{{$inputPkg}}.{{$typeName}})(nil)),
 		{{end}}
 	}
 
-	err := generate.GenerateMockSource(os.Stdout, "{{.OutputPkg}}", interfaces)
+	err := generate.GenerateMockSource(os.Stdout, "{{$outputPkg}}", interfaces)
 	if err != nil {
 		log.Fatalf("Error generating mock source: %v", err)
 	}
