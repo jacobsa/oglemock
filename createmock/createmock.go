@@ -20,7 +20,14 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"os"
+	"path"
+	"text/template"
+
+	// Ensure that the generate package, which is used by the generated code, is
+	// installed by goinstall.
+	_ "github.com/jacobsa/oglemock/generate"
 )
 
 // A template for generated code that is used to print the result.
@@ -40,6 +47,9 @@ func getTypeForPtr(ptr interface{}) reflect.Type {
 }
 
 func main() {
+	// Reduce noise in logging output.
+	log.SetFlags(0)
+
 	interfaces := []reflect.Type{
 		{{range $typeName := .TypeNames}}
 			(*{{$typeName}})(nil),
@@ -48,19 +58,42 @@ func main() {
 
 	err := generate.GenerateMockSource(os.Stdout, "{{.OutputPkg}}", interfaces)
 	if err != nil {
-		log.Errorf("Error generating mock source: %v", err)
-		os.Exit(1)
+		log.Fatalf("Error generating mock source: %v", err)
 	}
 }
 `
 
+type tmplArg struct {
+	InputPkg string
+	OutputPkg string
+
+	// Types to be mocked, relative to their package's name.
+	TypeNames []string
+}
+
 func main() {
+	// Reduce noise in logging output.
+	log.SetFlags(0)
+
+	// Check the command-line arguments.
 	flag.Parse()
 
-	if flag.NArg() < 2 {
+	cmdLineArgs := flag.Args()
+	if len(cmdLineArgs) < 2 {
 		fmt.Println("Usage: createmock [package] [interface ...]")
 		os.Exit(1)
 	}
 
-	fmt.Println("TODO: Implement me.")
+	// Create an appropriate template argument.
+	var arg tmplArg
+	arg.InputPkg = cmdLineArgs[0]
+	arg.OutputPkg = "mock_" + path.Base(arg.InputPkg)
+	arg.TypeNames = cmdLineArgs[1:]
+
+	// Execute the template to generate code that will itself generate the mock
+	// code.
+	tmpl := template.Must(template.New("code").Parse(tmplStr))
+	if err := tmpl.Execute(os.Stdout, arg); err != nil {
+		log.Fatalf("Error executing template: %v", err)
+	}
 }
