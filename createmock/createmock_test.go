@@ -199,3 +199,9 @@ func (t *CreateMockTest) OsFileInfo() {
 		"os",
 		"FileInfo")
 }
+
+func (t *CreateMockTest) ComplicatedSamplePackage() {
+	t.runCompilationTest(
+		"github.com/jacobsa/oglemock/generate/test_cases/complicated_pkg",
+		"ComplicatedThing")
+}
