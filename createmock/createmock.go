@@ -43,11 +43,9 @@ const tmplStr =
 package main
 
 import (
-	"{{$inputPkg}}"
-	"github.com/jacobsa/oglemock/generate"
-	"log"
-	"os"
-	"reflect"
+	{{range $identifier, $import := .Imports}}
+		{{$identifier}} "{{$import}}"
+	{{end}}
 )
 
 func getTypeForPtr(ptr interface{}) reflect.Type {
@@ -71,9 +69,16 @@ func main() {
 }
 `
 
+// A map from import identifier to package to use that identifier for,
+// containing elements for each import needed by the generated code.
+type importMap map[string]string
+
 type tmplArg struct {
 	InputPkg string
 	OutputPkg string
+
+	// Imports needed by the generated code.
+	Imports importMap
 
 	// Types to be mocked, relative to their package's name.
 	TypeNames []string
@@ -147,6 +152,13 @@ func main() {
 	arg.InputPkg = cmdLineArgs[0]
 	arg.OutputPkg = "mock_" + path.Base(arg.InputPkg)
 	arg.TypeNames = cmdLineArgs[1:]
+
+	arg.Imports = make(importMap)
+	arg.Imports[path.Base(arg.InputPkg)] = arg.InputPkg
+	arg.Imports["generate"] = "github.com/jacobsa/oglemock/generate"
+	arg.Imports["log"] = "log"
+	arg.Imports["os"] = "os"
+	arg.Imports["reflect"] = "reflect"
 
 	// Execute the template to generate code that will itself generate the mock
 	// code. Write the code to the temp file.
