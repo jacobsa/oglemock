@@ -58,7 +58,7 @@ func main() {
 
 	interfaces := []reflect.Type{
 		{{range $typeName := .TypeNames}}
-			getTypeForPtr((*{{$inputPkg}}.{{$typeName}})(nil)),
+			getTypeForPtr((*{{base $inputPkg}}.{{$typeName}})(nil)),
 		{{end}}
 	}
 
@@ -162,7 +162,11 @@ func main() {
 
 	// Execute the template to generate code that will itself generate the mock
 	// code. Write the code to the temp file.
-	tmpl := template.Must(template.New("code").Parse(tmplStr))
+	tmpl := template.Must(
+		template.New("code").Funcs(
+			template.FuncMap{
+			"base": path.Base,
+		}).Parse(tmplStr))
 	if err := tmpl.Execute(codeFile, arg); err != nil {
 		log.Fatalf("Error executing template: %v", err)
 	}
