@@ -26,6 +26,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"regexp"
 	"text/template"
 
 	// Ensure that the generate package, which is used by the generated code, is
@@ -76,6 +77,20 @@ type tmplArg struct {
 
 	// Types to be mocked, relative to their package's name.
 	TypeNames []string
+}
+
+var undefinedInterfaceRegexp =
+	regexp.MustCompile(`tool\.go:\d+: undefined: [\pL_0-9]+\.([\pL_0-9]+)`)
+
+// Does the 'go build' output indicate that an interface wasn't found? If so,
+// return the name of the interface.
+func findUndefinedInterface(output []byte) *string {
+	if match := undefinedInterfaceRegexp.FindSubmatch(output); match != nil {
+		res := string(match[1])
+		return &res
+	}
+
+	return nil
 }
 
 func main() {
@@ -134,6 +149,12 @@ func main() {
 	buildOutput, err := cmd.CombinedOutput()
 
 	if err != nil {
+		// Did the tool fail due to an unknown interface?
+		if in := findUndefinedInterface(buildOutput); in != nil {
+			log.Fatalf("Unknown interface: %s", *in)
+		}
+
+		// Otherwise print a generic error.
 		log.Fatalf(
 			"%s\n\nError building generated code:\n\n" +
 				"    %v\n\n Please report this oglemock bug.",
