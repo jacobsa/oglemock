@@ -93,6 +93,17 @@ import (
 {{end}}
 `
 
+type tmplArg struct {
+	// The package of the generated code.
+	Pkg string
+
+	// Imports needed by the interfaces.
+	Imports importMap
+
+	// The set of interfaces to mock.
+	Interfaces []reflect.Type
+}
+
 var tmpl *template.Template
 
 func init() {
@@ -147,17 +158,6 @@ func getOutputs(ft reflect.Type) []reflect.Type {
 // A map from import identifier to package to use that identifier for,
 // containing elements for each import needed by a set of mocked interfaces.
 type importMap map[string]string
-
-type tmplArg struct {
-	// The package of the generated code.
-	Pkg string
-
-	// Imports needed by the interfaces.
-	Imports importMap
-
-	// The set of interfaces to mock.
-	Interfaces []reflect.Type
-}
 
 // Add an import for the supplied type, without recursing.
 func addImportForType(imports importMap, t reflect.Type) {
