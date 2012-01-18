@@ -17,8 +17,10 @@ package main
 
 import (
 	. "github.com/jacobsa/ogletest"
+	"bytes"
 	"flag"
 	"fmt"
+	"go/build"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -100,6 +102,41 @@ func (t *CreateMockTest) runGoldenTest(
 	}
 }
 
+// Ensure that when createmock is run with the supplied args, it produces
+// output that can be compiled.
+func (t *CreateMockTest) runCompilationTest(createmockArgs ...string) {
+	// Create a temporary directory inside of $GOPATH to hold generated code.
+	tree, _, err := build.FindTree("github.com/jacobsa/oglemock")
+	AssertEq(nil, err)
+
+	tmpDir, err := ioutil.TempDir(path.Join(tree.Path, "src"), "tmp-createmock_test-")
+	AssertEq(nil, err)
+	defer os.RemoveAll(tmpDir)
+
+	// Create a file to hold the mock code.
+	codeFile, err := os.Create(path.Join(tmpDir, "mock.go"))
+	AssertEq(nil, err)
+
+  // Run createmock and save its output to the file created above.
+	stdErrBuf := new(bytes.Buffer)
+
+	cmd := exec.Command(createmockPath, createmockArgs...)
+	cmd.Stdout = codeFile
+	cmd.Stderr = stdErrBuf
+
+	err = cmd.Run()
+	AssertEq(nil, err, "createmock stderr output:\n\n%s", stdErrBuf.String())
+	codeFile.Close()
+
+	// Run 'go build' in the directory and make sure it exits with return code
+	// zero.
+	cmd = exec.Command("go", "build")
+	cmd.Dir = tmpDir
+	output, err := cmd.CombinedOutput()
+
+	ExpectEq(nil, err, "go build output:\n\n%s", output)
+}
+
 func writeContentsToFileOrDie(contents []byte, path string) {
 	if err := ioutil.WriteFile(path, contents, 0600); err != nil {
 		panic("ioutil.WriteFile: " + err.Error())
@@ -118,15 +155,6 @@ func readFileOrDie(path string) []byte {
 ////////////////////////////////////////////////////////////
 // Tests
 ////////////////////////////////////////////////////////////
-
-func (t *CreateMockTest) IoPartial() {
-	t.runGoldenTest(
-		"io_partial",
-		0,
-		"io",
-		"Reader",
-		"Writer")
-}
 
 func (t *CreateMockTest) NoPackage() {
 	t.runGoldenTest(
@@ -155,4 +183,11 @@ func (t *CreateMockTest) UnknownInterface() {
 		1,
 		"io",
 		"Frobnicator");
+}
+
+func (t *CreateMockTest) IoReaderAndWriter() {
+	t.runCompilationTest(
+		"io",
+		"Reader",
+		"Writer")
 }
