@@ -290,8 +290,6 @@ func (m *mockComplicatedThing) RenamedPackage(p0 tony.SomeUint8Alias) {
 		panic(fmt.Sprintf("mockComplicatedThing.RenamedPackage: invalid return values: %v", retVals))
 	}
 
-	var v reflect.Value
-
 	return
 }
 

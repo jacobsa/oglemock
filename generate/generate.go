@@ -86,7 +86,10 @@ import (
 				panic(fmt.Sprintf("{{$structName}}.{{.Name}}: invalid return values: %v", retVals))
 			}
 
-			var v reflect.Value
+			{{if $outputTypes}}
+				var v reflect.Value
+			{{end}}
+
 			{{range $i, $type := $outputTypes}}
 				// o{{$i}} {{getTypeString $type}}
 				v = reflect.ValueOf(retVals[{{$i}}])
