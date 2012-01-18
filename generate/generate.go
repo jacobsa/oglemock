@@ -25,8 +25,8 @@ import (
 	"go/printer"
 	"go/token"
 	"io"
-	"path"
 	"reflect"
+	"regexp"
 	"text/template"
 )
 
@@ -168,6 +168,9 @@ func getOutputs(ft reflect.Type) []reflect.Type {
 // containing elements for each import needed by a set of mocked interfaces.
 type importMap map[string]string
 
+var typePackageIdentifierRegexp =
+	regexp.MustCompile(`^([\pL_0-9]+)\.[\pL_0-9]+$`)
+
 // Add an import for the supplied type, without recursing.
 func addImportForType(imports importMap, t reflect.Type) {
 	// If there is no package path, this is a built-in type and we don't need an
@@ -186,8 +189,15 @@ func addImportForType(imports importMap, t reflect.Type) {
 		return
 	}
 
-	// Use the package's base name as an identifier.
-	imports[path.Base(pkgPath)] = pkgPath
+	// Use the identifier that's part of the type's string representation as the
+	// import identifier. This means that we'll do the right thing for package
+	// "foo/bar" with declaration "package baz".
+	match := typePackageIdentifierRegexp.FindStringSubmatch(t.String())
+	if match == nil {
+		return
+	}
+
+	imports[match[1]] = pkgPath
 }
 
 // Add all necessary imports for the type, recursing as appropriate.

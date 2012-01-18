@@ -15,9 +15,9 @@ import (
 
 	reflect "reflect"
 
-	renamed_pkg "github.com/jacobsa/oglemock/generate/test_cases/renamed_pkg"
-
 	runtime "runtime"
+
+	tony "github.com/jacobsa/oglemock/generate/test_cases/renamed_pkg"
 
 	unsafe "unsafe"
 )
