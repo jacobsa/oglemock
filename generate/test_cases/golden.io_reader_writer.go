@@ -1,7 +1,13 @@
 package some_pkg
 
 import (
+	fmt "fmt"
+
 	oglemock "github.com/jacobsa/oglemock"
+
+	reflect "reflect"
+
+	unsafe "unsafe"
 )
 
 type mockReader struct {

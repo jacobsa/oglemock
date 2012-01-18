@@ -21,7 +21,6 @@ package generate
 import (
 	"bytes"
 	"errors"
-	"github.com/jacobsa/oglemock"
 	"go/parser"
 	"go/printer"
 	"go/token"
@@ -228,8 +227,12 @@ func getImports(interfaces []reflect.Type) importMap {
 		addImportsForInterfaceMethods(imports, it)
 	}
 
-	// Make sure to also add an import for oglemock.
-	addImportsForType(imports, reflect.TypeOf((*oglemock.Controller)(nil)).Elem())
+	// Make sure there are imports for other types used by the generated code
+	// itself.
+	imports["fmt"] = "fmt"
+	imports["oglemock"] = "github.com/jacobsa/oglemock"
+	imports["reflect"] = "reflect"
+	imports["unsafe"] = "unsafe"
 
 	return imports
 }

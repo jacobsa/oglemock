@@ -3,6 +3,8 @@ package some_pkg
 import (
 	complicated_pkg "github.com/jacobsa/oglemock/generate/test_cases/complicated_pkg"
 
+	fmt "fmt"
+
 	image "image"
 
 	io "io"
@@ -11,7 +13,11 @@ import (
 
 	oglemock "github.com/jacobsa/oglemock"
 
+	reflect "reflect"
+
 	renamed_pkg "github.com/jacobsa/oglemock/generate/test_cases/renamed_pkg"
+
+	unsafe "unsafe"
 )
 
 type mockComplicatedThing struct {
