@@ -330,7 +330,7 @@ func (m *mockComplicatedThing) Slices(p0 []string) (o0 []int, o1 error) {
 	return
 }
 
-func (m *mockComplicatedThing) Variadic(p0 int, p1 []net.Conn) (o0 int) {
+func (m *mockComplicatedThing) Variadic(p0 int, p1 ...net.Conn) (o0 int) {
 	// Get a file name and line number for the caller.
 	_, file, line, _ := runtime.Caller(1)
 

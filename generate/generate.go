@@ -77,10 +77,11 @@ import (
 	}
 
 	{{range getMethods .}}
-	  {{$inputTypes := getInputs .Type}}
-	  {{$outputTypes := getOutputs .Type}}
+	  {{$funcType := .Type}}
+	  {{$inputTypes := getInputs $funcType}}
+	  {{$outputTypes := getOutputs $funcType}}
 
-		func (m *{{$structName}}) {{.Name}}({{range $i, $type := $inputTypes}}p{{$i}} {{getTypeString $type}}, {{end}}
+		func (m *{{$structName}}) {{.Name}}({{range $i, $type := $inputTypes}}p{{$i}} {{getInputTypeString $i $funcType}}, {{end}}
 		) ({{range $i, $type := $outputTypes}}o{{$i}} {{getTypeString $type}}, {{end}}
 		){
 			// Get a file name and line number for the caller.
@@ -135,11 +136,21 @@ func init() {
 	extraFuncs["getMethods"] = getMethods
 	extraFuncs["getInputs"] = getInputs
 	extraFuncs["getOutputs"] = getOutputs
+	extraFuncs["getInputTypeString"] = getInputTypeString
 	extraFuncs["getTypeString"] = getTypeString
 
 	tmpl = template.New("code")
 	tmpl.Funcs(extraFuncs)
 	tmpl.Parse(tmplStr)
+}
+
+func getInputTypeString(i int, ft reflect.Type) string {
+	numInputs := ft.NumIn()
+	if i == numInputs - 1 && ft.IsVariadic() {
+		return "..." + getTypeString(ft.In(i).Elem())
+	}
+
+	return getTypeString(ft.In(i))
 }
 
 func getTypeString(t reflect.Type) string {
