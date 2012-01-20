@@ -15,11 +15,14 @@
 
 package oglemock
 
-// ErrorReporter is an interface that wraps a method for reporting errors that
+// ErrorReporter is an interface that wraps methods for reporting errors that
 // should cause test failures.
 type ErrorReporter interface {
-	// Report that some failure (e.g. an unexpected method call, an unsatisfied
-	// expectation) occurred. If known, fileName and lineNumber should contain
-	// information about where it occurred.
+	// Report that some failure (e.g. an unsatisfied expectation) occurred. If
+	// known, fileName and lineNumber should contain information about where it
+	// occurred. The test may continue if the test framework supports it.
 	ReportError(fileName string, lineNumber int, err error)
+
+	// Like ReportError, but the test should be halted immediately.
+	ReportFatalError(fileName string, lineNumber int, err error)
 }

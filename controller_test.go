@@ -34,11 +34,17 @@ type errorReport struct {
 
 type fakeErrorReporter struct {
 	errorsReported []errorReport
+	fatalErrorsReported []errorReport
 }
 
 func (r *fakeErrorReporter) ReportError(fileName string, lineNumber int, err error) {
 	report := errorReport{fileName, lineNumber, err}
 	r.errorsReported = append(r.errorsReported, report)
+}
+
+func (r *fakeErrorReporter) ReportFatalError(fileName string, lineNumber int, err error) {
+	report := errorReport{fileName, lineNumber, err}
+	r.fatalErrorsReported = append(r.fatalErrorsReported, report)
 }
 
 type trivialMockObject struct {
