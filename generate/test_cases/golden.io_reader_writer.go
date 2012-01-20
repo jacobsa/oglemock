@@ -1,3 +1,9 @@
+// This file was auto-generated using createmock. See the following page for
+// more information:
+//
+//     https://github.com/jacobsa/oglemock
+//
+
 package some_pkg
 
 import (

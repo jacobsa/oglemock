@@ -31,7 +31,14 @@ import (
 )
 
 const tmplStr =
-`package {{.Pkg}}
+`
+// This file was auto-generated using createmock. See the following page for
+// more information:
+//
+//     https://github.com/jacobsa/oglemock
+//
+
+package {{.Pkg}}
 
 import (
 	{{range $identifier, $import := .Imports}}{{$identifier}} "{{$import}}"
