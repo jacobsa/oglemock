@@ -94,7 +94,8 @@ func init() { RegisterTestSuite(&ControllerTest{}) }
 
 func (t *ControllerTest) FinishWithoutAnyEvents() {
 	t.controller.Finish()
-	ExpectThat(len(t.reporter.errorsReported), Equals(0))
+	ExpectEq(0, len(t.reporter.errorsReported))
+	ExpectEq(0, len(t.reporter.fatalErrorsReported))
 }
 
 func (t *ControllerTest) HandleCallForUnknownObject() {
@@ -107,16 +108,20 @@ func (t *ControllerTest) HandleCallForUnknownObject() {
 		[]interface{}{p})
 
 	// The error should be reported immediately.
-	ExpectThat(len(t.reporter.errorsReported), Equals(1))
-	ExpectThat(t.reporter.errorsReported[0].fileName, Equals("taco.go"))
-	ExpectThat(t.reporter.errorsReported[0].lineNumber, Equals(112))
+	AssertEq(1, len(t.reporter.errorsReported))
+	AssertEq(0, len(t.reporter.fatalErrorsReported))
+
+	ExpectEq("taco.go", t.reporter.errorsReported[0].fileName)
+	ExpectEq(112, t.reporter.errorsReported[0].lineNumber)
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("Unexpected")))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("StringToInt")))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("[255]")))
 
 	// Finish should change nothing.
 	t.controller.Finish()
-	ExpectThat(len(t.reporter.errorsReported), Equals(1))
+
+	ExpectEq(1, len(t.reporter.errorsReported))
+	ExpectEq(0, len(t.reporter.fatalErrorsReported))
 }
 
 func (t *ControllerTest) ExpectCallForUnknownMethod() {
@@ -193,16 +198,20 @@ func (t *ControllerTest) ExpectThenNonMatchingCall() {
 
 
 	// The error should be reported immediately.
-	ExpectThat(len(t.reporter.errorsReported), Equals(1))
-	ExpectThat(t.reporter.errorsReported[0].fileName, Equals("taco.go"))
-	ExpectThat(t.reporter.errorsReported[0].lineNumber, Equals(112))
+	AssertEq(1, len(t.reporter.errorsReported))
+	AssertEq(0, len(t.reporter.fatalErrorsReported))
+
+	ExpectEq("taco.go", t.reporter.errorsReported[0].fileName)
+	ExpectEq(112, t.reporter.errorsReported[0].lineNumber)
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("Unexpected")))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("TwoIntsToString")))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("[8 1]")))
 
 	// Finish should change nothing.
 	t.controller.Finish()
-	ExpectThat(len(t.reporter.errorsReported), Equals(1))
+
+	ExpectEq(1, len(t.reporter.errorsReported))
+	ExpectEq(0, len(t.reporter.fatalErrorsReported))
 }
 
 func (t *ControllerTest) ExplicitCardinalityNotSatisfied() {
@@ -232,14 +241,17 @@ func (t *ControllerTest) ExplicitCardinalityNotSatisfied() {
 		[]interface{}{""})
 
 	// The error should not yet be reported.
-	ExpectThat(len(t.reporter.errorsReported), Equals(0))
+	ExpectEq(0, len(t.reporter.errorsReported))
+	ExpectEq(0, len(t.reporter.fatalErrorsReported))
 
 	// Finish should cause the error to be reported.
 	t.controller.Finish()
 
-	ExpectThat(len(t.reporter.errorsReported), Equals(1))
-	ExpectThat(t.reporter.errorsReported[0].fileName, Equals("burrito.go"))
-	ExpectThat(t.reporter.errorsReported[0].lineNumber, Equals(117))
+	AssertEq(1, len(t.reporter.errorsReported))
+	AssertEq(0, len(t.reporter.fatalErrorsReported))
+
+	ExpectEq("burrito.go", t.reporter.errorsReported[0].fileName)
+	ExpectEq(117, t.reporter.errorsReported[0].lineNumber)
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("Unsatisfied")))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("StringToInt")))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("at least 3 times")))
@@ -275,14 +287,17 @@ func (t *ControllerTest) ImplicitOneTimeActionCountNotSatisfied() {
 		[]interface{}{""})
 
 	// The error should not yet be reported.
-	ExpectThat(len(t.reporter.errorsReported), Equals(0))
+	ExpectEq(0, len(t.reporter.errorsReported))
+	ExpectEq(0, len(t.reporter.fatalErrorsReported))
 
 	// Finish should cause the error to be reported.
 	t.controller.Finish()
 
-	ExpectThat(len(t.reporter.errorsReported), Equals(1))
-	ExpectThat(t.reporter.errorsReported[0].fileName, Equals("burrito.go"))
-	ExpectThat(t.reporter.errorsReported[0].lineNumber, Equals(117))
+	AssertEq(1, len(t.reporter.errorsReported))
+	AssertEq(0, len(t.reporter.fatalErrorsReported))
+
+	ExpectEq("burrito.go", t.reporter.errorsReported[0].fileName)
+	ExpectEq(117, t.reporter.errorsReported[0].lineNumber)
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("Unsatisfied")))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("StringToInt")))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("at least 3 times")))
@@ -319,14 +334,17 @@ func (t *ControllerTest) ImplicitOneTimeActionLowerBoundNotSatisfied() {
 		[]interface{}{""})
 
 	// The error should not yet be reported.
-	ExpectThat(len(t.reporter.errorsReported), Equals(0))
+	ExpectEq(0, len(t.reporter.errorsReported))
+	ExpectEq(0, len(t.reporter.fatalErrorsReported))
 
 	// Finish should cause the error to be reported.
 	t.controller.Finish()
 
-	ExpectThat(len(t.reporter.errorsReported), Equals(1))
-	ExpectThat(t.reporter.errorsReported[0].fileName, Equals("burrito.go"))
-	ExpectThat(t.reporter.errorsReported[0].lineNumber, Equals(117))
+	AssertEq(1, len(t.reporter.errorsReported))
+	AssertEq(0, len(t.reporter.fatalErrorsReported))
+
+	ExpectEq("burrito.go", t.reporter.errorsReported[0].fileName)
+	ExpectEq(117, t.reporter.errorsReported[0].lineNumber)
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("Unsatisfied")))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("StringToInt")))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("at least 3 times")))
@@ -346,14 +364,17 @@ func (t *ControllerTest) ImplicitCardinalityOfOneNotSatisfied() {
 	// Don't call.
 
 	// The error should not yet be reported.
-	ExpectThat(len(t.reporter.errorsReported), Equals(0))
+	ExpectEq(0, len(t.reporter.errorsReported))
+	ExpectEq(0, len(t.reporter.fatalErrorsReported))
 
 	// Finish should cause the error to be reported.
 	t.controller.Finish()
 
-	ExpectThat(len(t.reporter.errorsReported), Equals(1))
-	ExpectThat(t.reporter.errorsReported[0].fileName, Equals("burrito.go"))
-	ExpectThat(t.reporter.errorsReported[0].lineNumber, Equals(117))
+	AssertEq(1, len(t.reporter.errorsReported))
+	AssertEq(0, len(t.reporter.fatalErrorsReported))
+
+	ExpectEq("burrito.go", t.reporter.errorsReported[0].fileName)
+	ExpectEq(117, t.reporter.errorsReported[0].lineNumber)
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("Unsatisfied")))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("StringToInt")))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("at least 1 time")))
@@ -394,9 +415,11 @@ func (t *ControllerTest) ExplicitCardinalityOverrun() {
 		[]interface{}{""})
 
 	// The error should be reported immediately.
-	ExpectThat(len(t.reporter.errorsReported), Equals(1))
-	ExpectThat(t.reporter.errorsReported[0].fileName, Equals("burrito.go"))
-	ExpectThat(t.reporter.errorsReported[0].lineNumber, Equals(117))
+	AssertEq(1, len(t.reporter.errorsReported))
+	AssertEq(0, len(t.reporter.fatalErrorsReported))
+
+	ExpectEq("burrito.go", t.reporter.errorsReported[0].fileName)
+	ExpectEq(117, t.reporter.errorsReported[0].lineNumber)
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("Unexpected")))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("StringToInt")))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("at most 2 times")))
@@ -404,7 +427,9 @@ func (t *ControllerTest) ExplicitCardinalityOverrun() {
 
 	// Finish should change nothing.
 	t.controller.Finish()
-	ExpectThat(len(t.reporter.errorsReported), Equals(1))
+
+	ExpectEq(1, len(t.reporter.errorsReported))
+	ExpectEq(0, len(t.reporter.fatalErrorsReported))
 }
 
 func (t *ControllerTest) ImplicitOneTimeActionCountOverrun() {
@@ -434,9 +459,11 @@ func (t *ControllerTest) ImplicitOneTimeActionCountOverrun() {
 		[]interface{}{""})
 
 	// The error should be reported immediately.
-	ExpectThat(len(t.reporter.errorsReported), Equals(1))
-	ExpectThat(t.reporter.errorsReported[0].fileName, Equals("burrito.go"))
-	ExpectThat(t.reporter.errorsReported[0].lineNumber, Equals(117))
+	AssertEq(1, len(t.reporter.errorsReported))
+	AssertEq(0, len(t.reporter.fatalErrorsReported))
+
+	ExpectEq("burrito.go", t.reporter.errorsReported[0].fileName)
+	ExpectEq(117, t.reporter.errorsReported[0].lineNumber)
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("Unexpected")))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("StringToInt")))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("at most 1 time")))
@@ -444,7 +471,9 @@ func (t *ControllerTest) ImplicitOneTimeActionCountOverrun() {
 
 	// Finish should change nothing.
 	t.controller.Finish()
-	ExpectThat(len(t.reporter.errorsReported), Equals(1))
+
+	ExpectEq(1, len(t.reporter.errorsReported))
+	ExpectEq(0, len(t.reporter.fatalErrorsReported))
 }
 
 func (t *ControllerTest) ImplicitCardinalityOfOneOverrun() {
@@ -473,9 +502,11 @@ func (t *ControllerTest) ImplicitCardinalityOfOneOverrun() {
 		[]interface{}{""})
 
 	// The error should be reported immediately.
-	ExpectThat(len(t.reporter.errorsReported), Equals(1))
-	ExpectThat(t.reporter.errorsReported[0].fileName, Equals("burrito.go"))
-	ExpectThat(t.reporter.errorsReported[0].lineNumber, Equals(117))
+	AssertEq(1, len(t.reporter.errorsReported))
+	AssertEq(0, len(t.reporter.fatalErrorsReported))
+
+	ExpectEq("burrito.go", t.reporter.errorsReported[0].fileName)
+	ExpectEq(117, t.reporter.errorsReported[0].lineNumber)
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("Unexpected")))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("StringToInt")))
 	ExpectThat(t.reporter.errorsReported[0].err, Error(HasSubstr("at most 1 time")))
@@ -483,7 +514,9 @@ func (t *ControllerTest) ImplicitCardinalityOfOneOverrun() {
 
 	// Finish should change nothing.
 	t.controller.Finish()
-	ExpectThat(len(t.reporter.errorsReported), Equals(1))
+
+	ExpectEq(1, len(t.reporter.errorsReported))
+	ExpectEq(0, len(t.reporter.fatalErrorsReported))
 }
 
 func (t *ControllerTest) ExplicitCardinalitySatisfied() {
@@ -514,7 +547,9 @@ func (t *ControllerTest) ExplicitCardinalitySatisfied() {
 
 	// There should be no errors.
 	t.controller.Finish()
-	ExpectThat(len(t.reporter.errorsReported), Equals(0))
+
+	ExpectEq(0, len(t.reporter.errorsReported))
+	ExpectEq(0, len(t.reporter.fatalErrorsReported))
 }
 
 func (t *ControllerTest) ImplicitOneTimeActionCountSatisfied() {
@@ -546,7 +581,9 @@ func (t *ControllerTest) ImplicitOneTimeActionCountSatisfied() {
 
 	// There should be no errors.
 	t.controller.Finish()
-	ExpectThat(len(t.reporter.errorsReported), Equals(0))
+
+	ExpectEq(0, len(t.reporter.errorsReported))
+	ExpectEq(0, len(t.reporter.fatalErrorsReported))
 }
 
 func (t *ControllerTest) ImplicitOneTimeActionLowerBoundJustSatisfied() {
@@ -579,7 +616,9 @@ func (t *ControllerTest) ImplicitOneTimeActionLowerBoundJustSatisfied() {
 
 	// There should be no errors.
 	t.controller.Finish()
-	ExpectThat(len(t.reporter.errorsReported), Equals(0))
+
+	ExpectEq(0, len(t.reporter.errorsReported))
+	ExpectEq(0, len(t.reporter.fatalErrorsReported))
 }
 
 func (t *ControllerTest) ImplicitOneTimeActionLowerBoundMoreThanSatisfied() {
@@ -626,7 +665,9 @@ func (t *ControllerTest) ImplicitOneTimeActionLowerBoundMoreThanSatisfied() {
 
 	// There should be no errors.
 	t.controller.Finish()
-	ExpectThat(len(t.reporter.errorsReported), Equals(0))
+
+	ExpectEq(0, len(t.reporter.errorsReported))
+	ExpectEq(0, len(t.reporter.fatalErrorsReported))
 }
 
 func (t *ControllerTest) FallbackActionConfiguredWithZeroCalls() {
@@ -644,7 +685,9 @@ func (t *ControllerTest) FallbackActionConfiguredWithZeroCalls() {
 
 	// There should be no errors.
 	t.controller.Finish()
-	ExpectThat(len(t.reporter.errorsReported), Equals(0))
+
+	ExpectEq(0, len(t.reporter.errorsReported))
+	ExpectEq(0, len(t.reporter.fatalErrorsReported))
 }
 
 func (t *ControllerTest) FallbackActionConfiguredWithMultipleCalls() {
@@ -675,7 +718,9 @@ func (t *ControllerTest) FallbackActionConfiguredWithMultipleCalls() {
 
 	// There should be no errors.
 	t.controller.Finish()
-	ExpectThat(len(t.reporter.errorsReported), Equals(0))
+
+	ExpectEq(0, len(t.reporter.errorsReported))
+	ExpectEq(0, len(t.reporter.fatalErrorsReported))
 }
 
 func (t *ControllerTest) ImplicitCardinalityOfOneSatisfied() {
@@ -698,7 +743,9 @@ func (t *ControllerTest) ImplicitCardinalityOfOneSatisfied() {
 
 	// There should be no errors.
 	t.controller.Finish()
-	ExpectThat(len(t.reporter.errorsReported), Equals(0))
+
+	ExpectEq(0, len(t.reporter.errorsReported))
+	ExpectEq(0, len(t.reporter.fatalErrorsReported))
 }
 
 func (t *ControllerTest) InvokesOneTimeActions() {
