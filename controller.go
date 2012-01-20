@@ -151,7 +151,11 @@ func (c *controllerImpl) ExpectCall(
 	oType := reflect.TypeOf(o)
 	method, ok := oType.MethodByName(methodName)
 	if !ok {
-		panic("Unknown method: " + methodName)
+		c.reporter.ReportFatalError(
+			fileName,
+			lineNumber,
+			errors.New("Unknown method: " + methodName))
+		return nil
 	}
 
 	partialAlreadyCalled := false
