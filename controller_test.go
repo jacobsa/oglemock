@@ -125,56 +125,98 @@ func (t *ControllerTest) HandleCallForUnknownObject() {
 }
 
 func (t *ControllerTest) ExpectCallForUnknownMethod() {
-	ExpectThat(
-		func() {
-			t.controller.ExpectCall(t.mock1, "Frobnicate", "", 0)
-		},
-		Panics(HasSubstr("Unknown method: Frobnicate")))
+	ExpectEq(
+		nil,
+		t.controller.ExpectCall(t.mock1, "Frobnicate", "burrito.go", 117))
+
+	// A fatal error should be reported immediately.
+	AssertEq(0, len(t.reporter.errorsReported))
+	AssertEq(1, len(t.reporter.fatalErrorsReported))
+
+	report := t.reporter.fatalErrorsReported[0]
+	ExpectEq("burrito.go", report.fileName)
+	ExpectEq(117, report.lineNumber)
+	ExpectThat(report.err, Error(HasSubstr("Unknown method")))
+	ExpectThat(report.err, Error(HasSubstr("Frobnicate")))
 }
 
 func (t *ControllerTest) PartialExpectationGivenWrongNumberOfArgs() {
-	ExpectThat(
-		func() {
-			t.controller.ExpectCall(t.mock1, "TwoIntsToString", "", 0)(17, 19, 23)
-		},
-		Panics(HasSubstr("arguments: expected 2, got 3")))
+	ExpectEq(
+		nil,
+		t.controller.ExpectCall(t.mock1, "TwoIntsToString", "burrito", 117)(
+			17, 19, 23))
+
+	// A fatal error should be reported immediately.
+	AssertEq(0, len(t.reporter.errorsReported))
+	AssertEq(1, len(t.reporter.fatalErrorsReported))
+
+	report := t.reporter.fatalErrorsReported[0]
+	ExpectEq("burrito.go", report.fileName)
+	ExpectEq(117, report.lineNumber)
+	ExpectThat(report.err, Error(HasSubstr("TwoIntsToString")))
+	ExpectThat(report.err, Error(HasSubstr("arguments")))
+	ExpectThat(report.err, Error(HasSubstr("expected 2")))
+	ExpectThat(report.err, Error(HasSubstr("got 3")))
 }
 
 func (t *ControllerTest) PartialExpectationCalledTwice() {
-	ExpectThat(
-		func() {
-			partial := t.controller.ExpectCall(t.mock1, "StringToInt", "", 0)
-			partial("taco")
-			partial("taco")
-		},
-		Panics(HasSubstr("called more than once")))
+	partial := t.controller.ExpectCall(t.mock1, "StringToInt", "burrito.go", 117)
+	AssertNe(nil, partial("taco"))
+	ExpectEq(nil, partial("taco"))
+
+	// A fatal error should be reported immediately.
+	AssertEq(0, len(t.reporter.errorsReported))
+	AssertEq(1, len(t.reporter.fatalErrorsReported))
+
+	report := t.reporter.fatalErrorsReported[0]
+	ExpectEq("burrito.go", report.fileName)
+	ExpectEq(117, report.lineNumber)
+	ExpectThat(report.err, Error(HasSubstr("called more than once")))
 }
 
 func (t *ControllerTest) HandleMethodCallForUnknownMethod() {
-	ExpectThat(
-		func() {
-			t.controller.HandleMethodCall(
-				t.mock1,
-				"Frobnicate",
-				"",
-				0,
-				[]interface{}{})
-		},
-		Panics(HasSubstr("Unknown method: Frobnicate")))
+	ExpectEq(
+		nil,
+		t.controller.HandleMethodCall(
+			t.mock1,
+			"Frobnicate",
+			"burrito.go",
+			117,
+			[]interface{}{}))
+
+	// A fatal error should be reported immediately.
+	AssertEq(0, len(t.reporter.errorsReported))
+	AssertEq(1, len(t.reporter.fatalErrorsReported))
+
+	report := t.reporter.fatalErrorsReported[0]
+	ExpectEq("burrito.go", report.fileName)
+	ExpectEq(117, report.lineNumber)
+	ExpectThat(report.err, Error(HasSubstr("Unknown method")))
+	ExpectThat(report.err, Error(HasSubstr("Frobnicate")))
 }
 
 func (t *ControllerTest) HandleMethodCallGivenWrongNumberOfArgs() {
-	ExpectThat(
-		func() {
-			t.controller.ExpectCall(t.mock1, "TwoIntsToString", "", 0)(17, 19)
-			t.controller.HandleMethodCall(
-				t.mock1,
-				"TwoIntsToString",
-				"taco.go",
-				112,
-				[]interface{}{17, 19, 23})
-			},
-		Panics(HasSubstr("arguments: expected 2; got 3")))
+	t.controller.ExpectCall(t.mock1, "TwoIntsToString", "", 0)(17, 19)
+
+	ExpectEq(
+		nil,
+		t.controller.HandleMethodCall(
+			t.mock1,
+			"TwoIntsToString",
+			"burrito.go",
+			117,
+			[]interface{}{17, 19, 23}))
+
+	// A fatal error should be reported immediately.
+	AssertEq(0, len(t.reporter.errorsReported))
+	AssertEq(1, len(t.reporter.fatalErrorsReported))
+
+	report := t.reporter.fatalErrorsReported[0]
+	ExpectEq("burrito.go", report.fileName)
+	ExpectEq(117, report.lineNumber)
+	ExpectThat(report.err, Error(HasSubstr("arguments")))
+	ExpectThat(report.err, Error(HasSubstr("expected 2")))
+	ExpectThat(report.err, Error(HasSubstr("got 3")))
 }
 
 func (t *ControllerTest) ExpectThenNonMatchingCall() {

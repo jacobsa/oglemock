@@ -23,6 +23,7 @@ type ErrorReporter interface {
 	// occurred. The test may continue if the test framework supports it.
 	ReportError(fileName string, lineNumber int, err error)
 
-	// Like ReportError, but the test should be halted immediately.
+	// Like ReportError, but the test should be halted immediately. It is assumed
+	// that this method does not return.
 	ReportFatalError(fileName string, lineNumber int, err error)
 }

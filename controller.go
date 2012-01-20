@@ -27,7 +27,8 @@ import (
 // See Controller.ExpectMethodCall below. It returns an expectation that can be
 // further modified (e.g. by calling WillOnce).
 //
-// If the arguments are of the wrong type, the function panics.
+// If the arguments are of the wrong type, the function reports a fatal error
+// and returns nil.
 type PartialExpecation func(...interface{}) Expectation
 
 // Controller represents an object that implements the central logic of
@@ -49,7 +50,7 @@ type Controller interface {
 	//         .WillOnce(Return(1, nil))
 	//
 	// If the mock object doesn't have a method of the supplied name, the
-	// function panics.
+	// function reports a fatal error and returns nil.
 	ExpectCall(
 		o MockObject,
 		methodName string,
@@ -73,7 +74,7 @@ type Controller interface {
 	//
 	// If the mock object doesn't have a method of the supplied name, the
 	// arguments are of the wrong type, or the action returns the wrong types,
-	// the function panics.
+	// the function reports a fatal error.
 	//
 	// HandleMethodCall is exported for the sake of mock implementations, and
 	// should not be used directly.
