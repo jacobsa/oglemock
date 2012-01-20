@@ -46,7 +46,13 @@ import (
 )
 
 {{range .Interfaces}}
+	{{$interfaceName := printf "Mock%s" .Name}}
 	{{$structName := printf "mock%s" .Name}}
+
+	type {{$interfaceName}} interface {
+		{{getTypeString .}}
+		oglemock.MockObject
+	}
 
 	type {{$structName}} struct {
 		controller oglemock.Controller
@@ -55,7 +61,7 @@ import (
 	
 	func New{{printf "Mock%s" .Name}}(
 		c oglemock.Controller,
-		desc string) *{{$structName}} {
+		desc string) {{$interfaceName}} {
 	  return &{{$structName}}{
 			controller: c,
 			description: desc,
@@ -252,6 +258,7 @@ func addImportsForInterfaceMethods(imports importMap, it reflect.Type) {
 func getImports(interfaces []reflect.Type) importMap {
 	imports := make(importMap)
 	for _, it := range interfaces {
+		addImportForType(imports, it)
 		addImportsForInterfaceMethods(imports, it)
 	}
 

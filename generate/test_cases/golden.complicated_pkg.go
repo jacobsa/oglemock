@@ -19,13 +19,18 @@ import (
 	unsafe "unsafe"
 )
 
+type MockComplicatedThing interface {
+	complicated_pkg.ComplicatedThing
+	oglemock.MockObject
+}
+
 type mockComplicatedThing struct {
 	controller	oglemock.Controller
 	description	string
 }
 
 func NewMockComplicatedThing(c oglemock.Controller,
-	desc string) *mockComplicatedThing {
+	desc string) MockComplicatedThing {
 	return &mockComplicatedThing{
 		controller:	c,
 		description:	desc,

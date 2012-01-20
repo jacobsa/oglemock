@@ -8,11 +8,17 @@ package some_pkg
 
 import (
 	fmt "fmt"
+	io "io"
 	oglemock "github.com/jacobsa/oglemock"
 	reflect "reflect"
 	runtime "runtime"
 	unsafe "unsafe"
 )
+
+type MockReader interface {
+	io.Reader
+	oglemock.MockObject
+}
 
 type mockReader struct {
 	controller	oglemock.Controller
@@ -20,7 +26,7 @@ type mockReader struct {
 }
 
 func NewMockReader(c oglemock.Controller,
-	desc string) *mockReader {
+	desc string) MockReader {
 	return &mockReader{
 		controller:	c,
 		description:	desc,
@@ -70,13 +76,18 @@ func (m *mockReader) Read(p0 []uint8) (o0 int, o1 error) {
 	return
 }
 
+type MockWriter interface {
+	io.Writer
+	oglemock.MockObject
+}
+
 type mockWriter struct {
 	controller	oglemock.Controller
 	description	string
 }
 
 func NewMockWriter(c oglemock.Controller,
-	desc string) *mockWriter {
+	desc string) MockWriter {
 	return &mockWriter{
 		controller:	c,
 		description:	desc,

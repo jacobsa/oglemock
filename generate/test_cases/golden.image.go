@@ -16,13 +16,18 @@ import (
 	unsafe "unsafe"
 )
 
+type MockImage interface {
+	image.Image
+	oglemock.MockObject
+}
+
 type mockImage struct {
 	controller	oglemock.Controller
 	description	string
 }
 
 func NewMockImage(c oglemock.Controller,
-	desc string) *mockImage {
+	desc string) MockImage {
 	return &mockImage{
 		controller:	c,
 		description:	desc,
@@ -121,13 +126,18 @@ func (m *mockImage) ColorModel() (o0 color.Model) {
 	return
 }
 
+type MockPalettedImage interface {
+	image.PalettedImage
+	oglemock.MockObject
+}
+
 type mockPalettedImage struct {
 	controller	oglemock.Controller
 	description	string
 }
 
 func NewMockPalettedImage(c oglemock.Controller,
-	desc string) *mockPalettedImage {
+	desc string) MockPalettedImage {
 	return &mockPalettedImage{
 		controller:	c,
 		description:	desc,

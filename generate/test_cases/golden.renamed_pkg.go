@@ -11,8 +11,14 @@ import (
 	oglemock "github.com/jacobsa/oglemock"
 	reflect "reflect"
 	runtime "runtime"
+	tony "github.com/jacobsa/oglemock/generate/test_cases/renamed_pkg"
 	unsafe "unsafe"
 )
+
+type MockSomeInterface interface {
+	tony.SomeInterface
+	oglemock.MockObject
+}
 
 type mockSomeInterface struct {
 	controller	oglemock.Controller
@@ -20,7 +26,7 @@ type mockSomeInterface struct {
 }
 
 func NewMockSomeInterface(c oglemock.Controller,
-	desc string) *mockSomeInterface {
+	desc string) MockSomeInterface {
 	return &mockSomeInterface{
 		controller:	c,
 		description:	desc,
