@@ -225,11 +225,7 @@ func (c *controllerImpl) Finish() {
 func expectationMatches(exp *InternalExpectation, args []interface{}) bool {
 	matchers := exp.ArgMatchers
 	if len(args) != len(matchers) {
-		panic(
-			fmt.Sprintf(
-				"Wrong number of arguments: expected %d; got %d",
-				len(matchers),
-				len(args)))
+		panic("expectationMatches: len(args)")
 	}
 
 	// Check each matcher.
@@ -345,6 +341,20 @@ func (c *controllerImpl) HandleMethodCall(
 			fileName,
 			lineNumber,
 			errors.New("Unknown method: " + methodName))
+		return nil
+	}
+
+	// HACK(jacobsa): Make sure we got the correct number of arguments. This will
+	// need to be refined when issue #5 (variadic methods) is handled.
+	if len(args) != method.Type.NumIn() - 1 {
+		c.reporter.ReportFatalError(
+			fileName,
+			lineNumber,
+			errors.New(
+				fmt.Sprintf(
+					"Wrong number of arguments: expected %d; got %d",
+					method.Type.NumIn() - 1,
+					len(args))))
 		return nil
 	}
 
