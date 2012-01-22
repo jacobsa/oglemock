@@ -27,7 +27,8 @@ import (
 // See Controller.ExpectMethodCall below. It returns an expectation that can be
 // further modified (e.g. by calling WillOnce).
 //
-// If the arguments are of the wrong type, the function panics.
+// If the arguments are of the wrong type, the function reports a fatal error
+// and returns nil.
 type PartialExpecation func(...interface{}) Expectation
 
 // Controller represents an object that implements the central logic of
@@ -49,7 +50,7 @@ type Controller interface {
 	//         .WillOnce(Return(1, nil))
 	//
 	// If the mock object doesn't have a method of the supplied name, the
-	// function panics.
+	// function reports a fatal error and returns nil.
 	ExpectCall(
 		o MockObject,
 		methodName string,
@@ -73,7 +74,7 @@ type Controller interface {
 	//
 	// If the mock object doesn't have a method of the supplied name, the
 	// arguments are of the wrong type, or the action returns the wrong types,
-	// the function panics.
+	// the function reports a fatal error.
 	//
 	// HandleMethodCall is exported for the sake of mock implementations, and
 	// should not be used directly.
@@ -150,14 +151,22 @@ func (c *controllerImpl) ExpectCall(
 	oType := reflect.TypeOf(o)
 	method, ok := oType.MethodByName(methodName)
 	if !ok {
-		panic("Unknown method: " + methodName)
+		c.reporter.ReportFatalError(
+			fileName,
+			lineNumber,
+			errors.New("Unknown method: " + methodName))
+		return nil
 	}
 
 	partialAlreadyCalled := false
 	return func(args ...interface{}) Expectation {
 		// This function should only be called once.
 		if partialAlreadyCalled {
-			panic("Partial expectation called more than once.")
+			c.reporter.ReportFatalError(
+				fileName,
+				lineNumber,
+				errors.New("Partial expectation called more than once."))
+			return nil
 		}
 
 		partialAlreadyCalled = true
@@ -165,13 +174,17 @@ func (c *controllerImpl) ExpectCall(
 		// Make sure that the number of args is legal. Keep in mind that the
 		// method's type has an extra receiver arg.
 		if len(args) != method.Type.NumIn() - 1 {
-			panic(
-				fmt.Sprintf(
-					"Expectation for %s given wrong number of arguments: " +
+			c.reporter.ReportFatalError(
+				fileName,
+				lineNumber,
+				errors.New(
+					fmt.Sprintf(
+						"Expectation for %s given wrong number of arguments: " +
 						"expected %d, got %d.",
-					methodName,
-					method.Type.NumIn() - 1,
-					len(args)))
+						methodName,
+						method.Type.NumIn() - 1,
+						len(args))))
+			return nil
 		}
 
 		// Create an expectation and insert it into the controller's map.
@@ -212,11 +225,7 @@ func (c *controllerImpl) Finish() {
 func expectationMatches(exp *InternalExpectation, args []interface{}) bool {
 	matchers := exp.ArgMatchers
 	if len(args) != len(matchers) {
-		panic(
-			fmt.Sprintf(
-				"Wrong number of arguments: expected %d; got %d",
-				len(matchers),
-				len(args)))
+		panic("expectationMatches: len(args)")
 	}
 
 	// Check each matcher.
@@ -328,7 +337,25 @@ func (c *controllerImpl) HandleMethodCall(
 	oType := reflect.TypeOf(o)
 	method, ok := oType.MethodByName(methodName)
 	if !ok {
-		panic("Unknown method: " + methodName)
+		c.reporter.ReportFatalError(
+			fileName,
+			lineNumber,
+			errors.New("Unknown method: " + methodName))
+		return nil
+	}
+
+	// HACK(jacobsa): Make sure we got the correct number of arguments. This will
+	// need to be refined when issue #5 (variadic methods) is handled.
+	if len(args) != method.Type.NumIn() - 1 {
+		c.reporter.ReportFatalError(
+			fileName,
+			lineNumber,
+			errors.New(
+				fmt.Sprintf(
+					"Wrong number of arguments: expected %d; got %d",
+					method.Type.NumIn() - 1,
+					len(args))))
+		return nil
 	}
 
 	// Find an expectation matching this call.
