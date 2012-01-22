@@ -162,7 +162,11 @@ func (c *controllerImpl) ExpectCall(
 	return func(args ...interface{}) Expectation {
 		// This function should only be called once.
 		if partialAlreadyCalled {
-			panic("Partial expectation called more than once.")
+			c.reporter.ReportFatalError(
+				fileName,
+				lineNumber,
+				errors.New("Partial expectation called more than once."))
+			return nil
 		}
 
 		partialAlreadyCalled = true
@@ -170,13 +174,17 @@ func (c *controllerImpl) ExpectCall(
 		// Make sure that the number of args is legal. Keep in mind that the
 		// method's type has an extra receiver arg.
 		if len(args) != method.Type.NumIn() - 1 {
-			panic(
-				fmt.Sprintf(
-					"Expectation for %s given wrong number of arguments: " +
+			c.reporter.ReportFatalError(
+				fileName,
+				lineNumber,
+				errors.New(
+					fmt.Sprintf(
+						"Expectation for %s given wrong number of arguments: " +
 						"expected %d, got %d.",
-					methodName,
-					method.Type.NumIn() - 1,
-					len(args)))
+						methodName,
+						method.Type.NumIn() - 1,
+						len(args))))
+			return nil
 		}
 
 		// Create an expectation and insert it into the controller's map.
