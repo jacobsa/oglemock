@@ -143,7 +143,7 @@ func (t *ControllerTest) ExpectCallForUnknownMethod() {
 func (t *ControllerTest) PartialExpectationGivenWrongNumberOfArgs() {
 	ExpectEq(
 		nil,
-		t.controller.ExpectCall(t.mock1, "TwoIntsToString", "burrito", 117)(
+		t.controller.ExpectCall(t.mock1, "TwoIntsToString", "burrito.go", 117)(
 			17, 19, 23))
 
 	// A fatal error should be reported immediately.
