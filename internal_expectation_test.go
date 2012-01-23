@@ -231,7 +231,7 @@ func (t *InternalExpectationTest) OneTimeActionRejectsSignature() {
 	ExpectEq(112, r.lineNumber)
 	ExpectThat(r.err, Error(HasSubstr("arg 0")))
 	ExpectThat(r.err, Error(HasSubstr("expected float64")))
-	ExpectThat(r.err, Error(HasSubstr("got string")))
+	ExpectThat(r.err, Error(HasSubstr("given string")))
 }
 
 func (t *InternalExpectationTest) WillRepeatedlyCalledTwice() {
@@ -261,5 +261,5 @@ func (t *InternalExpectationTest) FallbackActionRejectsSignature() {
 	ExpectEq(112, r.lineNumber)
 	ExpectThat(r.err, Error(HasSubstr("arg 0")))
 	ExpectThat(r.err, Error(HasSubstr("expected float64")))
-	ExpectThat(r.err, Error(HasSubstr("got string")))
+	ExpectThat(r.err, Error(HasSubstr("given string")))
 }
