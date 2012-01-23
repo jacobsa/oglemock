@@ -59,8 +59,8 @@ func (t *IntegrationTest) UnexpectedCall() {
 	expectedLine := getLineNumber() - 1
 
 	// An error should have been reported.
-	AssertEq(1, t.reporter.errors, "%v", t.reporter.errors)
-	AssertEq(0, t.reporter.fatalErrors, "%v", t.reporter.fatalErrors)
+	AssertEq(1, len(t.reporter.errors), "%v", t.reporter.errors)
+	AssertEq(0, len(t.reporter.fatalErrors), "%v", t.reporter.fatalErrors)
 
 	r := t.reporter.errors[0]
 	ExpectEq("integration_test.go", r.fileName)
@@ -105,8 +105,8 @@ func (t *IntegrationTest) ExpectedCalls() {
 	ExpectEq(nil, err)
 
 	// Errors
-	AssertEq(0, t.reporter.errors, "%v", t.reporter.errors)
-	AssertEq(0, t.reporter.fatalErrors, "%v", t.reporter.fatalErrors)
+	AssertEq(0, len(t.reporter.errors), "%v", t.reporter.errors)
+	AssertEq(0, len(t.reporter.fatalErrors), "%v", t.reporter.fatalErrors)
 }
 
 func (t *IntegrationTest) WrongTypeForReturn() {
@@ -117,8 +117,8 @@ func (t *IntegrationTest) WrongTypeForReturn() {
 	expectedLine := getLineNumber() - 3
 
 	// Errors
-	AssertEq(0, t.reporter.errors, "%v", t.reporter.errors)
-	AssertEq(0, t.reporter.fatalErrors, "%v", t.reporter.fatalErrors)
+	AssertEq(0, len(t.reporter.errors), "%v", t.reporter.errors)
+	AssertEq(0, len(t.reporter.fatalErrors), "%v", t.reporter.fatalErrors)
 
 	r := t.reporter.errors[0]
 	ExpectEq("integration_test.go", r.fileName)
