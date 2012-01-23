@@ -146,35 +146,62 @@ func (t *InternalExpectationTest) BothKindsOfAction() {
 }
 
 func (t *InternalExpectationTest) TimesCalledWithHugeNumber() {
-	exp := t.makeExpectation(emptyReturnSig, []interface{}{}, "", 0)
+	exp := t.makeExpectation(emptyReturnSig, []interface{}{}, "taco.go", 112)
+	exp.Times(1 << 30)
 
-	ExpectThat(
-		func() { exp.Times(1 << 30) },
-		Panics(HasSubstr("Times: N must be at most 1000")))
+	AssertEq(1, len(t.reporter.fatalErrorsReported))
+	AssertEq(0, len(t.reporter.errorsReported))
+
+	r := t.reporter.fatalErrorsReported[0]
+	ExpectEq("taco.go", r.fileName)
+	ExpectEq(112, r.lineNumber)
+	ExpectThat(r.err, Error(HasSubstr("Times")))
+	ExpectThat(r.err, Error(HasSubstr("N must be at most 1000")))
 }
 
 func (t *InternalExpectationTest) TimesCalledTwice() {
-	exp := t.makeExpectation(emptyReturnSig, []interface{}{}, "", 0)
+	exp := t.makeExpectation(emptyReturnSig, []interface{}{}, "taco.go", 112)
+	exp.Times(17)
+	exp.Times(17)
 
-	ExpectThat(
-		func() { exp.Times(17).Times(17) },
-		Panics(HasSubstr("Times called more than")))
+	AssertEq(1, len(t.reporter.fatalErrorsReported))
+	AssertEq(0, len(t.reporter.errorsReported))
+
+	r := t.reporter.fatalErrorsReported[0]
+	ExpectEq("taco.go", r.fileName)
+	ExpectEq(112, r.lineNumber)
+	ExpectThat(r.err, Error(HasSubstr("Times")))
+	ExpectThat(r.err, Error(HasSubstr("more than once")))
 }
 
 func (t *InternalExpectationTest) TimesCalledAfterWillOnce() {
-	exp := t.makeExpectation(emptyReturnSig, []interface{}{}, "", 0)
+	exp := t.makeExpectation(emptyReturnSig, []interface{}{}, "taco.go", 112)
+	exp.WillOnce(Return())
+	exp.Times(17)
 
-	ExpectThat(
-		func() { exp.WillOnce(Return()).Times(17) },
-		Panics(HasSubstr("Times called after WillOnce")))
+	AssertEq(1, len(t.reporter.fatalErrorsReported))
+	AssertEq(0, len(t.reporter.errorsReported))
+
+	r := t.reporter.fatalErrorsReported[0]
+	ExpectEq("taco.go", r.fileName)
+	ExpectEq(112, r.lineNumber)
+	ExpectThat(r.err, Error(HasSubstr("Times")))
+	ExpectThat(r.err, Error(HasSubstr("after WillOnce")))
 }
 
 func (t *InternalExpectationTest) TimesCalledAfterWillRepeatedly() {
-	exp := t.makeExpectation(emptyReturnSig, []interface{}{}, "", 0)
+	exp := t.makeExpectation(emptyReturnSig, []interface{}{}, "taco.go", 112)
+	exp.WillRepeatedly(Return())
+	exp.Times(17)
 
-	ExpectThat(
-		func() { exp.WillRepeatedly(Return()).Times(17) },
-		Panics(HasSubstr("Times called after WillRepeatedly")))
+	AssertEq(1, len(t.reporter.fatalErrorsReported))
+	AssertEq(0, len(t.reporter.errorsReported))
+
+	r := t.reporter.fatalErrorsReported[0]
+	ExpectEq("taco.go", r.fileName)
+	ExpectEq(112, r.lineNumber)
+	ExpectThat(r.err, Error(HasSubstr("Times")))
+	ExpectThat(r.err, Error(HasSubstr("after WillRepeatedly")))
 }
 
 func (t *InternalExpectationTest) WillOnceCalledAfterWillRepeatedly() {
