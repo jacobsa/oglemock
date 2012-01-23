@@ -118,9 +118,9 @@ func (t *IntegrationTest) WrongTypeForReturn() {
 
 	// Errors
 	AssertEq(0, len(t.reporter.errors), "%v", t.reporter.errors)
-	AssertEq(0, len(t.reporter.fatalErrors), "%v", t.reporter.fatalErrors)
+	AssertEq(1, len(t.reporter.fatalErrors), "%v", t.reporter.fatalErrors)
 
-	r := t.reporter.errors[0]
+	r := t.reporter.fatalErrors[0]
 	ExpectEq("integration_test.go", r.fileName)
 	ExpectEq(expectedLine, r.lineNumber)
 	ExpectThat(r.err, Error(HasSubstr("Return")))
