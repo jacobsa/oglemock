@@ -108,3 +108,25 @@ func (t *IntegrationTest) ExpectedCalls() {
 	AssertEq(0, t.reporter.errorsReported, "%v", t.reporter.errorsReported)
 	AssertEq(0, t.reporter.fatalErrorsReported, "%v", t.reporter.fatalErrorsReported)
 }
+
+func (t *IntegrationTest) WrongTypeForReturn() {
+	t.controller.ExpectCall(t.reader, "Read", "", 112)(nil).
+		WillOnce(oglemock.Return(0, errors.New(""))).
+		WillOnce(oglemock.Return("taco", errors.New(""))).
+		WillOnce(oglemock.Return(0, errors.New("")))
+
+	expectedLine := getLineNumber() - 3
+
+	// Errors
+	AssertEq(0, t.reporter.errorsReported, "%v", t.reporter.errorsReported)
+	AssertEq(0, t.reporter.fatalErrorsReported, "%v", t.reporter.fatalErrorsReported)
+
+	r := t.reporter.errorsReported[0]
+	ExpectEq("integration_test.go", r.fileName)
+	ExpectEq(expectedLine, r.lineNumber)
+	ExpectThat(r.err, Error(HasSubstr("Return")))
+	ExpectThat(r.err, Error(HasSubstr("wrong")))
+	ExpectThat(r.err, Error(HasSubstr("type")))
+	ExpectThat(r.err, Error(HasSubstr("int")))
+	ExpectThat(r.err, Error(HasSubstr("string")))
+}
