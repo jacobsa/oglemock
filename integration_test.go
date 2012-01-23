@@ -46,7 +46,7 @@ func (t *IntegrationTest) SetUp(c *TestInfo) {
 // Tests
 ////////////////////////////////////////////////////////////
 
-func (t *IntegrationTest) ZeroValuesForScalars() {
+func (t *IntegrationTest) ZeroValues() {
 	// Make an unexpected call.
 	n, err := t.reader.Read([]uint8{})
 
