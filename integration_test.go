@@ -43,8 +43,8 @@ type IntegrationTest struct {
 func init() { RegisterTestSuite(&IntegrationTest{}) }
 
 func (t *IntegrationTest) SetUp(c *TestInfo) {
-	t.reporter.errorsReported = make([]errorReport, 0)
-	t.reporter.fatalErrorsReported = make([]errorReport, 0)
+	t.reporter.errors = make([]errorReport, 0)
+	t.reporter.fatalErrors = make([]errorReport, 0)
 	t.controller = oglemock.NewController(&t.reporter)
 
 	t.reader = mock_io.NewMockReader(t.controller, "")
@@ -59,10 +59,10 @@ func (t *IntegrationTest) UnexpectedCall() {
 	expectedLine := getLineNumber() - 1
 
 	// An error should have been reported.
-	AssertEq(1, t.reporter.errorsReported, "%v", t.reporter.errorsReported)
-	AssertEq(0, t.reporter.fatalErrorsReported, "%v", t.reporter.fatalErrorsReported)
+	AssertEq(1, t.reporter.errors, "%v", t.reporter.errors)
+	AssertEq(0, t.reporter.fatalErrors, "%v", t.reporter.fatalErrors)
 
-	r := t.reporter.errorsReported[0]
+	r := t.reporter.errors[0]
 	ExpectEq("integration_test.go", r.fileName)
 	ExpectEq(expectedLine, r.lineNumber)
 	ExpectThat(r.err, Error(HasSubstr("Unexpected")))
@@ -105,8 +105,8 @@ func (t *IntegrationTest) ExpectedCalls() {
 	ExpectEq(nil, err)
 
 	// Errors
-	AssertEq(0, t.reporter.errorsReported, "%v", t.reporter.errorsReported)
-	AssertEq(0, t.reporter.fatalErrorsReported, "%v", t.reporter.fatalErrorsReported)
+	AssertEq(0, t.reporter.errors, "%v", t.reporter.errors)
+	AssertEq(0, t.reporter.fatalErrors, "%v", t.reporter.fatalErrors)
 }
 
 func (t *IntegrationTest) WrongTypeForReturn() {
@@ -117,10 +117,10 @@ func (t *IntegrationTest) WrongTypeForReturn() {
 	expectedLine := getLineNumber() - 3
 
 	// Errors
-	AssertEq(0, t.reporter.errorsReported, "%v", t.reporter.errorsReported)
-	AssertEq(0, t.reporter.fatalErrorsReported, "%v", t.reporter.fatalErrorsReported)
+	AssertEq(0, t.reporter.errors, "%v", t.reporter.errors)
+	AssertEq(0, t.reporter.fatalErrors, "%v", t.reporter.fatalErrors)
 
-	r := t.reporter.errorsReported[0]
+	r := t.reporter.errors[0]
 	ExpectEq("integration_test.go", r.fileName)
 	ExpectEq(expectedLine, r.lineNumber)
 	ExpectThat(r.err, Error(HasSubstr("Return")))

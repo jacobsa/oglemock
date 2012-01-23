@@ -36,8 +36,8 @@ type InternalExpectationTest struct {
 func init() { RegisterTestSuite(&InternalExpectationTest{}) }
 
 func (t *InternalExpectationTest) SetUp(c *TestInfo) {
-	t.reporter.errorsReported = make([]errorReport, 0)
-	t.reporter.fatalErrorsReported = make([]errorReport, 0)
+	t.reporter.errors = make([]errorReport, 0)
+	t.reporter.fatalErrors = make([]errorReport, 0)
 }
 
 func (t *InternalExpectationTest) makeExpectation(
@@ -149,10 +149,10 @@ func (t *InternalExpectationTest) TimesCalledWithHugeNumber() {
 	exp := t.makeExpectation(emptyReturnSig, []interface{}{}, "taco.go", 112)
 	exp.Times(1 << 30)
 
-	AssertEq(1, len(t.reporter.fatalErrorsReported))
-	AssertEq(0, len(t.reporter.errorsReported))
+	AssertEq(1, len(t.reporter.fatalErrors))
+	AssertEq(0, len(t.reporter.errors))
 
-	r := t.reporter.fatalErrorsReported[0]
+	r := t.reporter.fatalErrors[0]
 	ExpectEq("taco.go", r.fileName)
 	ExpectEq(112, r.lineNumber)
 	ExpectThat(r.err, Error(HasSubstr("Times")))
@@ -164,10 +164,10 @@ func (t *InternalExpectationTest) TimesCalledTwice() {
 	exp.Times(17)
 	exp.Times(17)
 
-	AssertEq(1, len(t.reporter.fatalErrorsReported))
-	AssertEq(0, len(t.reporter.errorsReported))
+	AssertEq(1, len(t.reporter.fatalErrors))
+	AssertEq(0, len(t.reporter.errors))
 
-	r := t.reporter.fatalErrorsReported[0]
+	r := t.reporter.fatalErrors[0]
 	ExpectEq("taco.go", r.fileName)
 	ExpectEq(112, r.lineNumber)
 	ExpectThat(r.err, Error(HasSubstr("Times")))
@@ -179,10 +179,10 @@ func (t *InternalExpectationTest) TimesCalledAfterWillOnce() {
 	exp.WillOnce(Return())
 	exp.Times(17)
 
-	AssertEq(1, len(t.reporter.fatalErrorsReported))
-	AssertEq(0, len(t.reporter.errorsReported))
+	AssertEq(1, len(t.reporter.fatalErrors))
+	AssertEq(0, len(t.reporter.errors))
 
-	r := t.reporter.fatalErrorsReported[0]
+	r := t.reporter.fatalErrors[0]
 	ExpectEq("taco.go", r.fileName)
 	ExpectEq(112, r.lineNumber)
 	ExpectThat(r.err, Error(HasSubstr("Times")))
@@ -194,10 +194,10 @@ func (t *InternalExpectationTest) TimesCalledAfterWillRepeatedly() {
 	exp.WillRepeatedly(Return())
 	exp.Times(17)
 
-	AssertEq(1, len(t.reporter.fatalErrorsReported))
-	AssertEq(0, len(t.reporter.errorsReported))
+	AssertEq(1, len(t.reporter.fatalErrors))
+	AssertEq(0, len(t.reporter.errors))
 
-	r := t.reporter.fatalErrorsReported[0]
+	r := t.reporter.fatalErrors[0]
 	ExpectEq("taco.go", r.fileName)
 	ExpectEq(112, r.lineNumber)
 	ExpectThat(r.err, Error(HasSubstr("Times")))
@@ -209,10 +209,10 @@ func (t *InternalExpectationTest) WillOnceCalledAfterWillRepeatedly() {
 	exp.WillRepeatedly(Return())
 	exp.WillOnce(Return())
 
-	AssertEq(1, len(t.reporter.fatalErrorsReported))
-	AssertEq(0, len(t.reporter.errorsReported))
+	AssertEq(1, len(t.reporter.fatalErrors))
+	AssertEq(0, len(t.reporter.errors))
 
-	r := t.reporter.fatalErrorsReported[0]
+	r := t.reporter.fatalErrors[0]
 	ExpectEq("taco.go", r.fileName)
 	ExpectEq(112, r.lineNumber)
 	ExpectThat(r.err, Error(HasSubstr("WillOnce")))
@@ -223,10 +223,10 @@ func (t *InternalExpectationTest) OneTimeActionRejectsSignature() {
 	exp := t.makeExpectation(float64ReturnSig, []interface{}{}, "taco.go", 112)
 	exp.WillOnce(Return("taco"))
 
-	AssertEq(1, len(t.reporter.fatalErrorsReported))
-	AssertEq(0, len(t.reporter.errorsReported))
+	AssertEq(1, len(t.reporter.fatalErrors))
+	AssertEq(0, len(t.reporter.errors))
 
-	r := t.reporter.fatalErrorsReported[0]
+	r := t.reporter.fatalErrors[0]
 	ExpectEq("taco.go", r.fileName)
 	ExpectEq(112, r.lineNumber)
 	ExpectThat(r.err, Error(HasSubstr("arg 0")))
@@ -239,10 +239,10 @@ func (t *InternalExpectationTest) WillRepeatedlyCalledTwice() {
 	exp.WillRepeatedly(Return())
 	exp.WillRepeatedly(Return())
 
-	AssertEq(1, len(t.reporter.fatalErrorsReported))
-	AssertEq(0, len(t.reporter.errorsReported))
+	AssertEq(1, len(t.reporter.fatalErrors))
+	AssertEq(0, len(t.reporter.errors))
 
-	r := t.reporter.fatalErrorsReported[0]
+	r := t.reporter.fatalErrors[0]
 	ExpectEq("taco.go", r.fileName)
 	ExpectEq(112, r.lineNumber)
 	ExpectThat(r.err, Error(HasSubstr("WillRepeatedly")))
@@ -253,10 +253,10 @@ func (t *InternalExpectationTest) FallbackActionRejectsSignature() {
 	exp := t.makeExpectation(float64ReturnSig, []interface{}{}, "taco.go", 112)
 	exp.WillRepeatedly(Return("taco"))
 
-	AssertEq(1, len(t.reporter.fatalErrorsReported))
-	AssertEq(0, len(t.reporter.errorsReported))
+	AssertEq(1, len(t.reporter.fatalErrors))
+	AssertEq(0, len(t.reporter.errors))
 
-	r := t.reporter.fatalErrorsReported[0]
+	r := t.reporter.fatalErrors[0]
 	ExpectEq("taco.go", r.fileName)
 	ExpectEq(112, r.lineNumber)
 	ExpectThat(r.err, Error(HasSubstr("arg 0")))
