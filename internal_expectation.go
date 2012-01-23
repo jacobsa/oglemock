@@ -16,6 +16,7 @@
 package oglemock
 
 import (
+	"errors"
 	"fmt"
 	"github.com/jacobsa/oglematchers"
 	"reflect"
@@ -73,6 +74,7 @@ func InternalNewExpectation(
 
 	// Store fields that can be stored directly.
 	result.methodSignature = methodSignature
+	result.errorReporter = reporter
 	result.FileName = fileName
 	result.LineNumber = lineNumber
 
@@ -97,21 +99,25 @@ func InternalNewExpectation(
 func (e *InternalExpectation) Times(n uint) Expectation {
 	// It is illegal to call this more than once.
 	if e.ExpectedNumMatches != -1 {
-		panic("Times called more than once.")
+		e.reportFatalError("Times called more than once.")
+		return nil
 	}
 
 	// It is illegal to call this after any actions are configured.
 	if len(e.OneTimeActions) != 0 {
-		panic("Times called after WillOnce.")
+		e.reportFatalError("Times called after WillOnce.")
+		return nil
 	}
 
 	if e.FallbackAction != nil {
-		panic("Times called after WillRepeatedly.")
+		e.reportFatalError("Times called after WillRepeatedly.")
+		return nil
 	}
 
 	// Make sure the number is reasonable (and will fit in an int).
 	if n > 1000 {
-		panic("Expectation.Times: N must be at most 1000")
+		e.reportFatalError("Expectation.Times: N must be at most 1000")
+		return nil
 	}
 
 	e.ExpectedNumMatches = int(n)
@@ -121,12 +127,14 @@ func (e *InternalExpectation) Times(n uint) Expectation {
 func (e *InternalExpectation) WillOnce(a Action) Expectation {
 	// It is illegal to call this after WillRepeatedly.
 	if e.FallbackAction != nil {
-		panic("WillOnce called after WillRepeatedly.")
+		e.reportFatalError("WillOnce called after WillRepeatedly.")
+		return nil
 	}
 
 	// Make sure the action is okay with the mock method's signature.
 	if err := a.CheckType(e.methodSignature); err != nil {
-		panic(fmt.Sprintf("WillOnce given invalid action: %v", err))
+		e.reportFatalError(fmt.Sprintf("WillOnce given invalid action: %v", err))
+		return nil
 	}
 
 	// Store the action.
@@ -138,16 +146,22 @@ func (e *InternalExpectation) WillOnce(a Action) Expectation {
 func (e *InternalExpectation) WillRepeatedly(a Action) Expectation {
 	// It is illegal to call this twice.
 	if e.FallbackAction != nil {
-		panic("WillRepeatedly called more than once.")
+		e.reportFatalError("WillRepeatedly called more than once.")
+		return nil
 	}
 
 	// Make sure the action is okay with the mock method's signature.
 	if err := a.CheckType(e.methodSignature); err != nil {
-		panic(fmt.Sprintf("WillRepeatedly given invalid action: %v", err))
+		e.reportFatalError(fmt.Sprintf("WillRepeatedly given invalid action: %v", err))
+		return nil
 	}
 
 	// Store the action.
 	e.FallbackAction = a
 
 	return e
+}
+
+func (e *InternalExpectation) reportFatalError(errorText string) {
+	e.errorReporter.ReportFatalError(e.FileName, e.LineNumber, errors.New(errorText))
 }
