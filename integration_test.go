@@ -18,6 +18,7 @@ package oglemock_test
 import (
 	. "github.com/jacobsa/oglematchers"
 	. "github.com/jacobsa/ogletest"
+	"errors"
 	"github.com/jacobsa/oglemock"
 	"github.com/jacobsa/oglemock/sample/mock_io"
 	"runtime"
@@ -76,4 +77,34 @@ func (t *IntegrationTest) ZeroValues() {
 	// Check the return values.
 	ExpectEq(0, n)
 	ExpectEq(nil, err)
+}
+
+func (t *IntegrationTest) ExpectedCalls() {
+	// Expectations
+	t.controller.ExpectCall(t.reader, "Read", "", 112)(nil).
+		WillOnce(oglemock.Return(17, nil)).
+		WillOnce(oglemock.Return(19, nil))
+
+	t.controller.ExpectCall(t.reader, "Read", "", 112)(Not(Equals(nil))).
+		WillOnce(oglemock.Return(23, errors.New("taco")))
+
+  // Calls
+	var n int
+	var err error
+
+	n, err = t.reader.Read(nil)
+	ExpectEq(17, n)
+	ExpectEq(nil, err)
+
+	n, err = t.reader.Read([]byte{})
+	ExpectEq(23, n)
+	ExpectThat(err, Error(Equals("taco")))
+
+	n, err = t.reader.Read(nil)
+	ExpectEq(19, n)
+	ExpectEq(nil, err)
+
+	// Errors
+	AssertEq(0, t.reporter.errorsReported, "%v", t.reporter.errorsReported)
+	AssertEq(0, t.reporter.fatalErrorsReported, "%v", t.reporter.fatalErrorsReported)
 }
