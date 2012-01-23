@@ -112,8 +112,7 @@ func (t *IntegrationTest) ExpectedCalls() {
 func (t *IntegrationTest) WrongTypeForReturn() {
 	t.controller.ExpectCall(t.reader, "Read", "", 112)(nil).
 		WillOnce(oglemock.Return(0, errors.New(""))).
-		WillOnce(oglemock.Return("taco", errors.New(""))).
-		WillOnce(oglemock.Return(0, errors.New("")))
+		WillOnce(oglemock.Return("taco", errors.New("")))
 
 	expectedLine := getLineNumber() - 3
 
