@@ -16,14 +16,21 @@
 package oglemock_test
 
 import (
+	. "github.com/jacobsa/oglematchers"
 	. "github.com/jacobsa/ogletest"
 	"github.com/jacobsa/oglemock"
 	"github.com/jacobsa/oglemock/sample/mock_io"
+	"runtime"
 )
 
 ////////////////////////////////////////////////////////////
 // Helpers
 ////////////////////////////////////////////////////////////
+
+func getLineNumber() int {
+	_, _, line, _ := runtime.Caller(1)
+	return line
+}
 
 type IntegrationTest struct {
 	reporter fakeErrorReporter
@@ -45,6 +52,22 @@ func (t *IntegrationTest) SetUp(c *TestInfo) {
 ////////////////////////////////////////////////////////////
 // Tests
 ////////////////////////////////////////////////////////////
+
+func (t *IntegrationTest) UnexpectedCall() {
+	t.reader.Read([]uint8{1, 2, 3})
+	expectedLine := getLineNumber() - 1
+
+	// An error should have been reported.
+	AssertEq(1, t.reporter.errorsReported, "%v", t.reporter.errorsReported)
+	AssertEq(0, t.reporter.fatalErrorsReported, "%v", t.reporter.fatalErrorsReported)
+
+	r := t.reporter.errorsReported[0]
+	ExpectEq("integration_test.go", r.fileName)
+	ExpectEq(expectedLine, r.lineNumber)
+	ExpectThat(r.err, Error(HasSubstr("Unexpected")))
+	ExpectThat(r.err, Error(HasSubstr("Read")))
+	ExpectThat(r.err, Error(HasSubstr("1, 2, 3")))
+}
 
 func (t *IntegrationTest) ZeroValues() {
 	// Make an unexpected call.
