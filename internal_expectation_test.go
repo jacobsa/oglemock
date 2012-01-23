@@ -30,9 +30,23 @@ var emptyReturnSig reflect.Type = reflect.TypeOf(func(i int) {})
 var float64ReturnSig reflect.Type = reflect.TypeOf(func(i int) float64 { return 17.0 })
 
 type InternalExpectationTest struct {
+	reporter fakeErrorReporter
 }
 
 func init() { RegisterTestSuite(&InternalExpectationTest{}) }
+
+func (t *InternalExpectationTest) SetUp(c *TestInfo) {
+	t.reporter.errorsReported = make([]errorReport, 0)
+	t.reporter.fatalErrorsReported = make([]errorReport, 0)
+}
+
+func (t *InternalExpectationTest) makeExpectation(
+	sig reflect.Type,
+	args[]interface{},
+	fileName string,
+	lineNumber int) *InternalExpectation {
+	return InternalNewExpectation(&t.reporter, sig, args, fileName, lineNumber)
+}
 
 ////////////////////////////////////////////////////////////
 // Tests
@@ -40,7 +54,7 @@ func init() { RegisterTestSuite(&InternalExpectationTest{}) }
 
 func (t *InternalExpectationTest) StoresFileNameAndLineNumber() {
 	args := []interface{}{}
-	exp := InternalNewExpectation(emptyReturnSig, args, "taco", 17)
+	exp := t.makeExpectation(emptyReturnSig, args, "taco", 17)
 
 	ExpectThat(exp.FileName, Equals("taco"))
 	ExpectThat(exp.LineNumber, Equals(17))
@@ -48,14 +62,14 @@ func (t *InternalExpectationTest) StoresFileNameAndLineNumber() {
 
 func (t *InternalExpectationTest) NoArgs() {
 	args := []interface{}{}
-	exp := InternalNewExpectation(emptyReturnSig, args, "", 0)
+	exp := t.makeExpectation(emptyReturnSig, args, "", 0)
 
 	ExpectThat(len(exp.ArgMatchers), Equals(0))
 }
 
 func (t *InternalExpectationTest) MixOfMatchersAndNonMatchers() {
 	args := []interface{}{Equals(17), 19, Equals(23)}
-	exp := InternalNewExpectation(emptyReturnSig, args, "", 0)
+	exp := t.makeExpectation(emptyReturnSig, args, "", 0)
 
 	// Matcher args
 	ExpectThat(len(exp.ArgMatchers), Equals(3))
@@ -77,20 +91,20 @@ func (t *InternalExpectationTest) MixOfMatchersAndNonMatchers() {
 }
 
 func (t *InternalExpectationTest) NoTimes() {
-	exp := InternalNewExpectation(emptyReturnSig, []interface{}{}, "", 0)
+	exp := t.makeExpectation(emptyReturnSig, []interface{}{}, "", 0)
 
 	ExpectThat(exp.ExpectedNumMatches, Equals(-1))
 }
 
 func (t *InternalExpectationTest) TimesN() {
-	exp := InternalNewExpectation(emptyReturnSig, []interface{}{}, "", 0)
+	exp := t.makeExpectation(emptyReturnSig, []interface{}{}, "", 0)
 	exp.Times(17)
 
 	ExpectThat(exp.ExpectedNumMatches, Equals(17))
 }
 
 func (t *InternalExpectationTest) NoActions() {
-	exp := InternalNewExpectation(emptyReturnSig, []interface{}{}, "", 0)
+	exp := t.makeExpectation(emptyReturnSig, []interface{}{}, "", 0)
 
 	ExpectThat(len(exp.OneTimeActions), Equals(0))
 	ExpectThat(exp.FallbackAction, Equals(nil))
@@ -100,7 +114,7 @@ func (t *InternalExpectationTest) WillOnce() {
 	action0 := Return(17.0)
 	action1 := Return(19.0)
 
-	exp := InternalNewExpectation(float64ReturnSig, []interface{}{}, "", 0)
+	exp := t.makeExpectation(float64ReturnSig, []interface{}{}, "", 0)
 	exp.WillOnce(action0).WillOnce(action1)
 
 	ExpectThat(len(exp.OneTimeActions), Equals(2))
@@ -111,7 +125,7 @@ func (t *InternalExpectationTest) WillOnce() {
 func (t *InternalExpectationTest) WillRepeatedly() {
 	action := Return(17.0)
 
-	exp := InternalNewExpectation(float64ReturnSig, []interface{}{}, "", 0)
+	exp := t.makeExpectation(float64ReturnSig, []interface{}{}, "", 0)
 	exp.WillRepeatedly(action)
 
 	ExpectThat(exp.FallbackAction, Equals(action))
@@ -122,7 +136,7 @@ func (t *InternalExpectationTest) BothKindsOfAction() {
 	action1 := Return(19.0)
 	action2 := Return(23.0)
 
-	exp := InternalNewExpectation(float64ReturnSig, []interface{}{}, "", 0)
+	exp := t.makeExpectation(float64ReturnSig, []interface{}{}, "", 0)
 	exp.WillOnce(action0).WillOnce(action1).WillRepeatedly(action2)
 
 	ExpectThat(len(exp.OneTimeActions), Equals(2))
@@ -132,67 +146,120 @@ func (t *InternalExpectationTest) BothKindsOfAction() {
 }
 
 func (t *InternalExpectationTest) TimesCalledWithHugeNumber() {
-	exp := InternalNewExpectation(emptyReturnSig, []interface{}{}, "", 0)
+	exp := t.makeExpectation(emptyReturnSig, []interface{}{}, "taco.go", 112)
+	exp.Times(1 << 30)
 
-	ExpectThat(
-		func() { exp.Times(1 << 30) },
-		Panics(HasSubstr("Times: N must be at most 1000")))
+	AssertEq(1, len(t.reporter.fatalErrorsReported))
+	AssertEq(0, len(t.reporter.errorsReported))
+
+	r := t.reporter.fatalErrorsReported[0]
+	ExpectEq("taco.go", r.fileName)
+	ExpectEq(112, r.lineNumber)
+	ExpectThat(r.err, Error(HasSubstr("Times")))
+	ExpectThat(r.err, Error(HasSubstr("N must be at most 1000")))
 }
 
 func (t *InternalExpectationTest) TimesCalledTwice() {
-	exp := InternalNewExpectation(emptyReturnSig, []interface{}{}, "", 0)
+	exp := t.makeExpectation(emptyReturnSig, []interface{}{}, "taco.go", 112)
+	exp.Times(17)
+	exp.Times(17)
 
-	ExpectThat(
-		func() { exp.Times(17).Times(17) },
-		Panics(HasSubstr("Times called more than")))
+	AssertEq(1, len(t.reporter.fatalErrorsReported))
+	AssertEq(0, len(t.reporter.errorsReported))
+
+	r := t.reporter.fatalErrorsReported[0]
+	ExpectEq("taco.go", r.fileName)
+	ExpectEq(112, r.lineNumber)
+	ExpectThat(r.err, Error(HasSubstr("Times")))
+	ExpectThat(r.err, Error(HasSubstr("more than once")))
 }
 
 func (t *InternalExpectationTest) TimesCalledAfterWillOnce() {
-	exp := InternalNewExpectation(emptyReturnSig, []interface{}{}, "", 0)
+	exp := t.makeExpectation(emptyReturnSig, []interface{}{}, "taco.go", 112)
+	exp.WillOnce(Return())
+	exp.Times(17)
 
-	ExpectThat(
-		func() { exp.WillOnce(Return()).Times(17) },
-		Panics(HasSubstr("Times called after WillOnce")))
+	AssertEq(1, len(t.reporter.fatalErrorsReported))
+	AssertEq(0, len(t.reporter.errorsReported))
+
+	r := t.reporter.fatalErrorsReported[0]
+	ExpectEq("taco.go", r.fileName)
+	ExpectEq(112, r.lineNumber)
+	ExpectThat(r.err, Error(HasSubstr("Times")))
+	ExpectThat(r.err, Error(HasSubstr("after WillOnce")))
 }
 
 func (t *InternalExpectationTest) TimesCalledAfterWillRepeatedly() {
-	exp := InternalNewExpectation(emptyReturnSig, []interface{}{}, "", 0)
+	exp := t.makeExpectation(emptyReturnSig, []interface{}{}, "taco.go", 112)
+	exp.WillRepeatedly(Return())
+	exp.Times(17)
 
-	ExpectThat(
-		func() { exp.WillRepeatedly(Return()).Times(17) },
-		Panics(HasSubstr("Times called after WillRepeatedly")))
+	AssertEq(1, len(t.reporter.fatalErrorsReported))
+	AssertEq(0, len(t.reporter.errorsReported))
+
+	r := t.reporter.fatalErrorsReported[0]
+	ExpectEq("taco.go", r.fileName)
+	ExpectEq(112, r.lineNumber)
+	ExpectThat(r.err, Error(HasSubstr("Times")))
+	ExpectThat(r.err, Error(HasSubstr("after WillRepeatedly")))
 }
 
 func (t *InternalExpectationTest) WillOnceCalledAfterWillRepeatedly() {
-	exp := InternalNewExpectation(emptyReturnSig, []interface{}{}, "", 0)
+	exp := t.makeExpectation(emptyReturnSig, []interface{}{}, "taco.go", 112)
+	exp.WillRepeatedly(Return())
+	exp.WillOnce(Return())
 
-	ExpectThat(
-		func() { exp.WillRepeatedly(Return()).WillOnce(Return()) },
-		Panics(HasSubstr("WillOnce called after WillRepeatedly")))
+	AssertEq(1, len(t.reporter.fatalErrorsReported))
+	AssertEq(0, len(t.reporter.errorsReported))
+
+	r := t.reporter.fatalErrorsReported[0]
+	ExpectEq("taco.go", r.fileName)
+	ExpectEq(112, r.lineNumber)
+	ExpectThat(r.err, Error(HasSubstr("WillOnce")))
+	ExpectThat(r.err, Error(HasSubstr("after WillRepeatedly")))
 }
 
 func (t *InternalExpectationTest) OneTimeActionRejectsSignature() {
-	action := Return("taco")
-	exp := InternalNewExpectation(float64ReturnSig, []interface{}{}, "", 0)
+	exp := t.makeExpectation(float64ReturnSig, []interface{}{}, "taco.go", 112)
+	exp.WillOnce(Return("taco"))
 
-	ExpectThat(
-		func() { exp.WillOnce(action) },
-		Panics(HasSubstr("arg 0; expected float64")))
+	AssertEq(1, len(t.reporter.fatalErrorsReported))
+	AssertEq(0, len(t.reporter.errorsReported))
+
+	r := t.reporter.fatalErrorsReported[0]
+	ExpectEq("taco.go", r.fileName)
+	ExpectEq(112, r.lineNumber)
+	ExpectThat(r.err, Error(HasSubstr("arg 0")))
+	ExpectThat(r.err, Error(HasSubstr("expected float64")))
+	ExpectThat(r.err, Error(HasSubstr("given string")))
 }
 
 func (t *InternalExpectationTest) WillRepeatedlyCalledTwice() {
-	exp := InternalNewExpectation(emptyReturnSig, []interface{}{}, "", 0)
+	exp := t.makeExpectation(emptyReturnSig, []interface{}{}, "taco.go", 112)
+	exp.WillRepeatedly(Return())
+	exp.WillRepeatedly(Return())
 
-	ExpectThat(
-		func() { exp.WillRepeatedly(Return()).WillRepeatedly(Return()) },
-		Panics(HasSubstr("WillRepeatedly called more than once")))
+	AssertEq(1, len(t.reporter.fatalErrorsReported))
+	AssertEq(0, len(t.reporter.errorsReported))
+
+	r := t.reporter.fatalErrorsReported[0]
+	ExpectEq("taco.go", r.fileName)
+	ExpectEq(112, r.lineNumber)
+	ExpectThat(r.err, Error(HasSubstr("WillRepeatedly")))
+	ExpectThat(r.err, Error(HasSubstr("once")))
 }
 
 func (t *InternalExpectationTest) FallbackActionRejectsSignature() {
-	action := Return("taco")
-	exp := InternalNewExpectation(float64ReturnSig, []interface{}{}, "", 0)
+	exp := t.makeExpectation(float64ReturnSig, []interface{}{}, "taco.go", 112)
+	exp.WillRepeatedly(Return("taco"))
 
-	ExpectThat(
-		func() { exp.WillRepeatedly(action) },
-		Panics(HasSubstr("arg 0; expected float64")))
+	AssertEq(1, len(t.reporter.fatalErrorsReported))
+	AssertEq(0, len(t.reporter.errorsReported))
+
+	r := t.reporter.fatalErrorsReported[0]
+	ExpectEq("taco.go", r.fileName)
+	ExpectEq(112, r.lineNumber)
+	ExpectThat(r.err, Error(HasSubstr("arg 0")))
+	ExpectThat(r.err, Error(HasSubstr("expected float64")))
+	ExpectThat(r.err, Error(HasSubstr("given string")))
 }
