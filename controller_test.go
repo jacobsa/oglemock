@@ -80,6 +80,7 @@ type ControllerTest struct {
 
 func (t *ControllerTest) SetUp(c *TestInfo) {
 	t.reporter.errorsReported = make([]errorReport, 0)
+	t.reporter.fatalErrorsReported = make([]errorReport, 0)
 	t.controller = NewController(&t.reporter)
 
 	t.mock1 = &trivialMockObject{17, "taco"}
