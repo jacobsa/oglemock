@@ -31,6 +31,10 @@ type InternalExpectation struct {
 	// checking action types.
 	methodSignature reflect.Type
 
+	// An error reporter to use for reporting errors in the way that expectations
+	// are set.
+	errorReporter ErrorReporter
+
 	// Matchers that the arguments to the mock method must satisfy in order to
 	// match this expectation.
 	ArgMatchers []oglematchers.Matcher
@@ -60,6 +64,7 @@ type InternalExpectation struct {
 // InternalNewExpectation is exported for purposes of testing only. You should
 // not touch it.
 func InternalNewExpectation(
+	reporter ErrorReporter,
 	methodSignature reflect.Type,
 	args []interface{},
 	fileName string,

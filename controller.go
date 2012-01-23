@@ -188,7 +188,13 @@ func (c *controllerImpl) ExpectCall(
 		}
 
 		// Create an expectation and insert it into the controller's map.
-		exp := InternalNewExpectation(method.Type, args, fileName, lineNumber)
+		exp := InternalNewExpectation(
+			c.reporter,
+			method.Type,
+			args,
+			fileName,
+			lineNumber)
+
 		c.addExpectation(o, methodName, exp)
 
 		// Return the expectation to the user.
