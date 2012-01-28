@@ -99,17 +99,11 @@ import (
 				panic(fmt.Sprintf("{{$structName}}.{{.Name}}: invalid return values: %v", retVals))
 			}
 
-			{{if $outputTypes}}
-				var v reflect.Value
-			{{end}}
-
 			{{range $i, $type := $outputTypes}}
 				// o{{$i}} {{getTypeString $type}}
-				v = reflect.ValueOf(retVals[{{$i}}])
-				if v.Type() != reflect.TypeOf(o{{$i}}) {
-					panic(fmt.Sprintf("{{$structName}}.{{.Name}}: invalid return value {{$i}}: %v", v))
+				if retVals[{{$i}}] != nil {
+					o{{$i}} = retVals[{{$i}}].({{getTypeString $type}})
 				}
-				o{{$i}} = v.Interface().({{getTypeString $type}})
 			{{end}}
 
 			return
@@ -277,7 +271,6 @@ func getImports(interfaces []reflect.Type) importMap {
 	// itself.
 	imports["fmt"] = "fmt"
 	imports["oglemock"] = "github.com/jacobsa/oglemock"
-	imports["reflect"] = "reflect"
 	imports["runtime"] = "runtime"
 	imports["unsafe"] = "unsafe"
 

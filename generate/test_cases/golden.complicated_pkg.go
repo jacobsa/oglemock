@@ -13,7 +13,6 @@ import (
 	io "io"
 	net "net"
 	oglemock "github.com/jacobsa/oglemock"
-	reflect "reflect"
 	runtime "runtime"
 	tony "github.com/jacobsa/oglemock/generate/test_cases/renamed_pkg"
 	unsafe "unsafe"
@@ -61,21 +60,15 @@ func (m *mockComplicatedThing) Arrays(p0 [3]string) (o0 [3]int, o1 error) {
 		panic(fmt.Sprintf("mockComplicatedThing.Arrays: invalid return values: %v", retVals))
 	}
 
-	var v reflect.Value
-
 	// o0 [3]int
-	v = reflect.ValueOf(retVals[0])
-	if v.Type() != reflect.TypeOf(o0) {
-		panic(fmt.Sprintf("mockComplicatedThing.: invalid return value 0: %v", v))
+	if retVals[0] != nil {
+		o0 = retVals[0].([3]int)
 	}
-	o0 = v.Interface().([3]int)
 
 	// o1 error
-	v = reflect.ValueOf(retVals[1])
-	if v.Type() != reflect.TypeOf(o1) {
-		panic(fmt.Sprintf("mockComplicatedThing.error: invalid return value 1: %v", v))
+	if retVals[1] != nil {
+		o1 = retVals[1].(error)
 	}
-	o1 = v.Interface().(error)
 
 	return
 }
@@ -96,14 +89,10 @@ func (m *mockComplicatedThing) Channels(p0 chan chan<- <-chan net.Conn) (o0 chan
 		panic(fmt.Sprintf("mockComplicatedThing.Channels: invalid return values: %v", retVals))
 	}
 
-	var v reflect.Value
-
 	// o0 chan int
-	v = reflect.ValueOf(retVals[0])
-	if v.Type() != reflect.TypeOf(o0) {
-		panic(fmt.Sprintf("mockComplicatedThing.: invalid return value 0: %v", v))
+	if retVals[0] != nil {
+		o0 = retVals[0].(chan int)
 	}
-	o0 = v.Interface().(chan int)
 
 	return
 }
@@ -124,21 +113,15 @@ func (m *mockComplicatedThing) EmptyInterface(p0 interface{}) (o0 interface{}, o
 		panic(fmt.Sprintf("mockComplicatedThing.EmptyInterface: invalid return values: %v", retVals))
 	}
 
-	var v reflect.Value
-
 	// o0 interface {}
-	v = reflect.ValueOf(retVals[0])
-	if v.Type() != reflect.TypeOf(o0) {
-		panic(fmt.Sprintf("mockComplicatedThing.: invalid return value 0: %v", v))
+	if retVals[0] != nil {
+		o0 = retVals[0].(interface{})
 	}
-	o0 = v.Interface().(interface{})
 
 	// o1 error
-	v = reflect.ValueOf(retVals[1])
-	if v.Type() != reflect.TypeOf(o1) {
-		panic(fmt.Sprintf("mockComplicatedThing.error: invalid return value 1: %v", v))
+	if retVals[1] != nil {
+		o1 = retVals[1].(error)
 	}
-	o1 = v.Interface().(error)
 
 	return
 }
@@ -159,14 +142,10 @@ func (m *mockComplicatedThing) Functions(p0 func(int, image.Image) int) (o0 func
 		panic(fmt.Sprintf("mockComplicatedThing.Functions: invalid return values: %v", retVals))
 	}
 
-	var v reflect.Value
-
 	// o0 func(string, int) net.Conn
-	v = reflect.ValueOf(retVals[0])
-	if v.Type() != reflect.TypeOf(o0) {
-		panic(fmt.Sprintf("mockComplicatedThing.: invalid return value 0: %v", v))
+	if retVals[0] != nil {
+		o0 = retVals[0].(func(string, int) net.Conn)
 	}
-	o0 = v.Interface().(func(string, int) net.Conn)
 
 	return
 }
@@ -187,21 +166,15 @@ func (m *mockComplicatedThing) Maps(p0 map[string]*int) (o0 map[int]*string, o1 
 		panic(fmt.Sprintf("mockComplicatedThing.Maps: invalid return values: %v", retVals))
 	}
 
-	var v reflect.Value
-
 	// o0 map[int]*string
-	v = reflect.ValueOf(retVals[0])
-	if v.Type() != reflect.TypeOf(o0) {
-		panic(fmt.Sprintf("mockComplicatedThing.: invalid return value 0: %v", v))
+	if retVals[0] != nil {
+		o0 = retVals[0].(map[int]*string)
 	}
-	o0 = v.Interface().(map[int]*string)
 
 	// o1 error
-	v = reflect.ValueOf(retVals[1])
-	if v.Type() != reflect.TypeOf(o1) {
-		panic(fmt.Sprintf("mockComplicatedThing.error: invalid return value 1: %v", v))
+	if retVals[1] != nil {
+		o1 = retVals[1].(error)
 	}
-	o1 = v.Interface().(error)
 
 	return
 }
@@ -222,21 +195,15 @@ func (m *mockComplicatedThing) NamedScalarType(p0 complicated_pkg.Byte) (o0 []co
 		panic(fmt.Sprintf("mockComplicatedThing.NamedScalarType: invalid return values: %v", retVals))
 	}
 
-	var v reflect.Value
-
 	// o0 []complicated_pkg.Byte
-	v = reflect.ValueOf(retVals[0])
-	if v.Type() != reflect.TypeOf(o0) {
-		panic(fmt.Sprintf("mockComplicatedThing.: invalid return value 0: %v", v))
+	if retVals[0] != nil {
+		o0 = retVals[0].([]complicated_pkg.Byte)
 	}
-	o0 = v.Interface().([]complicated_pkg.Byte)
 
 	// o1 error
-	v = reflect.ValueOf(retVals[1])
-	if v.Type() != reflect.TypeOf(o1) {
-		panic(fmt.Sprintf("mockComplicatedThing.error: invalid return value 1: %v", v))
+	if retVals[1] != nil {
+		o1 = retVals[1].(error)
 	}
-	o1 = v.Interface().(error)
 
 	return
 }
@@ -257,21 +224,15 @@ func (m *mockComplicatedThing) Pointers(p0 *int, p1 *net.Conn, p2 **io.Reader) (
 		panic(fmt.Sprintf("mockComplicatedThing.Pointers: invalid return values: %v", retVals))
 	}
 
-	var v reflect.Value
-
 	// o0 *int
-	v = reflect.ValueOf(retVals[0])
-	if v.Type() != reflect.TypeOf(o0) {
-		panic(fmt.Sprintf("mockComplicatedThing.: invalid return value 0: %v", v))
+	if retVals[0] != nil {
+		o0 = retVals[0].(*int)
 	}
-	o0 = v.Interface().(*int)
 
 	// o1 error
-	v = reflect.ValueOf(retVals[1])
-	if v.Type() != reflect.TypeOf(o1) {
-		panic(fmt.Sprintf("mockComplicatedThing.error: invalid return value 1: %v", v))
+	if retVals[1] != nil {
+		o1 = retVals[1].(error)
 	}
-	o1 = v.Interface().(error)
 
 	return
 }
@@ -311,21 +272,15 @@ func (m *mockComplicatedThing) Slices(p0 []string) (o0 []int, o1 error) {
 		panic(fmt.Sprintf("mockComplicatedThing.Slices: invalid return values: %v", retVals))
 	}
 
-	var v reflect.Value
-
 	// o0 []int
-	v = reflect.ValueOf(retVals[0])
-	if v.Type() != reflect.TypeOf(o0) {
-		panic(fmt.Sprintf("mockComplicatedThing.: invalid return value 0: %v", v))
+	if retVals[0] != nil {
+		o0 = retVals[0].([]int)
 	}
-	o0 = v.Interface().([]int)
 
 	// o1 error
-	v = reflect.ValueOf(retVals[1])
-	if v.Type() != reflect.TypeOf(o1) {
-		panic(fmt.Sprintf("mockComplicatedThing.error: invalid return value 1: %v", v))
+	if retVals[1] != nil {
+		o1 = retVals[1].(error)
 	}
-	o1 = v.Interface().(error)
 
 	return
 }
@@ -346,14 +301,10 @@ func (m *mockComplicatedThing) Variadic(p0 int, p1 ...net.Conn) (o0 int) {
 		panic(fmt.Sprintf("mockComplicatedThing.Variadic: invalid return values: %v", retVals))
 	}
 
-	var v reflect.Value
-
 	// o0 int
-	v = reflect.ValueOf(retVals[0])
-	if v.Type() != reflect.TypeOf(o0) {
-		panic(fmt.Sprintf("mockComplicatedThing.int: invalid return value 0: %v", v))
+	if retVals[0] != nil {
+		o0 = retVals[0].(int)
 	}
-	o0 = v.Interface().(int)
 
 	return
 }
