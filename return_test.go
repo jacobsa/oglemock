@@ -28,7 +28,6 @@ import (
 ////////////////////////////////////////////////////////////
 
 type ReturnTest struct {
-
 }
 
 func init()                     { RegisterTestSuite(&ReturnTest{}) }
@@ -45,15 +44,25 @@ func (t *ReturnTest) EmptySet() {
 	result := action.Invoke([]interface{}{})
 	ExpectThat(len(result), Equals(0))
 
-	// CheckType
 	emptyReturn := reflect.TypeOf(func(i int) {})
-	nonEmptyReturn := reflect.TypeOf(func(i int) string { return "" })
+	stringReturn := reflect.TypeOf(func(i int) string { return "" })
+	interfaceReturn := reflect.TypeOf(func(i int) error { return nil })
+	var err error
 
-	ExpectThat(action.CheckType(emptyReturn), Equals(nil))
-	ExpectThat(action.CheckType(nonEmptyReturn), Not(Equals(nil)))
+	// No return value.
+	err = action.CheckType(emptyReturn)
+	ExpectEq(nil, err)
+
+	// String return value.
+	err = action.CheckType(stringReturn)
+	ExpectThat(err, Error(HasSubstr("0 vals; expected 1")))
+
+	// Interface return value.
+	err = action.CheckType(interfaceReturn)
+	ExpectThat(err, Error(HasSubstr("0 vals; expected 1")))
 }
 
-func (t *ReturnTest) OneValue() {
+func (t *ReturnTest) StringValue() {
 	action := Return("taco")
 
 	// Invoke
@@ -62,17 +71,42 @@ func (t *ReturnTest) OneValue() {
 	ExpectThat(len(result), Equals(1))
 	ExpectThat(result[0], Equals("taco"))
 
-	// CheckType
 	type compatibleType string
-	emptyReturn := reflect.TypeOf(func(i int) {})
-	correctReturn := reflect.TypeOf(func(i int) string { return "" })
-	aliasedTypeReturn := reflect.TypeOf(func(i int) compatibleType { return "" })
-	tooManyReturn := reflect.TypeOf(func(i int) (string, int) { return "", i })
+	emptyReturn := reflect.TypeOf(func() {})
+	stringReturn := reflect.TypeOf(func() string { return "" })
+	aliasedTypeReturn := reflect.TypeOf(func() compatibleType { return "" })
+	intReturn := reflect.TypeOf(func() int { return 0 })
+	unsatisfiedInterfaceReturn := reflect.TypeOf(func() error { return nil })
+	tooManyReturn := reflect.TypeOf(func() (string, int) { return "", 0 })
+	var err error
 
-	ExpectThat(action.CheckType(emptyReturn), Not(Equals(nil)))
-	ExpectThat(action.CheckType(correctReturn), Equals(nil))
-	ExpectThat(action.CheckType(aliasedTypeReturn), Not(Equals(nil)))
-	ExpectThat(action.CheckType(tooManyReturn), Not(Equals(nil)))
+	// No return value.
+	err = action.CheckType(emptyReturn)
+	ExpectThat(err, Error(HasSubstr("1 vals; expected 0")))
+
+	// String return value.
+	err = action.CheckType(stringReturn)
+	ExpectEq(nil, err)
+
+	// Aliased string return value.
+	err = action.CheckType(aliasedTypeReturn)
+	ExpectEq(nil, err)
+
+	// Int return value.
+	err = action.CheckType(intReturn)
+	ExpectThat(err, Error(HasSubstr("val 0")))
+	ExpectThat(err, Error(HasSubstr("given string")))
+	ExpectThat(err, Error(HasSubstr("expected int")))
+
+	// Unsatisfied interface return value.
+	err = action.CheckType(unsatisfiedInterfaceReturn)
+	ExpectThat(err, Error(HasSubstr("val 0")))
+	ExpectThat(err, Error(HasSubstr("given string")))
+	ExpectThat(err, Error(HasSubstr("expected error")))
+
+	// Multiple return values.
+	err = action.CheckType(tooManyReturn)
+	ExpectThat(err, Error(HasSubstr("1 vals; expected 2")))
 }
 
 func (t *ReturnTest) MultipleValues() {
