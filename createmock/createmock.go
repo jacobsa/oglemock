@@ -18,6 +18,7 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"go/build"
@@ -112,7 +113,9 @@ func findUndefinedInterface(output []byte) *string {
 	return nil
 }
 
-func main() {
+// Split out from main so that deferred calls are executed even in the event of
+// an error.
+func run() error {
 	// Reduce noise in logging output.
 	log.SetFlags(0)
 
@@ -121,19 +124,18 @@ func main() {
 
 	cmdLineArgs := flag.Args()
 	if len(cmdLineArgs) < 2 {
-		fmt.Println("Usage: createmock [package] [interface ...]")
-		os.Exit(1)
+		return errors.New("Usage: createmock [package] [interface ...]")
 	}
 
 	// Create a temporary directory inside of $GOPATH to hold generated code.
 	tree, _, err := build.FindTree("github.com/jacobsa/oglemock")
 	if err != nil {
-		log.Fatalf("Couldn't find oglemock in $GOPATH: %v", err)
+		return errors.New(fmt.Sprintf("Couldn't find oglemock in $GOPATH: %v", err))
 	}
 
 	tmpDir, err := ioutil.TempDir(path.Join(tree.Path, "src"), "tmp-createmock-")
 	if err != nil {
-		log.Fatalf("Couldn't create a temporary directory: %v", err)
+		return errors.New(fmt.Sprintf("Creating temp dir: %v", err))
 	}
 
 	defer os.RemoveAll(tmpDir)
@@ -141,7 +143,7 @@ func main() {
 	// Create a file to hold generated code.
 	codeFile, err := os.Create(path.Join(tmpDir, "tool.go"))
 	if err != nil {
-		log.Fatalf("Couldn't create a file to hold code: %v", err)
+		return errors.New(fmt.Sprintf("Couldn't create a file to hold code: %v", err))
 	}
 
 	// Create an appropriate path for the built binary.
@@ -168,7 +170,7 @@ func main() {
 			"base": path.Base,
 		}).Parse(tmplStr))
 	if err := tmpl.Execute(codeFile, arg); err != nil {
-		log.Fatalf("Error executing template: %v", err)
+		return errors.New(fmt.Sprintf("Error executing template: %v", err))
 	}
 
 	codeFile.Close()
@@ -181,20 +183,20 @@ func main() {
 	if err != nil {
 		// Did the compilation fail due to the user-specified package not being found?
 		if pkg := findUnknownPackage(buildOutput); pkg != nil && *pkg == arg.InputPkg {
-			log.Fatalf("Unknown package: %s", *pkg)
+			return errors.New(fmt.Sprintf("Unknown package: %s", *pkg))
 		}
 
 		// Did the compilation fail due to an unknown interface?
 		if in := findUndefinedInterface(buildOutput); in != nil {
-			log.Fatalf("Unknown interface: %s", *in)
+			return errors.New(fmt.Sprintf("Unknown interface: %s", *in))
 		}
 
-		// Otherwise print a generic error.
-		log.Fatalf(
+		// Otherwise return a generic error.
+		return errors.New(fmt.Sprintf(
 			"%s\n\nError building generated code:\n\n" +
 				"    %v\n\n Please report this oglemock bug.",
 			buildOutput,
-		err)
+		err))
 	}
 
 	// Run the binary.
@@ -202,16 +204,25 @@ func main() {
 	binaryOutput, err := cmd.CombinedOutput()
 
 	if err != nil {
-		log.Fatalf(
+		return errors.New(fmt.Sprintf(
 			"%s\n\nError running generated code:\n\n" +
 				"    %v\n\n Please report this oglemock bug.",
 			binaryOutput,
-		err)
+		err))
 	}
 
 	// Copy its output.
 	_, err = os.Stdout.Write(binaryOutput)
 	if err != nil {
-		log.Fatalf("Error copying binary output: %v", err)
+		return errors.New(fmt.Sprintf("Error copying binary output: %v", err))
+	}
+
+	return nil
+}
+
+func main() {
+	if err := run(); err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
 	}
 }
