@@ -37,96 +37,114 @@ func TestOgletest(t *testing.T) { RunTests(t) }
 // Tests
 ////////////////////////////////////////////////////////////
 
-func (t *ReturnTest) EmptySet() {
-	action := Return()
-
-	// Invoke
-	result := action.Invoke([]interface{}{})
-	ExpectThat(len(result), Equals(0))
-
-	emptyReturn := reflect.TypeOf(func(i int) {})
-	stringReturn := reflect.TypeOf(func(i int) string { return "" })
-	interfaceReturn := reflect.TypeOf(func(i int) error { return nil })
-	var err error
-
-	// No return value.
-	err = action.CheckType(emptyReturn)
-	ExpectEq(nil, err)
-
-	// String return value.
-	err = action.CheckType(stringReturn)
-	ExpectThat(err, Error(HasSubstr("0 vals; expected 1")))
-
-	// Interface return value.
-	err = action.CheckType(interfaceReturn)
-	ExpectThat(err, Error(HasSubstr("0 vals; expected 1")))
+func (t *ReturnTest) NoReturnValues() {
+	ExpectTrue(false, "TODO")
 }
 
-func (t *ReturnTest) StringValue() {
-	action := Return("taco")
-
-	// Invoke
-	result := action.Invoke([]interface{}{})
-
-	ExpectThat(len(result), Equals(1))
-	ExpectThat(result[0], Equals("taco"))
-
-	type compatibleType string
-	emptyReturn := reflect.TypeOf(func() {})
-	stringReturn := reflect.TypeOf(func() string { return "" })
-	aliasedTypeReturn := reflect.TypeOf(func() compatibleType { return "" })
-	intReturn := reflect.TypeOf(func() int { return 0 })
-	unsatisfiedInterfaceReturn := reflect.TypeOf(func() error { return nil })
-	tooManyReturn := reflect.TypeOf(func() (string, int) { return "", 0 })
-	var err error
-
-	// No return value.
-	err = action.CheckType(emptyReturn)
-	ExpectThat(err, Error(HasSubstr("1 vals; expected 0")))
-
-	// String return value.
-	err = action.CheckType(stringReturn)
-	ExpectEq(nil, err)
-
-	// Aliased string return value.
-	err = action.CheckType(aliasedTypeReturn)
-	ExpectEq(nil, err)
-
-	// Int return value.
-	err = action.CheckType(intReturn)
-	ExpectThat(err, Error(HasSubstr("val 0")))
-	ExpectThat(err, Error(HasSubstr("given string")))
-	ExpectThat(err, Error(HasSubstr("expected int")))
-
-	// Unsatisfied interface return value.
-	err = action.CheckType(unsatisfiedInterfaceReturn)
-	ExpectThat(err, Error(HasSubstr("val 0")))
-	ExpectThat(err, Error(HasSubstr("given string")))
-	ExpectThat(err, Error(HasSubstr("expected error")))
-
-	// Multiple return values.
-	err = action.CheckType(tooManyReturn)
-	ExpectThat(err, Error(HasSubstr("1 vals; expected 2")))
+func (t *ReturnTest) Bool() {
+	ExpectTrue(false, "TODO")
 }
 
-func (t *ReturnTest) MultipleValues() {
-	someInt := 17
+func (t *ReturnTest) Int() {
+	ExpectTrue(false, "TODO")
+}
 
-	// Invoke
-	action := Return("taco", &someInt, 19)
-	result := action.Invoke([]interface{}{})
+func (t *ReturnTest) Int8() {
+	ExpectTrue(false, "TODO")
+}
 
-	ExpectThat(len(result), Equals(3))
-	ExpectThat(result[0], Equals("taco"))
-	ExpectThat(result[1], Equals(&someInt))
-	ExpectThat(result[2], Equals(19))
+func (t *ReturnTest) Int16() {
+	ExpectTrue(false, "TODO")
+}
 
-	// CheckType
-	emptyReturn := reflect.TypeOf(func(i int) {})
-	correctReturn := reflect.TypeOf(func(i int) (string, *int, int) { return "", &someInt, 19 })
-	incorrectReturn := reflect.TypeOf(func(i int) (string, *int) { return "", &someInt })
+func (t *ReturnTest) Int32() {
+	ExpectTrue(false, "TODO")
+}
 
-	ExpectThat(action.CheckType(emptyReturn), Not(Equals(nil)))
-	ExpectThat(action.CheckType(correctReturn), Equals(nil))
-	ExpectThat(action.CheckType(incorrectReturn), Not(Equals(nil)))
+func (t *ReturnTest) Int64() {
+	ExpectTrue(false, "TODO")
+}
+
+func (t *ReturnTest) Uint() {
+	ExpectTrue(false, "TODO")
+}
+
+func (t *ReturnTest) Uint8() {
+	ExpectTrue(false, "TODO")
+}
+
+func (t *ReturnTest) Uint16() {
+	ExpectTrue(false, "TODO")
+}
+
+func (t *ReturnTest) Uint32() {
+	ExpectTrue(false, "TODO")
+}
+
+func (t *ReturnTest) Uint64() {
+	ExpectTrue(false, "TODO")
+}
+
+func (t *ReturnTest) Uintptr() {
+	ExpectTrue(false, "TODO")
+}
+
+func (t *ReturnTest) Float32() {
+	ExpectTrue(false, "TODO")
+}
+
+func (t *ReturnTest) Float64() {
+	ExpectTrue(false, "TODO")
+}
+
+func (t *ReturnTest) Complex64() {
+	ExpectTrue(false, "TODO")
+}
+
+func (t *ReturnTest) Complex128() {
+	ExpectTrue(false, "TODO")
+}
+
+func (t *ReturnTest) ArrayOfInt() {
+	ExpectTrue(false, "TODO")
+}
+
+func (t *ReturnTest) ChanOfInt() {
+	ExpectTrue(false, "TODO")
+}
+
+func (t *ReturnTest) Func() {
+	ExpectTrue(false, "TODO")
+}
+
+func (t *ReturnTest) Interface() {
+	ExpectTrue(false, "TODO")
+}
+
+func (t *ReturnTest) MapFromStringToInt() {
+	ExpectTrue(false, "TODO")
+}
+
+func (t *ReturnTest) PointerToString() {
+	ExpectTrue(false, "TODO")
+}
+
+func (t *ReturnTest) SliceOfInts() {
+	ExpectTrue(false, "TODO")
+}
+
+func (t *ReturnTest) String() {
+	ExpectTrue(false, "TODO")
+}
+
+func (t *ReturnTest) Struct() {
+	ExpectTrue(false, "TODO")
+}
+
+func (t *ReturnTest) UnsafePointer() {
+	ExpectTrue(false, "TODO")
+}
+
+func (t *ReturnTest) MultipleReturnValues() {
+	ExpectTrue(false, "TODO")
 }
