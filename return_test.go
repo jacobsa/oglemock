@@ -17,8 +17,8 @@ package oglemock_test
 
 import (
 	. "github.com/jacobsa/oglematchers"
-	. "github.com/jacobsa/oglemock"
 	. "github.com/jacobsa/ogletest"
+	"github.com/jacobsa/oglemock"
 	"reflect"
 	"testing"
 )
@@ -38,7 +38,30 @@ func TestOgletest(t *testing.T) { RunTests(t) }
 ////////////////////////////////////////////////////////////
 
 func (t *ReturnTest) NoReturnValues() {
-	ExpectTrue(false, "TODO")
+	sig := reflect.TypeOf(func() {})
+	var a oglemock.Action
+	var err error
+	var vals []interface{}
+
+	// No values.
+	a = oglemock.Return()
+	err = a.CheckType(sig)
+	ExpectEq(nil, err)
+
+	vals = a.Invoke([]interface{}{})
+	ExpectThat(vals, ElementsAre())
+
+	// One value.
+	a = oglemock.Return(17)
+	err = a.CheckType(sig)
+	ExpectThat(err, HasSubstr("given 1 val"))
+	ExpectThat(err, HasSubstr("expected 0"))
+
+	// Two values.
+	a = oglemock.Return(17, 19)
+	err = a.CheckType(sig)
+	ExpectThat(err, HasSubstr("given 2 vals"))
+	ExpectThat(err, HasSubstr("expected 0"))
 }
 
 func (t *ReturnTest) Bool() {
