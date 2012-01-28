@@ -46,7 +46,7 @@ func (t *ReturnTest) NoReturnValues() {
 	// No values.
 	a = oglemock.Return()
 	err = a.CheckType(sig)
-	ExpectEq(nil, err)
+	AssertEq(nil, err)
 
 	vals = a.Invoke([]interface{}{})
 	ExpectThat(vals, ElementsAre())
@@ -54,18 +54,49 @@ func (t *ReturnTest) NoReturnValues() {
 	// One value.
 	a = oglemock.Return(17)
 	err = a.CheckType(sig)
-	ExpectThat(err, HasSubstr("given 1 val"))
-	ExpectThat(err, HasSubstr("expected 0"))
+	ExpectThat(err, Error(HasSubstr("given 1 val")))
+	ExpectThat(err, Error(HasSubstr("expected 0")))
 
 	// Two values.
 	a = oglemock.Return(17, 19)
 	err = a.CheckType(sig)
-	ExpectThat(err, HasSubstr("given 2 vals"))
-	ExpectThat(err, HasSubstr("expected 0"))
+	ExpectThat(err, Error(HasSubstr("given 2 vals")))
+	ExpectThat(err, Error(HasSubstr("expected 0")))
 }
 
 func (t *ReturnTest) Bool() {
-	ExpectTrue(false, "TODO")
+	sig := reflect.TypeOf(func() bool { return false })
+	var a oglemock.Action
+	var err error
+	var vals []interface{}
+
+	// True
+	a = oglemock.Return(true)
+	err = a.CheckType(sig)
+	AssertEq(nil, err)
+
+	vals = a.Invoke([]interface{}{})
+	ExpectThat(vals, ElementsAre(true))
+
+	// False
+	a = oglemock.Return(false)
+	err = a.CheckType(sig)
+	AssertEq(nil, err)
+
+	vals = a.Invoke([]interface{}{})
+	ExpectThat(vals, ElementsAre(false))
+
+	// Int value
+	a = oglemock.Return(int(17))
+	err = a.CheckType(sig)
+	ExpectThat(err, Error(HasSubstr("given int")))
+	ExpectThat(err, Error(HasSubstr("expected bool")))
+
+	// String value
+	a = oglemock.Return("taco")
+	err = a.CheckType(sig)
+	ExpectThat(err, Error(HasSubstr("given string")))
+	ExpectThat(err, Error(HasSubstr("expected bool")))
 }
 
 func (t *ReturnTest) Int() {
