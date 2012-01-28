@@ -10,7 +10,6 @@ import (
 	fmt "fmt"
 	io "io"
 	oglemock "github.com/jacobsa/oglemock"
-	reflect "reflect"
 	runtime "runtime"
 	unsafe "unsafe"
 )
@@ -57,21 +56,15 @@ func (m *mockReader) Read(p0 []uint8) (o0 int, o1 error) {
 		panic(fmt.Sprintf("mockReader.Read: invalid return values: %v", retVals))
 	}
 
-	var v reflect.Value
-
 	// o0 int
-	v = reflect.ValueOf(retVals[0])
-	if v.Type() != reflect.TypeOf(o0) {
-		panic(fmt.Sprintf("mockReader.int: invalid return value 0: %v", v))
+	if retVals[0] != nil {
+		o0 = retVals[0].(int)
 	}
-	o0 = v.Interface().(int)
 
 	// o1 error
-	v = reflect.ValueOf(retVals[1])
-	if v.Type() != reflect.TypeOf(o1) {
-		panic(fmt.Sprintf("mockReader.error: invalid return value 1: %v", v))
+	if retVals[1] != nil {
+		o1 = retVals[1].(error)
 	}
-	o1 = v.Interface().(error)
 
 	return
 }

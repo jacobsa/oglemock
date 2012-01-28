@@ -9,7 +9,6 @@ package some_pkg
 import (
 	fmt "fmt"
 	oglemock "github.com/jacobsa/oglemock"
-	reflect "reflect"
 	runtime "runtime"
 	tony "github.com/jacobsa/oglemock/generate/test_cases/renamed_pkg"
 	unsafe "unsafe"
@@ -57,14 +56,10 @@ func (m *mockSomeInterface) DoFoo(p0 int) (o0 int) {
 		panic(fmt.Sprintf("mockSomeInterface.DoFoo: invalid return values: %v", retVals))
 	}
 
-	var v reflect.Value
-
 	// o0 int
-	v = reflect.ValueOf(retVals[0])
-	if v.Type() != reflect.TypeOf(o0) {
-		panic(fmt.Sprintf("mockSomeInterface.int: invalid return value 0: %v", v))
+	if retVals[0] != nil {
+		o0 = retVals[0].(int)
 	}
-	o0 = v.Interface().(int)
 
 	return
 }
