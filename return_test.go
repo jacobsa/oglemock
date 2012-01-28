@@ -33,6 +33,32 @@ type ReturnTest struct {
 func init()                     { RegisterTestSuite(&ReturnTest{}) }
 func TestOgletest(t *testing.T) { RunTests(t) }
 
+type returnTestCase struct {
+	suppliedVal interface{}
+	expectedVal interface{}
+	expectedCheckTypeResult bool
+	expectedCheckTypeErrorSubstring string
+}
+
+func (t *ReturnTest) runTestCases(signature reflect.Type, cases []returnTestCase) {
+	for i, c := range cases {
+		a := oglemock.Return(c.suppliedVal)
+
+		// CheckType
+		err := a.CheckType(signature)
+		if c.expectedCheckTypeResult {
+			ExpectEq(nil, err, "Test case %d: %v", i, c)
+		} else {
+			ExpectThat(err, Error(HasSubstr(c.expectedCheckTypeErrorSubstring)),
+				"Test case %d: %v", i, c)
+		}
+
+		// Invoke
+		res := a.Invoke([]interface{}{})
+		ExpectThat(res, StrictEquals(c.expectedVal))
+	}
+}
+
 ////////////////////////////////////////////////////////////
 // Tests
 ////////////////////////////////////////////////////////////
