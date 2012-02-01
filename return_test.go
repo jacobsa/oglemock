@@ -93,16 +93,7 @@ func (t *ReturnTest) NoReturnValues() {
 }
 
 func (t *ReturnTest) Bool() {
-	sig := reflect.TypeOf(func() bool { return false })
-	cases := []returnTestCase {
-		{ true, true, true, "" },
-		{ false, false, true, "" },
-		{ nil, false, false, "given <nil>; expected bool" },
-		{ int(17), false, false, "given int; expected bool" },
-		{ "false", false, false, "given string; expected bool" },
-	}
-
-	t.runTestCases(sig, cases)
+	ExpectTrue(false, "TODO")
 }
 
 func (t *ReturnTest) Int() {
