@@ -1032,17 +1032,17 @@ func (t *ReturnTest) Struct() {
 }
 
 func (t *ReturnTest) UnsafePointer() {
-	ExpectTrue(false, "TODO")
+	ExpectTrue(false, "TODO")  // Copy PointerToString
 }
 
 func (t *ReturnTest) NamedNumericType() {
-	ExpectTrue(false, "TODO")
+	ExpectTrue(false, "TODO")  // Copy Int16, change named part
 }
 
 func (t *ReturnTest) NamedNonNumericType() {
-	ExpectTrue(false, "TODO")
+	ExpectTrue(false, "TODO")  // Copy Bool, change named part
 }
 
 func (t *ReturnTest) NamedChannelType() {
-	ExpectTrue(false, "TODO")
+	ExpectTrue(false, "TODO")  // Copy ChanOfInt, change named part
 }
