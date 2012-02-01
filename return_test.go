@@ -27,6 +27,8 @@ import (
 // Helpers
 ////////////////////////////////////////////////////////////
 
+var someInt int = 17
+
 type ReturnTest struct {
 }
 
@@ -120,7 +122,27 @@ func (t *ReturnTest) MultipleReturnValues() {
 }
 
 func (t *ReturnTest) Bool() {
-	ExpectTrue(false, "TODO")
+	type namedType bool
+
+	sig := reflect.TypeOf(func() bool { return false })
+	cases := []returnTestCase{
+		// Identical types.
+		{ bool(true), bool(true), true, "" },
+		{ bool(false), bool(false), true, "" },
+
+		// Named version of same underlying type.
+		{ namedType(true), bool(true), true, "" },
+
+		// Wrong types.
+		{ nil, nil, false, "given <nil>; expected bool" },
+		{ int(1), nil, false, "given int; expected bool" },
+		{ float64(1), nil, false, "given float64; expected bool" },
+		{ complex128(1), nil, false, "given complex128; expected bool" },
+		{ &someInt, nil, false, "given *int; expected bool" },
+		{ make(chan int), nil, false, "given chan int; expected bool" },
+	}
+
+	t.runTestCases(sig, cases)
 }
 
 func (t *ReturnTest) Int() {
