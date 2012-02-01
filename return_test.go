@@ -92,6 +92,10 @@ func (t *ReturnTest) NoReturnValues() {
 	ExpectThat(err, Error(HasSubstr("expected 0")))
 }
 
+func (t *ReturnTest) MultipleReturnValues() {
+	ExpectTrue(false, "TODO")
+}
+
 func (t *ReturnTest) Bool() {
 	ExpectTrue(false, "TODO")
 }
@@ -112,6 +116,10 @@ func (t *ReturnTest) Int32() {
 	ExpectTrue(false, "TODO")
 }
 
+func (t *ReturnTest) Rune() {
+	ExpectTrue(false, "TODO")
+}
+
 func (t *ReturnTest) Int64() {
 	ExpectTrue(false, "TODO")
 }
@@ -121,6 +129,10 @@ func (t *ReturnTest) Uint() {
 }
 
 func (t *ReturnTest) Uint8() {
+	ExpectTrue(false, "TODO")
+}
+
+func (t *ReturnTest) Byte() {
 	ExpectTrue(false, "TODO")
 }
 
@@ -196,6 +208,14 @@ func (t *ReturnTest) UnsafePointer() {
 	ExpectTrue(false, "TODO")
 }
 
-func (t *ReturnTest) MultipleReturnValues() {
+func (t *ReturnTest) NamedNumericType() {
+	ExpectTrue(false, "TODO")
+}
+
+func (t *ReturnTest) NamedNonNumericType() {
+	ExpectTrue(false, "TODO")
+}
+
+func (t *ReturnTest) NamedChannelType() {
 	ExpectTrue(false, "TODO")
 }
