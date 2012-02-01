@@ -779,6 +779,44 @@ func (t *ReturnTest) SendChanOfInt() {
 }
 
 func (t *ReturnTest) RecvChanOfInt() {
+	type namedType <-chan int
+	type namedElemType int
+
+	someChan := make(<-chan int)
+	someBidirectionalChannel := make(chan int)
+	someNamedTypeChan := namedType(make(namedType))
+
+	sig := reflect.TypeOf(func() <-chan int { return nil })
+	cases := []returnTestCase{
+		// Identical types.
+		{ someChan, someChan, true, "" },
+
+		// Nil values.
+		{ (interface{})(nil), (<-chan int)(nil), true, "" },
+		{ (chan int)(nil), (<-chan int)(nil), true, "" },
+
+		// Named version of same underlying type.
+		{ someNamedTypeChan, someNamedTypeChan, true, "" },
+
+		// Bidirectional channel
+		{ someBidirectionalChannel, (<-chan int)(someBidirectionalChannel), true, "" },
+
+		// Wrong direction
+		{ (chan<- int)(someBidirectionalChannel), nil, false, "given chan<- int" },
+
+		// Wrong element types.
+		{ make(chan string), nil, false, "given chan string" },
+		{ make(chan namedElemType), nil, false, "given chan namedElemType" },
+
+		// Wrong types.
+		{ (func())(nil), nil, false, "given func()" },
+		{ int(1), nil, false, "given int" },
+		{ float64(1), nil, false, "given float64" },
+		{ complex128(1), nil, false, "given complex128" },
+		{ &someInt, nil, false, "given *int" },
+	}
+
+	t.runTestCases(sig, cases)
 }
 
 func (t *ReturnTest) Func() {
