@@ -136,7 +136,7 @@ func (t *ReturnTest) Bool() {
 
 		// Wrong types.
 		{ nil, nil, false, "given <nil>" },
-		{ int16(1), nil, false, "given int" },
+		{ int(1), nil, false, "given int" },
 		{ float64(1), nil, false, "given float64" },
 		{ complex128(1), nil, false, "given complex128" },
 		{ &someInt, nil, false, "given *int" },
@@ -520,7 +520,26 @@ func (t *ReturnTest) Uint64() {
 }
 
 func (t *ReturnTest) Uintptr() {
-	ExpectTrue(false, "TODO")
+	type namedType uintptr
+
+	sig := reflect.TypeOf(func() uintptr { return 0 })
+	cases := []returnTestCase{
+		// Identical types.
+		{ uintptr(17), uintptr(17), true, "" },
+
+		// Named version of same underlying type.
+		{ namedType(17), uintptr(17), true, "" },
+
+		// Wrong types.
+		{ nil, nil, false, "given <nil>" },
+		{ int(1), nil, false, "given int" },
+		{ float64(1), nil, false, "given float64" },
+		{ complex128(1), nil, false, "given complex128" },
+		{ &someInt, nil, false, "given *int" },
+		{ make(chan int), nil, false, "given chan int" },
+	}
+
+	t.runTestCases(sig, cases)
 }
 
 func (t *ReturnTest) Float32() {
