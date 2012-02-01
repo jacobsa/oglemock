@@ -60,7 +60,7 @@ func (t *ReturnTest) runTestCases(signature reflect.Type, cases []returnTestCase
 		// Invoke
 		res := a.Invoke([]interface{}{})
 		AssertThat(res, ElementsAre(Any()))
-		ExpectThat(res[0], IdenticalTo(c.expectedVal))
+		ExpectThat(res[0], IdenticalTo(c.expectedVal), "Test case %d: %v", i, c)
 	}
 }
 
@@ -261,7 +261,34 @@ func (t *ReturnTest) Int32() {
 }
 
 func (t *ReturnTest) Rune() {
-	ExpectTrue(false, "TODO")
+	type namedType rune
+
+	sig := reflect.TypeOf(func() rune { return 0 })
+	cases := []returnTestCase{
+		// Identical types.
+		{ rune(0), rune(0), true, "" },
+		{ rune(math.MaxInt32), rune(math.MaxInt32), true, "" },
+
+		// Named version of same underlying type.
+		{ namedType(17), rune(17), true, "" },
+
+		// Aliased version of type.
+		{ int32(17), rune(17), true, "" },
+
+		// In-range ints.
+		{ int(17), rune(17), true, "" },
+		{ int(math.MaxInt32), rune(math.MaxInt32), true, "" },
+
+		// Wrong types.
+		{ nil, nil, false, "given <nil>" },
+		{ int16(1), nil, false, "given int16" },
+		{ float64(1), nil, false, "given float64" },
+		{ complex128(1), nil, false, "given complex128" },
+		{ &someInt, nil, false, "given *int" },
+		{ make(chan int), nil, false, "given chan int" },
+	}
+
+	t.runTestCases(sig, cases)
 }
 
 func (t *ReturnTest) Int64() {
