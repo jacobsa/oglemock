@@ -236,8 +236,7 @@ func expectationMatches(exp *InternalExpectation, args []interface{}) bool {
 
 	// Check each matcher.
 	for i, matcher := range matchers {
-		res, _ := matcher.Matches(args[i])
-		if !res {
+		if err := matcher.Matches(args[i]); err != nil {
 			return false
 		}
 	}
