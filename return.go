@@ -28,6 +28,9 @@ import (
 //
 //  *  x is assignable to T. (See "Assignability" in the language spec.)
 //
+//  *  x is the nil literal and T is a pointer, function, interface, slice,
+//     channel, or map type.
+//
 //  *  T is any numeric type, and x is an int that is in-range for that type.
 //     This facilities using raw integer constants: Return(17).
 //
