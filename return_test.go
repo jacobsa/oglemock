@@ -19,6 +19,8 @@ import (
 	. "github.com/jacobsa/oglematchers"
 	. "github.com/jacobsa/ogletest"
 	"github.com/jacobsa/oglemock"
+	"bytes"
+	"io"
 	"math"
 	"reflect"
 	"testing"
@@ -851,7 +853,27 @@ func (t *ReturnTest) Func() {
 }
 
 func (t *ReturnTest) Interface() {
-	ExpectTrue(false, "TODO")
+	sig := reflect.TypeOf(func() io.Reader { return nil })
+
+	someBuffer := new(bytes.Buffer)
+
+	cases := []returnTestCase{
+		// Type that implements interface.
+		{ someBuffer, someBuffer, true, "" },
+
+		// Nil values.
+		// TODO(jacobsa): Is the second case correct?
+		{ (interface{})(nil), (interface{})(nil), true, "" },
+		{ (chan int)(nil), (chan int)(nil), true, "" },
+
+		// Non-implementing types.
+		{ int(1), nil, false, "given int" },
+		{ float64(1), nil, false, "given float64" },
+		{ complex128(1), nil, false, "given complex128" },
+		{ &someInt, nil, false, "given *int" },
+	}
+
+	t.runTestCases(sig, cases)
 }
 
 func (t *ReturnTest) MapFromStringToInt() {
