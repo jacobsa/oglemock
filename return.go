@@ -24,6 +24,22 @@ import (
 // Return creates an Action that simply returns the values passed to Return as
 // arguments. You should make sure that these values are correctly typed to be
 // return values for the mock method.
+//
+// The following special cases apply. Given an argument x to return and a
+// corresponding type T in the method's signature:
+//
+//  *  If T is any numeric type, x may be an int that is in-range for that
+//     type. This facilities using raw integer constants: Return(17).
+//
+//  *  If T is a floating-point or complex number type, x may be a float64.
+//     This facilities using raw floating-point constants: Return(17.5).
+//
+//  *  If T is a complex number type, x may be a complex128. This facilities
+//     using raw complex constants: Return(17+2i).
+//
+//  *  If T is an interface type, x may be any value that implements T
+//     (including nil).
+//
 func Return(vals ...interface{}) Action {
 	return &returnAction{vals}
 }
