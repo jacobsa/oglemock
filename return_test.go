@@ -920,14 +920,14 @@ func (t *ReturnTest) PointerToString() {
 	sig := reflect.TypeOf(func() *string { return nil })
 	cases := []returnTestCase{
 		// Identical types.
-		{ *string(&someStr), *string(&someStr), true, "" },
+		{ (*string)(&someStr), (*string)(&someStr), true, "" },
 
 		// Nil values.
 		{ (interface{})(nil), (*string)(nil), true, "" },
 		{ (*string)(nil), (*string)(nil), true, "" },
 
 		// Named version of same underlying type.
-		{ namedType(&someStr), *string(&someStr), true, "" },
+		{ namedType(&someStr), (*string)(&someStr), true, "" },
 
 		// Wrong element types.
 		{ &someInt, nil, false, "given *int" },
