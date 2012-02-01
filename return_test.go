@@ -93,7 +93,30 @@ func (t *ReturnTest) NoReturnValues() {
 }
 
 func (t *ReturnTest) MultipleReturnValues() {
-	ExpectTrue(false, "TODO")
+	sig := reflect.TypeOf(func() (int, string) { return 0, "" })
+	var a oglemock.Action
+	var err error
+	var vals []interface{}
+
+	// No values.
+	a = oglemock.Return()
+	err = a.CheckType(sig)
+	ExpectThat(err, Error(HasSubstr("given 0 vals")))
+	ExpectThat(err, Error(HasSubstr("expected 2")))
+
+	// One value.
+	a = oglemock.Return(17)
+	err = a.CheckType(sig)
+	ExpectThat(err, Error(HasSubstr("given 1 val")))
+	ExpectThat(err, Error(HasSubstr("expected 2")))
+
+	// Two values.
+	a = oglemock.Return(17, "taco")
+	err = a.CheckType(sig)
+	AssertEq(nil, err)
+
+	vals = a.Invoke([]interface{}{})
+	ExpectThat(vals, ElementsAre(IdenticalTo(int(17)), "taco"))
 }
 
 func (t *ReturnTest) Bool() {
