@@ -152,7 +152,7 @@ func (t *ReturnTest) Int() {
 	sig := reflect.TypeOf(func() int { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
-		{ int(0), int(0), true, "" },
+		{ int(math.MinInt32), int(math.MinInt32), true, "" },
 		{ int(math.MaxInt32), int(math.MaxInt32), true, "" },
 
 		// Named version of same underlying type.
@@ -176,17 +176,18 @@ func (t *ReturnTest) Int8() {
 	sig := reflect.TypeOf(func() int8 { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
-		{ int8(0), int8(0), true, "" },
+		{ int8(math.MinInt8), int8(math.MinInt8), true, "" },
 		{ int8(math.MaxInt8), int8(math.MaxInt8), true, "" },
 
 		// Named version of same underlying type.
 		{ namedType(17), int8(17), true, "" },
 
 		// In-range ints.
-		{ int(17), int8(17), true, "" },
+		{ int(math.MinInt8), int8(math.MinInt8), true, "" },
 		{ int(math.MaxInt8), int8(math.MaxInt8), true, "" },
 
 		// Out of range ints.
+		{ int(math.MinInt8 - 1), nil, false, "out of range" },
 		{ int(math.MaxInt8 + 1), nil, false, "out of range" },
 
 		// Wrong types.
@@ -207,17 +208,18 @@ func (t *ReturnTest) Int16() {
 	sig := reflect.TypeOf(func() int16 { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
-		{ int16(0), int16(0), true, "" },
+		{ int16(math.MinInt16), int16(math.MinInt16), true, "" },
 		{ int16(math.MaxInt16), int16(math.MaxInt16), true, "" },
 
 		// Named version of same underlying type.
 		{ namedType(17), int16(17), true, "" },
 
 		// In-range ints.
-		{ int(17), int16(17), true, "" },
+		{ int(math.MinInt16), int16(math.MinInt16), true, "" },
 		{ int(math.MaxInt16), int16(math.MaxInt16), true, "" },
 
 		// Out of range ints.
+		{ int(math.MinInt16 - 1), nil, false, "out of range" },
 		{ int(math.MaxInt16 + 1), nil, false, "out of range" },
 
 		// Wrong types.
@@ -238,14 +240,14 @@ func (t *ReturnTest) Int32() {
 	sig := reflect.TypeOf(func() int32 { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
-		{ int32(0), int32(0), true, "" },
+		{ int32(math.MinInt32), int32(math.MinInt32), true, "" },
 		{ int32(math.MaxInt32), int32(math.MaxInt32), true, "" },
 
 		// Named version of same underlying type.
 		{ namedType(17), int32(17), true, "" },
 
 		// In-range ints.
-		{ int(17), int32(17), true, "" },
+		{ int(math.MinInt32), int32(math.MinInt32), true, "" },
 		{ int(math.MaxInt32), int32(math.MaxInt32), true, "" },
 
 		// Wrong types.
@@ -266,7 +268,7 @@ func (t *ReturnTest) Rune() {
 	sig := reflect.TypeOf(func() rune { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
-		{ rune(0), rune(0), true, "" },
+		{ rune(math.MinInt32), rune(math.MinInt32), true, "" },
 		{ rune(math.MaxInt32), rune(math.MaxInt32), true, "" },
 
 		// Named version of same underlying type.
@@ -276,7 +278,7 @@ func (t *ReturnTest) Rune() {
 		{ int32(17), rune(17), true, "" },
 
 		// In-range ints.
-		{ int(17), rune(17), true, "" },
+		{ int(math.MinInt32), rune(math.MinInt32), true, "" },
 		{ int(math.MaxInt32), rune(math.MaxInt32), true, "" },
 
 		// Wrong types.
@@ -297,14 +299,14 @@ func (t *ReturnTest) Int64() {
 	sig := reflect.TypeOf(func() int64 { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
-		{ int64(0), int64(0), true, "" },
+		{ int64(math.MinInt64), int64(math.MinInt64), true, "" },
 		{ int64(math.MaxInt64), int64(math.MaxInt64), true, "" },
 
 		// Named version of same underlying type.
 		{ namedType(17), int64(17), true, "" },
 
 		// In-range ints.
-		{ int(17), int64(17), true, "" },
+		{ int(math.MinInt32), int64(math.MinInt32), true, "" },
 		{ int(math.MaxInt32), int64(math.MaxInt32), true, "" },
 
 		// Wrong types.
