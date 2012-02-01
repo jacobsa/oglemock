@@ -180,7 +180,7 @@ func (t *ReturnTest) Int8() {
 		{ int8(math.MaxInt8), int8(math.MaxInt8), true, "" },
 
 		// Named version of same underlying type.
-		{ namedType(17), int(17), true, "" },
+		{ namedType(17), int8(17), true, "" },
 
 		// In-range ints.
 		{ int(17), int8(17), true, "" },
@@ -202,7 +202,34 @@ func (t *ReturnTest) Int8() {
 }
 
 func (t *ReturnTest) Int16() {
-	ExpectTrue(false, "TODO")
+	type namedType int16
+
+	sig := reflect.TypeOf(func() int16 { return 0 })
+	cases := []returnTestCase{
+		// Identical types.
+		{ int16(0), int16(0), true, "" },
+		{ int16(math.MaxInt16), int16(math.MaxInt16), true, "" },
+
+		// Named version of same underlying type.
+		{ namedType(17), int16(17), true, "" },
+
+		// In-range ints.
+		{ int(17), int16(17), true, "" },
+		{ int(math.MaxInt16), int16(math.MaxInt16), true, "" },
+
+		// Out of range ints.
+		{ int(math.MaxInt16 + 1), nil, false, "out of range" },
+
+		// Wrong types.
+		{ nil, nil, false, "given <nil>" },
+		{ int8(1), nil, false, "given int8" },
+		{ float64(1), nil, false, "given float64" },
+		{ complex128(1), nil, false, "given complex128" },
+		{ &someInt, nil, false, "given *int" },
+		{ make(chan int), nil, false, "given chan int" },
+	}
+
+	t.runTestCases(sig, cases)
 }
 
 func (t *ReturnTest) Int32() {
