@@ -233,7 +233,31 @@ func (t *ReturnTest) Int16() {
 }
 
 func (t *ReturnTest) Int32() {
-	ExpectTrue(false, "TODO")
+	type namedType int32
+
+	sig := reflect.TypeOf(func() int32 { return 0 })
+	cases := []returnTestCase{
+		// Identical types.
+		{ int32(0), int32(0), true, "" },
+		{ int32(math.MaxInt32), int32(math.MaxInt32), true, "" },
+
+		// Named version of same underlying type.
+		{ namedType(17), int32(17), true, "" },
+
+		// In-range ints.
+		{ int(17), int32(17), true, "" },
+		{ int(math.MaxInt32), int32(math.MaxInt32), true, "" },
+
+		// Wrong types.
+		{ nil, nil, false, "given <nil>" },
+		{ int16(1), nil, false, "given int16" },
+		{ float64(1), nil, false, "given float64" },
+		{ complex128(1), nil, false, "given complex128" },
+		{ &someInt, nil, false, "given *int" },
+		{ make(chan int), nil, false, "given chan int" },
+	}
+
+	t.runTestCases(sig, cases)
 }
 
 func (t *ReturnTest) Rune() {
