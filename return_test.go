@@ -458,7 +458,34 @@ func (t *ReturnTest) Uint16() {
 }
 
 func (t *ReturnTest) Uint32() {
-	ExpectTrue(false, "TODO")
+	type namedType uint32
+
+	sig := reflect.TypeOf(func() uint32 { return 0 })
+	cases := []returnTestCase{
+		// Identical types.
+		{ uint(0), uint32(0), true, "" },
+		{ uint(math.MaxUint32), uint32(math.MaxUint32), true, "" },
+
+		// Named version of same underlying type.
+		{ namedType(17), uint32(17), true, "" },
+
+		// In-range ints.
+		{ int(0), uint32(0), true, "" },
+		{ int(math.MaxInt32), uint32(math.MaxInt32), true, "" },
+
+		// Out of range ints.
+		{ int(-1), nil, false, "out of range" },
+
+		// Wrong types.
+		{ nil, nil, false, "given <nil>" },
+		{ int16(1), nil, false, "given int16" },
+		{ float64(1), nil, false, "given float64" },
+		{ complex128(1), nil, false, "given complex128" },
+		{ &someInt, nil, false, "given *int" },
+		{ make(chan int), nil, false, "given chan int" },
+	}
+
+	t.runTestCases(sig, cases)
 }
 
 func (t *ReturnTest) Uint64() {
