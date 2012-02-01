@@ -637,7 +637,35 @@ func (t *ReturnTest) Complex64() {
 }
 
 func (t *ReturnTest) Complex128() {
-	ExpectTrue(false, "TODO")
+	type namedType complex128
+
+	sig := reflect.TypeOf(func() complex128 { return 0 })
+	cases := []returnTestCase{
+		// Identical types.
+		{ complex128(-17.5-1i), complex128(-17.5-1i), true, "" },
+		{ complex128(17.5+1i), complex128(17.5+1i), true, "" },
+
+		// Named version of same underlying type.
+		{ namedType(17.5+1i), complex128(17.5+1i), true, "" },
+
+		// In-range ints.
+		{ int(-17), complex128(-17), true, "" },
+		{ int(17), complex128(17), true, "" },
+
+		// Float64s
+		{ float64(-17.5), complex128(-17.5), true, "" },
+		{ float64(17.5), complex128(17.5), true, "" },
+
+		// Wrong types.
+		{ nil, nil, false, "given <nil>" },
+		{ int16(1), nil, false, "given int8" },
+		{ float32(1), nil, false, "given float32" },
+		{ complex64(1), nil, false, "given complex64" },
+		{ &someInt, nil, false, "given *int" },
+		{ make(chan int), nil, false, "given chan int" },
+	}
+
+	t.runTestCases(sig, cases)
 }
 
 func (t *ReturnTest) ArrayOfInt() {
