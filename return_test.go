@@ -543,7 +543,34 @@ func (t *ReturnTest) Uintptr() {
 }
 
 func (t *ReturnTest) Float32() {
-	ExpectTrue(false, "TODO")
+	type namedType float32
+
+	sig := reflect.TypeOf(func() float32 { return 0 })
+	cases := []returnTestCase{
+		// Identical types.
+		{ float32(-17.5), float32(-17.5), true, "" },
+		{ float32(17.5), float32(17.5), true, "" },
+
+		// Named version of same underlying type.
+		{ namedType(17.5), float32(17.5), true, "" },
+
+		// In-range ints.
+		{ int(-17), float32(-17), true, "" },
+		{ int(17), float32(17), true, "" },
+
+		// Float64s
+		{ float64(-17.5), float32(-17.5), true, "" },
+		{ float64(17.5), float32(17.5), true, "" },
+
+		// Wrong types.
+		{ nil, nil, false, "given <nil>" },
+		{ int16(1), nil, false, "given int8" },
+		{ complex128(1), nil, false, "given complex128" },
+		{ &someInt, nil, false, "given *int" },
+		{ make(chan int), nil, false, "given chan int" },
+	}
+
+	t.runTestCases(sig, cases)
 }
 
 func (t *ReturnTest) Float64() {
