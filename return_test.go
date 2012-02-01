@@ -977,7 +977,27 @@ func (t *ReturnTest) SliceOfInts() {
 }
 
 func (t *ReturnTest) String() {
-	ExpectTrue(false, "TODO")
+	type namedType string
+
+	sig := reflect.TypeOf(func() string { return "" })
+	cases := []returnTestCase{
+		// Identical types.
+		{ string(""), string(""), true, "" },
+		{ string("taco"), string("taco"), true, "" },
+
+		// Named version of same underlying type.
+		{ namedType("burrito"), string("burrito"), true, "" },
+
+		// Wrong types.
+		{ nil, nil, false, "given <nil>" },
+		{ int(1), nil, false, "given int" },
+		{ float64(1), nil, false, "given float64" },
+		{ complex128(1), nil, false, "given complex128" },
+		{ &someInt, nil, false, "given *int" },
+		{ make(chan int), nil, false, "given chan int" },
+	}
+
+	t.runTestCases(sig, cases)
 }
 
 func (t *ReturnTest) Struct() {
