@@ -361,8 +361,8 @@ func (t *ReturnTest) Uint8() {
 	sig := reflect.TypeOf(func() uint8 { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
-		{ uint(0), uint8(0), true, "" },
-		{ uint(math.MaxUint8), uint8(math.MaxUint8), true, "" },
+		{ uint8(0), uint8(0), true, "" },
+		{ uint8(math.MaxUint8), uint8(math.MaxUint8), true, "" },
 
 		// Named version of same underlying type.
 		{ namedType(17), uint8(17), true, "" },
@@ -396,8 +396,8 @@ func (t *ReturnTest) Byte() {
 	sig := reflect.TypeOf(func() byte { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
-		{ uint(0), byte(0), true, "" },
-		{ uint(math.MaxUint8), byte(math.MaxUint8), true, "" },
+		{ byte(0), byte(0), true, "" },
+		{ byte(math.MaxUint8), byte(math.MaxUint8), true, "" },
 
 		// Named version of same underlying type.
 		{ namedType(17), byte(17), true, "" },
@@ -431,8 +431,8 @@ func (t *ReturnTest) Uint16() {
 	sig := reflect.TypeOf(func() uint16 { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
-		{ uint(0), uint16(0), true, "" },
-		{ uint(math.MaxUint16), uint16(math.MaxUint16), true, "" },
+		{ uint32(0), uint16(0), true, "" },
+		{ uint32(math.MaxUint16), uint16(math.MaxUint16), true, "" },
 
 		// Named version of same underlying type.
 		{ namedType(17), uint16(17), true, "" },
@@ -463,8 +463,8 @@ func (t *ReturnTest) Uint32() {
 	sig := reflect.TypeOf(func() uint32 { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
-		{ uint(0), uint32(0), true, "" },
-		{ uint(math.MaxUint32), uint32(math.MaxUint32), true, "" },
+		{ uint32(0), uint32(0), true, "" },
+		{ uint32(math.MaxUint32), uint32(math.MaxUint32), true, "" },
 
 		// Named version of same underlying type.
 		{ namedType(17), uint32(17), true, "" },
@@ -489,7 +489,34 @@ func (t *ReturnTest) Uint32() {
 }
 
 func (t *ReturnTest) Uint64() {
-	ExpectTrue(false, "TODO")
+	type namedType uint64
+
+	sig := reflect.TypeOf(func() uint64 { return 0 })
+	cases := []returnTestCase{
+		// Identical types.
+		{ uint64(0), uint64(0), true, "" },
+		{ uint64(math.MaxUint64), uint64(math.MaxUint64), true, "" },
+
+		// Named version of same underlying type.
+		{ namedType(17), uint64(17), true, "" },
+
+		// In-range ints.
+		{ int(0), uint64(0), true, "" },
+		{ int(math.MaxInt32), uint32(math.MaxInt32), true, "" },
+
+		// Out of range ints.
+		{ int(-1), nil, false, "out of range" },
+
+		// Wrong types.
+		{ nil, nil, false, "given <nil>" },
+		{ int16(1), nil, false, "given int16" },
+		{ float64(1), nil, false, "given float64" },
+		{ complex128(1), nil, false, "given complex128" },
+		{ &someInt, nil, false, "given *int" },
+		{ make(chan int), nil, false, "given chan int" },
+	}
+
+	t.runTestCases(sig, cases)
 }
 
 func (t *ReturnTest) Uintptr() {
