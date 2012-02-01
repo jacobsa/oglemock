@@ -718,7 +718,7 @@ func (t *ReturnTest) ChanOfInt() {
 		{ (chan int)(nil), (chan int)(nil), true, "" },
 
 		// Named version of same underlying type.
-		{ someNamedTypeChan, someNamedTypeChan, true, "" },
+		{ someNamedTypeChan, (chan int)(someNamedTypeChan), true, "" },
 
 		// Wrong element types.
 		{ make(chan string), nil, false, "given chan string" },
@@ -757,7 +757,7 @@ func (t *ReturnTest) SendChanOfInt() {
 		{ (chan int)(nil), (chan<- int)(nil), true, "" },
 
 		// Named version of same underlying type.
-		{ someNamedTypeChan, someNamedTypeChan, true, "" },
+		{ someNamedTypeChan, (chan<- int)(someNamedTypeChan), true, "" },
 
 		// Bidirectional channel
 		{ someBidirectionalChannel, (chan<- int)(someBidirectionalChannel), true, "" },
@@ -798,7 +798,7 @@ func (t *ReturnTest) RecvChanOfInt() {
 		{ (chan int)(nil), (<-chan int)(nil), true, "" },
 
 		// Named version of same underlying type.
-		{ someNamedTypeChan, someNamedTypeChan, true, "" },
+		{ someNamedTypeChan, (<-chan int)(someNamedTypeChan), true, "" },
 
 		// Bidirectional channel
 		{ someBidirectionalChannel, (<-chan int)(someBidirectionalChannel), true, "" },
@@ -861,12 +861,11 @@ func (t *ReturnTest) Interface() {
 		// Type that implements interface.
 		{ someBuffer, someBuffer, true, "" },
 
-		// Nil values.
-		// TODO(jacobsa): Is the second case correct?
+		// Nil value.
 		{ (interface{})(nil), (interface{})(nil), true, "" },
-		{ (chan int)(nil), (chan int)(nil), true, "" },
 
 		// Non-implementing types.
+		{ (chan int)(nil), (chan int)(nil), true, "" },
 		{ int(1), nil, false, "given int" },
 		{ float64(1), nil, false, "given float64" },
 		{ complex128(1), nil, false, "given complex128" },
@@ -877,7 +876,37 @@ func (t *ReturnTest) Interface() {
 }
 
 func (t *ReturnTest) MapFromStringToInt() {
-	ExpectTrue(false, "TODO")
+	type namedType map[string]int
+	type namedElemType string
+
+	someMap := make(map[string]int)
+	someNamedTypeMap := namedType(make(namedType))
+
+	sig := reflect.TypeOf(func() map[string]int { return nil })
+	cases := []returnTestCase{
+		// Identical types.
+		{ someMap, someMap, true, "" },
+
+		// Nil values.
+		{ (interface{})(nil), (chan int)(nil), true, "" },
+		{ (map[string]int)(nil), (map[string]int)(nil), true, "" },
+
+		// Named version of same underlying type.
+		{ someNamedTypeMap, map[string]int(someNamedTypeMap), true, "" },
+
+		// Wrong element types.
+		{ make(map[int]int), nil, false, "given map[int]int" },
+		{ make(map[string]string), nil, false, "given map[string]string" },
+
+		// Wrong types.
+		{ (func())(nil), nil, false, "given func()" },
+		{ int(1), nil, false, "given int" },
+		{ float64(1), nil, false, "given float64" },
+		{ complex128(1), nil, false, "given complex128" },
+		{ &someInt, nil, false, "given *int" },
+	}
+
+	t.runTestCases(sig, cases)
 }
 
 func (t *ReturnTest) PointerToString() {
