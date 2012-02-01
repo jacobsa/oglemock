@@ -820,7 +820,34 @@ func (t *ReturnTest) RecvChanOfInt() {
 }
 
 func (t *ReturnTest) Func() {
-	ExpectTrue(false, "TODO")
+	type namedType func(string) int
+	someFunc := func(string) int { return 0 }
+
+	sig := reflect.TypeOf(func() func(string) int { return nil })
+	cases := []returnTestCase{
+		// Identical types.
+		{ someFunc, someFunc, true, "" },
+
+		// Nil values.
+		{ (interface{})(nil), (func(string) int)(nil), true, "" },
+		{ (func(string) int)(nil), (func(string) int)(nil), true, "" },
+
+		// Named version of same underlying type.
+		{ namedType(someFunc), someFunc, true, "" },
+
+		// Wrong parameter and return types.
+		{ func(int) int { return 0 }, nil, false, "given func(int) int" },
+		{ func(string) string { return "" }, nil, false, "given func(string) string" },
+
+		// Wrong types.
+		{ int(1), nil, false, "given int" },
+		{ float64(1), nil, false, "given float64" },
+		{ complex128(1), nil, false, "given complex128" },
+		{ &someInt, nil, false, "given *int" },
+		{ (chan int)(nil), nil, false, "given chan int" },
+	}
+
+	t.runTestCases(sig, cases)
 }
 
 func (t *ReturnTest) Interface() {
