@@ -896,6 +896,7 @@ func (t *ReturnTest) MapFromStringToInt() {
 
 		// Wrong element types.
 		{ make(map[int]int), nil, false, "given map[int]int" },
+		{ make(map[namedElemType]int), nil, false, "given map[namedElemType]int" },
 		{ make(map[string]string), nil, false, "given map[string]string" },
 
 		// Wrong types.
@@ -910,7 +911,36 @@ func (t *ReturnTest) MapFromStringToInt() {
 }
 
 func (t *ReturnTest) PointerToString() {
-	ExpectTrue(false, "TODO")
+	type namedType *string
+	type namedElemType string
+
+	someStr := ""
+	someNamedStr := namedElemType("")
+
+	sig := reflect.TypeOf(func() *string { return nil })
+	cases := []returnTestCase{
+		// Identical types.
+		{ *string(&someStr), *string(&someStr), true, "" },
+
+		// Nil values.
+		{ (interface{})(nil), (*string)(nil), true, "" },
+		{ (*string)(nil), (*string)(nil), true, "" },
+
+		// Named version of same underlying type.
+		{ namedType(&someStr), *string(&someStr), true, "" },
+
+		// Wrong element types.
+		{ &someInt, nil, false, "given *int" },
+		{ &someNamedStr, nil, false, "given *oglematchers_test.namedElemType" },
+
+		// Wrong types.
+		{ (func())(nil), nil, false, "given func()" },
+		{ int(1), nil, false, "given int" },
+		{ float64(1), nil, false, "given float64" },
+		{ complex128(1), nil, false, "given complex128" },
+	}
+
+	t.runTestCases(sig, cases)
 }
 
 func (t *ReturnTest) SliceOfInts() {
