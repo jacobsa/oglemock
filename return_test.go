@@ -669,7 +669,34 @@ func (t *ReturnTest) Complex128() {
 }
 
 func (t *ReturnTest) ArrayOfInt() {
-	ExpectTrue(false, "TODO")
+	type namedType [2]int
+	type namedElemType int
+
+	sig := reflect.TypeOf(func() [2]int { return [2]int{0, 0} })
+	cases := []returnTestCase{
+		// Identical types.
+		{ [2]int{19, 23}, [2]int{19, 23}, true, "" },
+
+		// Named version of same underlying type.
+		{ namedType{19, 23}, [2]int{19, 23}, true, "" },
+
+		// Wrong length.
+		{ [1]int{17}, nil, false, "given [1]int" },
+
+		// Wrong element types.
+		{ [2]namedElemType{19, 23}, nil, false, "given [2]namedElemType" },
+		{ [2]string{"", ""}, nil, false, "given [2]string" },
+
+		// Wrong types.
+		{ nil, nil, false, "given <nil>" },
+		{ int(1), nil, false, "given int" },
+		{ float64(1), nil, false, "given float64" },
+		{ complex128(1), nil, false, "given complex128" },
+		{ &someInt, nil, false, "given *int" },
+		{ make(chan int), nil, false, "given chan int" },
+	}
+
+	t.runTestCases(sig, cases)
 }
 
 func (t *ReturnTest) ChanOfInt() {
