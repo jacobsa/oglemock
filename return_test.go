@@ -55,7 +55,7 @@ func (t *ReturnTest) runTestCases(signature reflect.Type, cases []returnTestCase
 
 		// Invoke
 		res := a.Invoke([]interface{}{})
-		ExpectThat(res, StrictEquals(c.expectedVal))
+		ExpectThat(res, IdenticalTo(c.expectedVal))
 	}
 }
 
