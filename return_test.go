@@ -1001,7 +1001,34 @@ func (t *ReturnTest) String() {
 }
 
 func (t *ReturnTest) Struct() {
-	ExpectTrue(false, "TODO")
+	type myStruct struct {
+		a int
+	}
+
+	type otherStruct struct {}
+	type namedType myStruct
+
+	sig := reflect.TypeOf(func() myStruct { return myStruct{0} })
+	cases := []returnTestCase{
+		// Identical types.
+		{ myStruct{17}, myStruct{17}, true, "" },
+
+		// Named version of same underlying type.
+		{ myStruct{17}, nil, false, "given oglematchers_test.namedType" },
+
+		// Wrong field types.
+		{ otherStruct{}, nil, false, "given oglematchers_test.otherStruct" },
+
+		// Wrong types.
+		{ nil, nil, false, "given <nil>" },
+		{ int(1), nil, false, "given int" },
+		{ float64(1), nil, false, "given float64" },
+		{ complex128(1), nil, false, "given complex128" },
+		{ &someInt, nil, false, "given *int" },
+		{ make(chan int), nil, false, "given chan int" },
+	}
+
+	t.runTestCases(sig, cases)
 }
 
 func (t *ReturnTest) UnsafePointer() {
