@@ -51,11 +51,13 @@ func (t *ReturnTest) runTestCases(signature reflect.Type, cases []returnTestCase
 		} else {
 			ExpectThat(err, Error(HasSubstr(c.expectedCheckTypeErrorSubstring)),
 				"Test case %d: %v", i, c)
+			continue
 		}
 
 		// Invoke
 		res := a.Invoke([]interface{}{})
-		ExpectThat(res, IdenticalTo(c.expectedVal))
+		AssertThat(res, ElementsAre(Any()))
+		ExpectThat(res[0], IdenticalTo(c.expectedVal))
 	}
 }
 
@@ -92,37 +94,15 @@ func (t *ReturnTest) NoReturnValues() {
 
 func (t *ReturnTest) Bool() {
 	sig := reflect.TypeOf(func() bool { return false })
-	var a oglemock.Action
-	var err error
-	var vals []interface{}
+	cases := []returnTestCase {
+		{ true, true, true, "" },
+		{ false, false, true, "" },
+		{ nil, false, false, "given <nil>; expected bool" },
+		{ int(17), false, false, "given int; expected bool" },
+		{ "false", false, false, "given string; expected bool" },
+	}
 
-	// True
-	a = oglemock.Return(true)
-	err = a.CheckType(sig)
-	AssertEq(nil, err)
-
-	vals = a.Invoke([]interface{}{})
-	ExpectThat(vals, ElementsAre(true))
-
-	// False
-	a = oglemock.Return(false)
-	err = a.CheckType(sig)
-	AssertEq(nil, err)
-
-	vals = a.Invoke([]interface{}{})
-	ExpectThat(vals, ElementsAre(false))
-
-	// Int value
-	a = oglemock.Return(int(17))
-	err = a.CheckType(sig)
-	ExpectThat(err, Error(HasSubstr("given int")))
-	ExpectThat(err, Error(HasSubstr("expected bool")))
-
-	// String value
-	a = oglemock.Return("taco")
-	err = a.CheckType(sig)
-	ExpectThat(err, Error(HasSubstr("given string")))
-	ExpectThat(err, Error(HasSubstr("expected bool")))
+	t.runTestCases(sig, cases)
 }
 
 func (t *ReturnTest) Int() {

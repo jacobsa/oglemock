@@ -54,9 +54,9 @@ func (a *returnAction) CheckType(signature reflect.Type) error {
 		if expectedType != actualType {
 			return errors.New(
 				fmt.Sprintf(
-					"Return given %v for arg %d; expected %v.",
-					actualType,
+					"Return arg %d: given %v; expected %v.",
 					i,
+					actualType,
 					expectedType))
 		}
 	}
