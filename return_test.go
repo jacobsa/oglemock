@@ -944,7 +944,36 @@ func (t *ReturnTest) PointerToString() {
 }
 
 func (t *ReturnTest) SliceOfInts() {
-	ExpectTrue(false, "TODO")
+	type namedType []int
+	type namedElemType int
+
+	someSlice := make([]int, 1)
+
+	sig := reflect.TypeOf(func() []int { return nil })
+	cases := []returnTestCase{
+		// Identical types.
+		{ someSlice, someSlice, true, "" },
+
+		// Nil values.
+		{ (interface{})(nil), ([]int)(nil), true, "" },
+		{ ([]int)(nil), ([]int)(nil), true, "" },
+
+		// Named version of same underlying type.
+		{ namedType(someSlice), namedType(someSlice), true, "" },
+
+		// Wrong element types.
+		{ make([]string, 1), nil, false, "given []string" },
+		{ make([]namedElemType, 1), nil, false, "given []oglematchers_test.namedElemType" },
+
+		// Wrong types.
+		{ (func())(nil), nil, false, "given func()" },
+		{ int(1), nil, false, "given int" },
+		{ float64(1), nil, false, "given float64" },
+		{ complex128(1), nil, false, "given complex128" },
+		{ &someInt, nil, false, "given *int" },
+	}
+
+	t.runTestCases(sig, cases)
 }
 
 func (t *ReturnTest) String() {
