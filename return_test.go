@@ -306,7 +306,7 @@ func (t *ReturnTest) Uint() {
 
 		// In-range ints.
 		{ int(0), uint(0), "" },
-		{ int(math.MaxInt32), uint(math.MaxUint32), "" },
+		{ int(math.MaxInt32), uint(math.MaxInt32), "" },
 
 		// Out of range ints.
 		{ int(-1), nil, "out of range" },
