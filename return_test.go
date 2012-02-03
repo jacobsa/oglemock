@@ -1070,8 +1070,11 @@ func (t *ReturnTest) NamedNumericType() {
 		{ namedType(math.MinInt16), namedType(math.MinInt16), "" },
 		{ namedType(math.MaxInt16), namedType(math.MaxInt16), "" },
 
+		// Non-named version of same type.
+		{ int16(17), namedType(17), "" },
+
 		// Other named version of same underlying type.
-		{ otherNamedType(17), nil, "given otherNamedType" },
+		{ otherNamedType(17), nil, "given oglematchers_test.otherNamedType" },
 
 		// In-range ints.
 		{ int(math.MinInt16), namedType(math.MinInt16), "" },
@@ -1094,7 +1097,30 @@ func (t *ReturnTest) NamedNumericType() {
 }
 
 func (t *ReturnTest) NamedNonNumericType() {
-	ExpectTrue(false, "TODO")  // Copy Bool, change named part
+	type namedType string
+	type otherNamedType string
+
+	sig := reflect.TypeOf(func() namedType { return "" })
+	cases := []returnTestCase{
+		// Identical types.
+		{ namedType("taco"), namedType("taco"), "" },
+
+		// Non-named version of same type.
+		{ string("taco"), namedType("taco"), "" },
+
+		// Other named version of same underlying type.
+		{ otherNamedType(""), nil, "given oglematchers_test.otherNamedType" },
+
+		// Wrong types.
+		{ nil, nil, "given <nil>" },
+		{ int(1), nil, "given int" },
+		{ float64(1), nil, "given float64" },
+		{ complex128(1), nil, "given complex128" },
+		{ &someInt, nil, "given *int" },
+		{ make(chan int), nil, "given chan int" },
+	}
+
+	t.runTestCases(sig, cases)
 }
 
 func (t *ReturnTest) NamedChannelType() {
