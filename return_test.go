@@ -391,8 +391,8 @@ func (t *ReturnTest) Uint16() {
 	sig := reflect.TypeOf(func() uint16 { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
-		{ uint32(0), uint16(0), "" },
-		{ uint32(math.MaxUint16), uint16(math.MaxUint16), "" },
+		{ uint16(0), uint16(0), "" },
+		{ uint16(math.MaxUint16), uint16(math.MaxUint16), "" },
 
 		// In-range ints.
 		{ int(0), uint16(0), "" },
@@ -969,7 +969,7 @@ func (t *ReturnTest) UserDefinedNonNumericType() {
 		{ int(1), nil, "given int" },
 		{ float64(1), nil, "given float64" },
 		{ complex128(1), nil, "given complex128" },
-		{ string(""), nil, "given complex128" },
+		{ string(""), nil, "given string" },
 		{ &someInt, nil, "given *int" },
 		{ make(chan int), nil, "given chan int" },
 	}
