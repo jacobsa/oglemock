@@ -942,7 +942,7 @@ func (t *ReturnTest) UserDefinedNumericType() {
 
 		// Wrong types.
 		{ nil, nil, "given <nil>" },
-		{ int16(1), nil, "given int8" },
+		{ int16(1), nil, "given int16" },
 		{ float64(1), nil, "given float64" },
 		{ complex128(1), nil, "given complex128" },
 		{ &someInt, nil, "given *int" },
