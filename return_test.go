@@ -72,7 +72,7 @@ func (t *ReturnTest) runTestCases(signature reflect.Type, cases []returnTestCase
 
 func (t *ReturnTest) SetSignatureNotCalled() {
 	a := oglemock.Return()
-	f := func() { a.Invoke() }
+	f := func() { a.Invoke([]interface{}{}) }
 	ExpectThat(f, Panics(MatchesRegexp("SetSignature.*called")))
 }
 

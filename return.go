@@ -80,7 +80,7 @@ func (a *returnAction) buildInvokeResult(
 
 	for i, val := range a.returnVals {
 		resType := sig.Out(i)
-		res[i], err = a.coerce(a.returnVals[i], resType)
+		res[i], err = a.coerce(val, resType)
 
 		if err != nil {
 			res = nil
@@ -90,4 +90,18 @@ func (a *returnAction) buildInvokeResult(
 	}
 
 	return
+}
+
+func (a *returnAction) coerce(x interface{}, t reflect.Type) (interface{}, error) {
+	xv := reflect.ValueOf(x)
+	rv := reflect.New(t)
+
+	// If x is assignable to type t, let the reflect package do the heavy
+	// lifting.
+	if xv.Type().AssignableTo(t) {
+		rv.Set(xv)
+		return rv.Interface(), nil
+	}
+
+	return nil, errors.New("TODO")
 }
