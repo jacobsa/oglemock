@@ -615,9 +615,7 @@ func (t *ReturnTest) ArrayOfInt() {
 
 func (t *ReturnTest) ChanOfInt() {
 	type namedElemType int
-
 	someChan := make(chan int)
-	someNamedTypeChan := namedType(make(namedType))
 
 	sig := reflect.TypeOf(func() chan int { return nil })
 	cases := []returnTestCase{
@@ -652,7 +650,6 @@ func (t *ReturnTest) SendChanOfInt() {
 
 	someChan := make(chan<- int)
 	someBidirectionalChannel := make(chan int)
-	someNamedTypeChan := namedType(make(namedType))
 
 	sig := reflect.TypeOf(func() chan<- int { return nil })
 	cases := []returnTestCase{
@@ -689,7 +686,6 @@ func (t *ReturnTest) RecvChanOfInt() {
 
 	someChan := make(<-chan int)
 	someBidirectionalChannel := make(chan int)
-	someNamedTypeChan := namedType(make(namedType))
 
 	sig := reflect.TypeOf(func() <-chan int { return nil })
 	cases := []returnTestCase{
@@ -775,7 +771,6 @@ func (t *ReturnTest) MapFromStringToInt() {
 	type namedElemType string
 
 	someMap := make(map[string]int)
-	someNamedTypeMap := namedType(make(namedType))
 
 	sig := reflect.TypeOf(func() map[string]int { return nil })
 	cases := []returnTestCase{
@@ -806,7 +801,6 @@ func (t *ReturnTest) PointerToString() {
 	type namedElemType string
 
 	someStr := ""
-	someNamedStr := namedElemType("")
 
 	sig := reflect.TypeOf(func() *string { return nil })
 	cases := []returnTestCase{
@@ -819,7 +813,6 @@ func (t *ReturnTest) PointerToString() {
 
 		// Wrong element types.
 		{ &someInt, nil, "given *int" },
-		{ &someNamedStr, nil, "given *oglematchers_test.namedElemType" },
 
 		// Wrong types.
 		{ (func())(nil), nil, "given func()" },
@@ -930,25 +923,18 @@ func (t *ReturnTest) UnsafePointer() {
 	t.runTestCases(sig, cases)
 }
 
-func (t *ReturnTest) NamedNumericType() {
-	type namedType int16
-	type otherNamedType int16
+func (t *ReturnTest) UserDefinedNumericType() {
+	type myType int16
 
-	sig := reflect.TypeOf(func() namedType { return 0 })
+	sig := reflect.TypeOf(func() myType { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
-		{ namedType(math.MinInt16), namedType(math.MinInt16), "" },
-		{ namedType(math.MaxInt16), namedType(math.MaxInt16), "" },
-
-		// Non-named version of same type.
-		{ int16(17), namedType(17), "" },
-
-		// Other named version of same underlying type.
-		{ otherNamedType(17), nil, "given oglematchers_test.otherNamedType" },
+		{ myType(math.MinInt16), myType(math.MinInt16), "" },
+		{ myType(math.MaxInt16), myType(math.MaxInt16), "" },
 
 		// In-range ints.
-		{ int(math.MinInt16), namedType(math.MinInt16), "" },
-		{ int(math.MaxInt16), namedType(math.MaxInt16), "" },
+		{ int(math.MinInt16), myType(math.MinInt16), "" },
+		{ int(math.MaxInt16), myType(math.MaxInt16), "" },
 
 		// Out of range ints.
 		{ int(math.MinInt16 - 1), nil, "out of range" },
@@ -956,7 +942,7 @@ func (t *ReturnTest) NamedNumericType() {
 
 		// Wrong types.
 		{ nil, nil, "given <nil>" },
-		{ int8(1), nil, "given int8" },
+		{ int16(1), nil, "given int8" },
 		{ float64(1), nil, "given float64" },
 		{ complex128(1), nil, "given complex128" },
 		{ &someInt, nil, "given *int" },
@@ -966,69 +952,22 @@ func (t *ReturnTest) NamedNumericType() {
 	t.runTestCases(sig, cases)
 }
 
-func (t *ReturnTest) NamedNonNumericType() {
-	type namedType string
-	type otherNamedType string
+func (t *ReturnTest) UserDefinedNonNumericType() {
+	type myType string
 
-	sig := reflect.TypeOf(func() namedType { return "" })
+	sig := reflect.TypeOf(func() myType { return "" })
 	cases := []returnTestCase{
 		// Identical types.
-		{ namedType("taco"), namedType("taco"), "" },
-
-		// Non-named version of same type.
-		{ string("taco"), namedType("taco"), "" },
-
-		// Other named version of same underlying type.
-		{ otherNamedType(""), nil, "given oglematchers_test.otherNamedType" },
+		{ myType("taco"), myType("taco"), "" },
 
 		// Wrong types.
 		{ nil, nil, "given <nil>" },
 		{ int(1), nil, "given int" },
 		{ float64(1), nil, "given float64" },
 		{ complex128(1), nil, "given complex128" },
+		{ string(""), nil, "given complex128" },
 		{ &someInt, nil, "given *int" },
 		{ make(chan int), nil, "given chan int" },
-	}
-
-	t.runTestCases(sig, cases)
-}
-
-func (t *ReturnTest) NamedChannelType() {
-	type namedType chan int
-	type otherNamedType chan int
-
-	someChan := make(namedType)
-	someUnnamedTypeChan := make(chan int)
-	someOtherNamedTypeChan := make(otherNamedType)
-
-	sig := reflect.TypeOf(func() namedType { return nil })
-	cases := []returnTestCase{
-		// Identical types.
-		{ someChan, someChan, "" },
-
-		// Non-named version of same type.
-		{ someUnnamedTypeChan, namedType(someUnnamedTypeChan), "" },
-
-		// Other named version of same underlying type.
-		{ someOtherNamedTypeChan, nil, "given oglematchers_test.otherNamedType" },
-
-		// Nil values.
-		{ (interface{})(nil), namedType(nil), "" },
-		{ namedType(nil), namedType(nil), "" },
-
-		// Wrong element types.
-		{ make(chan string), nil, "given chan string" },
-
-		// Wrong direction
-		{ (<-chan int)(someChan), nil, "given <-chan int" },
-		{ (chan<- int)(someChan), nil, "given chan<- int" },
-
-		// Wrong types.
-		{ (func())(nil), nil, "given func()" },
-		{ int(1), nil, "given int" },
-		{ float64(1), nil, "given float64" },
-		{ complex128(1), nil, "given complex128" },
-		{ &someInt, nil, "given *int" },
 	}
 
 	t.runTestCases(sig, cases)
