@@ -18,6 +18,7 @@ package oglemock
 import (
 	"errors"
 	"fmt"
+	"math"
 	"reflect"
 )
 
@@ -152,7 +153,42 @@ func (a *returnAction) isComplex(t reflect.Type) bool {
 }
 
 func (a *returnAction) coerceInt(x int64, t reflect.Type) (interface{}, error) {
-	return nil, errors.New("TODO")
+	k := t.Kind()
+
+	// Floating point and complex numbers: promote appropriately.
+	if a.isFloatingPoint(t) || a.isComplex(t) {
+		return a.coerceFloat(float64(x), t)
+	}
+
+	// Integers: range check.
+	min := int64(math.MinInt64)
+	max := int64(math.MaxInt64)
+
+	switch {
+	case k == reflect.Int8:
+		min = math.MinInt8
+		max = math.MaxInt8
+
+	case k == reflect.Int16:
+		min = math.MinInt16
+		max = math.MaxInt16
+
+	case k == reflect.Int32:
+		min = math.MinInt32
+		max = math.MaxInt32
+
+	case k >= reflect.Uint && k <= reflect.Uint64:  // Unsigned
+		min = 0
+	}
+
+	if x < min || x > max {
+		return nil, errors.New("int value out of range")
+	}
+
+	rv := reflect.New(t).Elem()
+	rv.SetInt(x)
+
+	return rv.Interface(), nil
 }
 
 func (a *returnAction) coerceFloat(x float64, t reflect.Type) (interface{}, error) {
