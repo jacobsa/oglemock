@@ -41,11 +41,12 @@ import (
 //     raw complex constants: Return(17+2i).
 //
 func Return(vals ...interface{}) Action {
-	return &returnAction{vals}
+	return &returnAction{vals, nil}
 }
 
 type returnAction struct {
 	returnVals []interface{}
+	signature reflect.Type
 }
 
 func (a *returnAction) Invoke(vals []interface{}) []interface{} {
@@ -53,29 +54,40 @@ func (a *returnAction) Invoke(vals []interface{}) []interface{} {
 }
 
 func (a *returnAction) SetSignature(signature reflect.Type) error {
+	if _, err := a.buildInvokeResult(signature); err != nil {
+		return err
+	}
+
+	a.signature = signature
+	return nil
+}
+
+// A version of Invoke that does error checking, used by both public methods.
+func (a *returnAction) buildInvokeResult(
+	sig reflect.Type) (res []interface{}, err error) {
 	// Check the length of the return value.
-	numOut := signature.NumOut()
+	numOut := sig.NumOut()
 	numVals := len(a.returnVals)
 
 	if numOut != numVals {
-		return errors.New(
+		err = errors.New(
 			fmt.Sprintf("Return given %d vals; expected %d.", numVals, numOut))
+		return
 	}
 
-	// Check the type of each value to be returned.
-	for i, val := range a.returnVals {
-		expectedType := signature.Out(i)
-		actualType := reflect.TypeOf(val)
+	// Attempt to coerce each return value.
+	res = make([]interface{}, numOut)
 
-		if expectedType != actualType {
-			return errors.New(
-				fmt.Sprintf(
-					"Return arg %d: given %v; expected %v.",
-					i,
-					actualType,
-					expectedType))
+	for i, val := range a.returnVals {
+		resType := sig.Out(i)
+		res[i], err = a.coerce(a.returnVals[i], resType)
+
+		if err != nil {
+			res = nil
+			err = errors.New(fmt.Sprintf("Return: arg %d: %v", i, err))
+			return
 		}
 	}
 
-	return nil
+	return
 }
