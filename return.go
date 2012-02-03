@@ -21,6 +21,10 @@ import (
 	"reflect"
 )
 
+var intType = reflect.TypeOf(int(0))
+var float64Type = reflect.TypeOf(float64(0))
+var complex128Type = reflect.TypeOf(complex128(0))
+
 // Return creates an Action that returns the values passed to Return as
 // arguments, after suitable legal type conversions. The following rules apply.
 // Given an argument x to Return and a corresponding type T in the method's
@@ -117,5 +121,44 @@ func (a *returnAction) coerce(x interface{}, t reflect.Type) (interface{}, error
 		return rv.Interface(), nil
 	}
 
+	// Handle numeric types as described in the documentation on Return.
+	switch {
+	case t == intType && a.isNumeric(xv.Type()):
+		return a.coerceInt(xv.Int(), t)
+
+	case t == float64Type && (a.isFloatingPoint(xv.Type()) || a.isComplex(xv.Type())):
+		return a.coerceFloat(xv.Float(), t)
+
+	case t == complex128Type && a.isComplex(xv.Type()):
+		return a.coerceComplex(xv.Complex(), t)
+	}
+
+	// The value wasn't of a legal type.
 	return nil, errors.New(fmt.Sprintf("expected %v, given %v", t, xv.Type()))
+}
+
+func (a *returnAction) isNumeric(t reflect.Type) bool {
+	return (t.Kind() >= reflect.Int && t.Kind() <= reflect.Uint64) ||
+		a.isFloatingPoint(t) ||
+		a.isComplex(t)
+}
+
+func (a *returnAction) isFloatingPoint(t reflect.Type) bool {
+	return t.Kind() == reflect.Float32 || t.Kind() == reflect.Float64
+}
+
+func (a *returnAction) isComplex(t reflect.Type) bool {
+	return t.Kind() == reflect.Complex64 || t.Kind() == reflect.Complex128
+}
+
+func (a *returnAction) coerceInt(x int64, t reflect.Type) (interface{}, error) {
+	return nil, errors.New("TODO")
+}
+
+func (a *returnAction) coerceFloat(x float64, t reflect.Type) (interface{}, error) {
+	return nil, errors.New("TODO")
+}
+
+func (a *returnAction) coerceComplex(x complex128, t reflect.Type) (interface{}, error) {
+	return nil, errors.New("TODO")
 }
