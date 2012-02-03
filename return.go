@@ -55,6 +55,10 @@ type returnAction struct {
 }
 
 func (a *returnAction) Invoke(vals []interface{}) []interface{} {
+	if a.signature == nil {
+		panic("You must first call SetSignature with a valid signature.")
+	}
+
 	res, err := a.buildInvokeResult(a.signature)
 	if err != nil {
 		panic(err)
