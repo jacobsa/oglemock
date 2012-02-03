@@ -28,7 +28,8 @@ type mockComplicatedThing struct {
 	description	string
 }
 
-func NewMockComplicatedThing(c oglemock.Controller,
+func NewMockComplicatedThing(
+	c oglemock.Controller,
 	desc string) MockComplicatedThing {
 	return &mockComplicatedThing{
 		controller:	c,

@@ -81,9 +81,7 @@ import (
 	  {{$inputTypes := getInputs $funcType}}
 	  {{$outputTypes := getOutputs $funcType}}
 
-		func (m *{{$structName}}) {{.Name}}({{range $i, $type := $inputTypes}}p{{$i}} {{getInputTypeString $i $funcType}}, {{end}}
-		) ({{range $i, $type := $outputTypes}}o{{$i}} {{getTypeString $type}}, {{end}}
-		){
+		func (m *{{$structName}}) {{.Name}}({{range $i, $type := $inputTypes}}p{{$i}} {{getInputTypeString $i $funcType}}, {{end}}) ({{range $i, $type := $outputTypes}}o{{$i}} {{getTypeString $type}}, {{end}}) {
 			// Get a file name and line number for the caller.
 			_, file, line, _ := runtime.Caller(1)
 

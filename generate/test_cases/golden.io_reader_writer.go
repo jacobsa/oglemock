@@ -24,7 +24,8 @@ type mockReader struct {
 	description	string
 }
 
-func NewMockReader(c oglemock.Controller,
+func NewMockReader(
+	c oglemock.Controller,
 	desc string) MockReader {
 	return &mockReader{
 		controller:	c,
@@ -79,7 +80,8 @@ type mockWriter struct {
 	description	string
 }
 
-func NewMockWriter(c oglemock.Controller,
+func NewMockWriter(
+	c oglemock.Controller,
 	desc string) MockWriter {
 	return &mockWriter{
 		controller:	c,

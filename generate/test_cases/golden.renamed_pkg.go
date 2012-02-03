@@ -24,7 +24,8 @@ type mockSomeInterface struct {
 	description	string
 }
 
-func NewMockSomeInterface(c oglemock.Controller,
+func NewMockSomeInterface(
+	c oglemock.Controller,
 	desc string) MockSomeInterface {
 	return &mockSomeInterface{
 		controller:	c,

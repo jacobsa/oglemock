@@ -25,7 +25,8 @@ type mockImage struct {
 	description	string
 }
 
-func NewMockImage(c oglemock.Controller,
+func NewMockImage(
+	c oglemock.Controller,
 	desc string) MockImage {
 	return &mockImage{
 		controller:	c,
@@ -123,7 +124,8 @@ type mockPalettedImage struct {
 	description	string
 }
 
-func NewMockPalettedImage(c oglemock.Controller,
+func NewMockPalettedImage(
+	c oglemock.Controller,
 	desc string) MockPalettedImage {
 	return &mockPalettedImage{
 		controller:	c,
