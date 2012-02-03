@@ -298,8 +298,6 @@ func (t *ReturnTest) Int64() {
 }
 
 func (t *ReturnTest) Uint() {
-	type namedType uint
-
 	sig := reflect.TypeOf(func() uint { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
@@ -326,8 +324,6 @@ func (t *ReturnTest) Uint() {
 }
 
 func (t *ReturnTest) Uint8() {
-	type namedType uint8
-
 	sig := reflect.TypeOf(func() uint8 { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
@@ -358,8 +354,6 @@ func (t *ReturnTest) Uint8() {
 }
 
 func (t *ReturnTest) Byte() {
-	type namedType byte
-
 	sig := reflect.TypeOf(func() byte { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
@@ -390,8 +384,6 @@ func (t *ReturnTest) Byte() {
 }
 
 func (t *ReturnTest) Uint16() {
-	type namedType uint16
-
 	sig := reflect.TypeOf(func() uint16 { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
@@ -419,8 +411,6 @@ func (t *ReturnTest) Uint16() {
 }
 
 func (t *ReturnTest) Uint32() {
-	type namedType uint32
-
 	sig := reflect.TypeOf(func() uint32 { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
@@ -447,8 +437,6 @@ func (t *ReturnTest) Uint32() {
 }
 
 func (t *ReturnTest) Uint64() {
-	type namedType uint64
-
 	sig := reflect.TypeOf(func() uint64 { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
@@ -475,8 +463,6 @@ func (t *ReturnTest) Uint64() {
 }
 
 func (t *ReturnTest) Uintptr() {
-	type namedType uintptr
-
 	sig := reflect.TypeOf(func() uintptr { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
@@ -495,8 +481,6 @@ func (t *ReturnTest) Uintptr() {
 }
 
 func (t *ReturnTest) Float32() {
-	type namedType float32
-
 	sig := reflect.TypeOf(func() float32 { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
@@ -523,8 +507,6 @@ func (t *ReturnTest) Float32() {
 }
 
 func (t *ReturnTest) Float64() {
-	type namedType float64
-
 	sig := reflect.TypeOf(func() float64 { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
@@ -548,8 +530,6 @@ func (t *ReturnTest) Float64() {
 }
 
 func (t *ReturnTest) Complex64() {
-	type namedType complex64
-
 	sig := reflect.TypeOf(func() complex64 { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
@@ -580,8 +560,6 @@ func (t *ReturnTest) Complex64() {
 }
 
 func (t *ReturnTest) Complex128() {
-	type namedType complex128
-
 	sig := reflect.TypeOf(func() complex128 { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
@@ -609,7 +587,6 @@ func (t *ReturnTest) Complex128() {
 }
 
 func (t *ReturnTest) ArrayOfInt() {
-	type namedType [2]int
 	type namedElemType int
 
 	sig := reflect.TypeOf(func() [2]int { return [2]int{0, 0} })
@@ -637,7 +614,6 @@ func (t *ReturnTest) ArrayOfInt() {
 }
 
 func (t *ReturnTest) ChanOfInt() {
-	type namedType chan int
 	type namedElemType int
 
 	someChan := make(chan int)
@@ -672,7 +648,6 @@ func (t *ReturnTest) ChanOfInt() {
 }
 
 func (t *ReturnTest) SendChanOfInt() {
-	type namedType chan<- int
 	type namedElemType int
 
 	someChan := make(chan<- int)
@@ -710,7 +685,6 @@ func (t *ReturnTest) SendChanOfInt() {
 }
 
 func (t *ReturnTest) RecvChanOfInt() {
-	type namedType <-chan int
 	type namedElemType int
 
 	someChan := make(<-chan int)
@@ -748,7 +722,6 @@ func (t *ReturnTest) RecvChanOfInt() {
 }
 
 func (t *ReturnTest) Func() {
-	type namedType func(string) int
 	someFunc := func(string) int { return 0 }
 
 	sig := reflect.TypeOf(func() func(string) int { return nil })
@@ -799,7 +772,6 @@ func (t *ReturnTest) Interface() {
 }
 
 func (t *ReturnTest) MapFromStringToInt() {
-	type namedType map[string]int
 	type namedElemType string
 
 	someMap := make(map[string]int)
@@ -831,7 +803,6 @@ func (t *ReturnTest) MapFromStringToInt() {
 }
 
 func (t *ReturnTest) PointerToString() {
-	type namedType *string
 	type namedElemType string
 
 	someStr := ""
@@ -862,7 +833,6 @@ func (t *ReturnTest) PointerToString() {
 }
 
 func (t *ReturnTest) SliceOfInts() {
-	type namedType []int
 	type namedElemType int
 
 	someSlice := make([]int, 1)
@@ -892,8 +862,6 @@ func (t *ReturnTest) SliceOfInts() {
 }
 
 func (t *ReturnTest) String() {
-	type namedType string
-
 	sig := reflect.TypeOf(func() string { return "" })
 	cases := []returnTestCase{
 		// Identical types.
@@ -918,7 +886,6 @@ func (t *ReturnTest) Struct() {
 	}
 
 	type otherStruct struct {}
-	type namedType myStruct
 
 	sig := reflect.TypeOf(func() myStruct { return myStruct{0} })
 	cases := []returnTestCase{
@@ -941,8 +908,6 @@ func (t *ReturnTest) Struct() {
 }
 
 func (t *ReturnTest) UnsafePointer() {
-	type namedType unsafe.Pointer
-
 	someStr := ""
 
 	sig := reflect.TypeOf(func() unsafe.Pointer { return nil })
