@@ -114,18 +114,15 @@ func (t *IntegrationTest) WrongTypeForReturn() {
 		WillOnce(oglemock.Return(0, errors.New(""))).
 		WillOnce(oglemock.Return("taco", errors.New("")))
 
-	expectedLine := getLineNumber() - 3
-
 	// Errors
 	AssertEq(0, len(t.reporter.errors), "%v", t.reporter.errors)
 	AssertEq(1, len(t.reporter.fatalErrors), "%v", t.reporter.fatalErrors)
 
 	r := t.reporter.fatalErrors[0]
 	ExpectEq("integration_test.go", r.fileName)
-	ExpectEq(expectedLine, r.lineNumber)
-	ExpectThat(r.err, Error(HasSubstr("Return")))
-	ExpectThat(r.err, Error(HasSubstr("wrong")))
-	ExpectThat(r.err, Error(HasSubstr("type")))
+	ExpectEq(112, r.lineNumber)
+	ExpectThat(r.err, Error(HasSubstr("Return given")))
 	ExpectThat(r.err, Error(HasSubstr("int")))
+	ExpectThat(r.err, Error(HasSubstr("arg 0")))
 	ExpectThat(r.err, Error(HasSubstr("string")))
 }
