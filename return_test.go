@@ -24,6 +24,7 @@ import (
 	"math"
 	"reflect"
 	"testing"
+	"unsafe"
 )
 
 ////////////////////////////////////////////////////////////
@@ -937,6 +938,7 @@ func (t *ReturnTest) PointerToString() {
 		{ int(1), nil, "given int" },
 		{ float64(1), nil, "given float64" },
 		{ complex128(1), nil, "given complex128" },
+		{ unsafe.Pointer(&someStr), nil, "given unsafe.Pointer" },
 	}
 
 	t.runTestCases(sig, cases)
@@ -1031,7 +1033,31 @@ func (t *ReturnTest) Struct() {
 }
 
 func (t *ReturnTest) UnsafePointer() {
-	ExpectTrue(false, "TODO")  // Copy PointerToString
+	type namedType unsafe.Pointer
+
+	someStr := ""
+
+	sig := reflect.TypeOf(func() unsafe.Pointer { return nil })
+	cases := []returnTestCase{
+		// Identical types.
+		{ unsafe.Pointer(&someStr), (*string)(&someStr), "" },
+
+		// Nil values.
+		{ (interface{})(nil), unsafe.Pointer(nil), "" },
+		{ unsafe.Pointer(nil), unsafe.Pointer(nil), "" },
+
+		// Named version of same underlying type.
+		{ namedType(&someStr), nil, "given unsafe.Pointer" },
+
+		// Wrong types.
+		{ (func())(nil), nil, "given func()" },
+		{ int(1), nil, "given int" },
+		{ float64(1), nil, "given float64" },
+		{ complex128(1), nil, "given complex128" },
+		{ (*string)(&someStr), nil, "given *string" },
+	}
+
+	t.runTestCases(sig, cases)
 }
 
 func (t *ReturnTest) NamedNumericType() {
