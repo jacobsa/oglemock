@@ -131,8 +131,8 @@ func (e *InternalExpectation) WillOnce(a Action) Expectation {
 		return nil
 	}
 
-	// Make sure the action is okay with the mock method's signature.
-	if err := a.CheckType(e.methodSignature); err != nil {
+	// Tell the action about the method's signature.
+	if err := a.SetSignature(e.methodSignature); err != nil {
 		e.reportFatalError(fmt.Sprintf("WillOnce given invalid action: %v", err))
 		return nil
 	}
@@ -150,8 +150,8 @@ func (e *InternalExpectation) WillRepeatedly(a Action) Expectation {
 		return nil
 	}
 
-	// Make sure the action is okay with the mock method's signature.
-	if err := a.CheckType(e.methodSignature); err != nil {
+	// Tell the action about the method's signature.
+	if err := a.SetSignature(e.methodSignature); err != nil {
 		e.reportFatalError(fmt.Sprintf("WillRepeatedly given invalid action: %v", err))
 		return nil
 	}

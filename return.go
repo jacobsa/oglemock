@@ -52,7 +52,7 @@ func (a *returnAction) Invoke(vals []interface{}) []interface{} {
 	return a.returnVals
 }
 
-func (a *returnAction) CheckType(signature reflect.Type) error {
+func (a *returnAction) SetSignature(signature reflect.Type) error {
 	// Check the length of the return value.
 	numOut := signature.NumOut()
 	numVals := len(a.returnVals)
