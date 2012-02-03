@@ -233,5 +233,7 @@ func (a *returnAction) coerceFloat(x float64, t reflect.Type) (interface{}, erro
 }
 
 func (a *returnAction) coerceComplex(x complex128, t reflect.Type) (interface{}, error) {
-	return nil, errors.New("TODO")
+	rv := reflect.New(t).Elem()
+	rv.SetComplex(x)
+	return rv.Interface(), nil
 }
