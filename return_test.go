@@ -1061,7 +1061,36 @@ func (t *ReturnTest) UnsafePointer() {
 }
 
 func (t *ReturnTest) NamedNumericType() {
-	ExpectTrue(false, "TODO")  // Copy Int16, change named part
+	type namedType int16
+	type otherNamedType int16
+
+	sig := reflect.TypeOf(func() namedType { return 0 })
+	cases := []returnTestCase{
+		// Identical types.
+		{ namedType(math.MinInt16), namedType(math.MinInt16), "" },
+		{ namedType(math.MaxInt16), namedType(math.MaxInt16), "" },
+
+		// Other named version of same underlying type.
+		{ otherNamedType(17), nil, "given otherNamedType" },
+
+		// In-range ints.
+		{ int(math.MinInt16), namedType(math.MinInt16), "" },
+		{ int(math.MaxInt16), namedType(math.MaxInt16), "" },
+
+		// Out of range ints.
+		{ int(math.MinInt16 - 1), nil, "out of range" },
+		{ int(math.MaxInt16 + 1), nil, "out of range" },
+
+		// Wrong types.
+		{ nil, nil, "given <nil>" },
+		{ int8(1), nil, "given int8" },
+		{ float64(1), nil, "given float64" },
+		{ complex128(1), nil, "given complex128" },
+		{ &someInt, nil, "given *int" },
+		{ make(chan int), nil, "given chan int" },
+	}
+
+	t.runTestCases(sig, cases)
 }
 
 func (t *ReturnTest) NamedNonNumericType() {
