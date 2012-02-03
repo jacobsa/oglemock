@@ -131,16 +131,11 @@ func (t *ReturnTest) MultipleReturnValues() {
 }
 
 func (t *ReturnTest) Bool() {
-	type namedType bool
-
 	sig := reflect.TypeOf(func() bool { return false })
 	cases := []returnTestCase{
 		// Identical types.
 		{ bool(true), bool(true), "" },
 		{ bool(false), bool(false), "" },
-
-		// Named version of same underlying type.
-		{ namedType(true), bool(true), "" },
 
 		// Wrong types.
 		{ nil, nil, "given <nil>" },
@@ -163,9 +158,6 @@ func (t *ReturnTest) Int() {
 		{ int(math.MinInt32), int(math.MinInt32), "" },
 		{ int(math.MaxInt32), int(math.MaxInt32), "" },
 
-		// Named version of same underlying type.
-		{ namedType(17), int(17), "" },
-
 		// Wrong types.
 		{ nil, nil, "given <nil>" },
 		{ int16(1), nil, "given int16" },
@@ -186,9 +178,6 @@ func (t *ReturnTest) Int8() {
 		// Identical types.
 		{ int8(math.MinInt8), int8(math.MinInt8), "" },
 		{ int8(math.MaxInt8), int8(math.MaxInt8), "" },
-
-		// Named version of same underlying type.
-		{ namedType(17), int8(17), "" },
 
 		// In-range ints.
 		{ int(math.MinInt8), int8(math.MinInt8), "" },
@@ -219,9 +208,6 @@ func (t *ReturnTest) Int16() {
 		{ int16(math.MinInt16), int16(math.MinInt16), "" },
 		{ int16(math.MaxInt16), int16(math.MaxInt16), "" },
 
-		// Named version of same underlying type.
-		{ namedType(17), int16(17), "" },
-
 		// In-range ints.
 		{ int(math.MinInt16), int16(math.MinInt16), "" },
 		{ int(math.MaxInt16), int16(math.MaxInt16), "" },
@@ -251,9 +237,6 @@ func (t *ReturnTest) Int32() {
 		{ int32(math.MinInt32), int32(math.MinInt32), "" },
 		{ int32(math.MaxInt32), int32(math.MaxInt32), "" },
 
-		// Named version of same underlying type.
-		{ namedType(17), int32(17), "" },
-
 		// Aliased version of type.
 		{ rune(17), int32(17), "" },
 
@@ -281,9 +264,6 @@ func (t *ReturnTest) Rune() {
 		// Identical types.
 		{ rune(math.MinInt32), rune(math.MinInt32), "" },
 		{ rune(math.MaxInt32), rune(math.MaxInt32), "" },
-
-		// Named version of same underlying type.
-		{ namedType(17), rune(17), "" },
 
 		// Aliased version of type.
 		{ int32(17), rune(17), "" },
@@ -313,9 +293,6 @@ func (t *ReturnTest) Int64() {
 		{ int64(math.MinInt64), int64(math.MinInt64), "" },
 		{ int64(math.MaxInt64), int64(math.MaxInt64), "" },
 
-		// Named version of same underlying type.
-		{ namedType(17), int64(17), "" },
-
 		// In-range ints.
 		{ int(math.MinInt32), int64(math.MinInt32), "" },
 		{ int(math.MaxInt32), int64(math.MaxInt32), "" },
@@ -340,9 +317,6 @@ func (t *ReturnTest) Uint() {
 		// Identical types.
 		{ uint(0), uint(0), "" },
 		{ uint(math.MaxUint32), uint(math.MaxUint32), "" },
-
-		// Named version of same underlying type.
-		{ namedType(17), uint(17), "" },
 
 		// In-range ints.
 		{ int(0), uint(0), "" },
@@ -371,9 +345,6 @@ func (t *ReturnTest) Uint8() {
 		// Identical types.
 		{ uint8(0), uint8(0), "" },
 		{ uint8(math.MaxUint8), uint8(math.MaxUint8), "" },
-
-		// Named version of same underlying type.
-		{ namedType(17), uint8(17), "" },
 
 		// Aliased version of type.
 		{ byte(17), uint8(17), "" },
@@ -407,9 +378,6 @@ func (t *ReturnTest) Byte() {
 		{ byte(0), byte(0), "" },
 		{ byte(math.MaxUint8), byte(math.MaxUint8), "" },
 
-		// Named version of same underlying type.
-		{ namedType(17), byte(17), "" },
-
 		// Aliased version of type.
 		{ uint8(17), byte(17), "" },
 
@@ -442,9 +410,6 @@ func (t *ReturnTest) Uint16() {
 		{ uint32(0), uint16(0), "" },
 		{ uint32(math.MaxUint16), uint16(math.MaxUint16), "" },
 
-		// Named version of same underlying type.
-		{ namedType(17), uint16(17), "" },
-
 		// In-range ints.
 		{ int(0), uint16(0), "" },
 		{ int(math.MaxUint16), uint16(math.MaxUint16), "" },
@@ -474,9 +439,6 @@ func (t *ReturnTest) Uint32() {
 		{ uint32(0), uint32(0), "" },
 		{ uint32(math.MaxUint32), uint32(math.MaxUint32), "" },
 
-		// Named version of same underlying type.
-		{ namedType(17), uint32(17), "" },
-
 		// In-range ints.
 		{ int(0), uint32(0), "" },
 		{ int(math.MaxInt32), uint32(math.MaxInt32), "" },
@@ -504,9 +466,6 @@ func (t *ReturnTest) Uint64() {
 		// Identical types.
 		{ uint64(0), uint64(0), "" },
 		{ uint64(math.MaxUint64), uint64(math.MaxUint64), "" },
-
-		// Named version of same underlying type.
-		{ namedType(17), uint64(17), "" },
 
 		// In-range ints.
 		{ int(0), uint64(0), "" },
