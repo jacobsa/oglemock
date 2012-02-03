@@ -21,6 +21,7 @@ import (
 	"errors"
 	"github.com/jacobsa/oglemock"
 	"github.com/jacobsa/oglemock/sample/mock_io"
+	"path"
 	"runtime"
 )
 
@@ -63,11 +64,11 @@ func (t *IntegrationTest) UnexpectedCall() {
 	AssertEq(0, len(t.reporter.fatalErrors), "%v", t.reporter.fatalErrors)
 
 	r := t.reporter.errors[0]
-	ExpectEq("integration_test.go", r.fileName)
+	ExpectEq("integration_test.go", path.Base(r.fileName))
 	ExpectEq(expectedLine, r.lineNumber)
 	ExpectThat(r.err, Error(HasSubstr("Unexpected")))
 	ExpectThat(r.err, Error(HasSubstr("Read")))
-	ExpectThat(r.err, Error(HasSubstr("1, 2, 3")))
+	ExpectThat(r.err, Error(HasSubstr("[1 2 3]")))
 }
 
 func (t *IntegrationTest) ZeroValues() {
@@ -110,7 +111,7 @@ func (t *IntegrationTest) ExpectedCalls() {
 }
 
 func (t *IntegrationTest) WrongTypeForReturn() {
-	t.controller.ExpectCall(t.reader, "Read", "", 112)(nil).
+	t.controller.ExpectCall(t.reader, "Read", "foo.go", 112)(nil).
 		WillOnce(oglemock.Return(0, errors.New(""))).
 		WillOnce(oglemock.Return("taco", errors.New("")))
 
@@ -119,10 +120,10 @@ func (t *IntegrationTest) WrongTypeForReturn() {
 	AssertEq(1, len(t.reporter.fatalErrors), "%v", t.reporter.fatalErrors)
 
 	r := t.reporter.fatalErrors[0]
-	ExpectEq("integration_test.go", r.fileName)
+	ExpectEq("foo.go", r.fileName)
 	ExpectEq(112, r.lineNumber)
-	ExpectThat(r.err, Error(HasSubstr("Return given")))
-	ExpectThat(r.err, Error(HasSubstr("int")))
+	ExpectThat(r.err, Error(HasSubstr("Return")))
 	ExpectThat(r.err, Error(HasSubstr("arg 0")))
+	ExpectThat(r.err, Error(HasSubstr("int")))
 	ExpectThat(r.err, Error(HasSubstr("string")))
 }
