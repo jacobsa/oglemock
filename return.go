@@ -166,8 +166,7 @@ func (a *returnAction) coerceInt(x int64, t reflect.Type) (interface{}, error) {
 	}
 
 	// Integers: range check.
-	min := int64(math.MinInt64)
-	max := int64(math.MaxInt64)
+	var min, max int64
 	unsigned := false
 
 	switch k {
@@ -182,6 +181,15 @@ func (a *returnAction) coerceInt(x int64, t reflect.Type) (interface{}, error) {
 	case reflect.Int32:
 		min = math.MinInt32
 		max = math.MaxInt32
+
+	case reflect.Int64:
+		min = math.MinInt64
+		max = math.MaxInt64
+
+	case reflect.Uint:
+		unsigned = true
+		min = 0
+		max = math.MaxUint32
 
 	case reflect.Uint8:
 		unsigned = true
