@@ -168,22 +168,43 @@ func (a *returnAction) coerceInt(x int64, t reflect.Type) (interface{}, error) {
 	// Integers: range check.
 	min := int64(math.MinInt64)
 	max := int64(math.MaxInt64)
+	unsigned := false
 
-	switch {
-	case k == reflect.Int8:
+	switch k {
+	case reflect.Int8:
 		min = math.MinInt8
 		max = math.MaxInt8
 
-	case k == reflect.Int16:
+	case reflect.Int16:
 		min = math.MinInt16
 		max = math.MaxInt16
 
-	case k == reflect.Int32:
+	case reflect.Int32:
 		min = math.MinInt32
 		max = math.MaxInt32
 
-	case k >= reflect.Uint && k <= reflect.Uint64:  // Unsigned
+	case reflect.Uint8:
+		unsigned = true
 		min = 0
+		max = math.MaxUint8
+
+	case reflect.Uint16:
+		unsigned = true
+		min = 0
+		max = math.MaxUint16
+
+	case reflect.Uint32:
+		unsigned = true
+		min = 0
+		max = math.MaxUint32
+
+	case reflect.Uint64:
+		unsigned = true
+		min = 0
+		max = math.MaxInt64
+
+	default:
+		panic(fmt.Sprintf("Unexpected type: %v", t))
 	}
 
 	if x < min || x > max {
@@ -191,7 +212,11 @@ func (a *returnAction) coerceInt(x int64, t reflect.Type) (interface{}, error) {
 	}
 
 	rv := reflect.New(t).Elem()
-	rv.SetInt(x)
+	if unsigned {
+		rv.SetUint(uint64(x))
+	} else {
+		rv.SetInt(x)
+	}
 
 	return rv.Interface(), nil
 }
