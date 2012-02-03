@@ -1124,5 +1124,42 @@ func (t *ReturnTest) NamedNonNumericType() {
 }
 
 func (t *ReturnTest) NamedChannelType() {
-	ExpectTrue(false, "TODO")  // Copy ChanOfInt, change named part
+	type namedType chan int
+	type otherNamedType chan int
+
+	someChan := make(namedType)
+	someUnnamedTypeChan := make(chan int)
+	someOtherNamedTypeChan := make(otherNamedType)
+
+	sig := reflect.TypeOf(func() namedType { return nil })
+	cases := []returnTestCase{
+		// Identical types.
+		{ someChan, someChan, "" },
+
+		// Non-named version of same type.
+		{ someUnnamedTypeChan, namedType(someUnnamedTypeChan), "" },
+
+		// Other named version of same underlying type.
+		{ someOtherNamedTypeChan, nil, "given oglematchers_test.otherNamedType" },
+
+		// Nil values.
+		{ (interface{})(nil), namedType(nil), "" },
+		{ namedType(nil), namedType(nil), "" },
+
+		// Wrong element types.
+		{ make(chan string), nil, "given chan string" },
+
+		// Wrong direction
+		{ (<-chan int)(someChan), nil, "given <-chan int" },
+		{ (chan<- int)(someChan), nil, "given chan<- int" },
+
+		// Wrong types.
+		{ (func())(nil), nil, "given func()" },
+		{ int(1), nil, "given int" },
+		{ float64(1), nil, "given float64" },
+		{ complex128(1), nil, "given complex128" },
+		{ &someInt, nil, "given *int" },
+	}
+
+	t.runTestCases(sig, cases)
 }
