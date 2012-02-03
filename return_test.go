@@ -497,7 +497,7 @@ func (t *ReturnTest) Float32() {
 
 		// Wrong types.
 		{ nil, nil, "given <nil>" },
-		{ int16(1), nil, "given int8" },
+		{ int16(1), nil, "given int16" },
 		{ complex128(1), nil, "given complex128" },
 		{ &someInt, nil, "given *int" },
 		{ make(chan int), nil, "given chan int" },
@@ -519,7 +519,7 @@ func (t *ReturnTest) Float64() {
 
 		// Wrong types.
 		{ nil, nil, "given <nil>" },
-		{ int16(1), nil, "given int8" },
+		{ int16(1), nil, "given int16" },
 		{ float32(1), nil, "given float32" },
 		{ complex128(1), nil, "given complex128" },
 		{ &someInt, nil, "given *int" },

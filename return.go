@@ -222,7 +222,14 @@ func (a *returnAction) coerceInt(x int64, t reflect.Type) (interface{}, error) {
 }
 
 func (a *returnAction) coerceFloat(x float64, t reflect.Type) (interface{}, error) {
-	return nil, errors.New("TODO")
+	// Promote complex numbers.
+	if a.isComplex(t) {
+		return a.coerceComplex(complex(x, 0), t)
+	}
+
+	rv := reflect.New(t).Elem()
+	rv.SetFloat(x)
+	return rv.Interface(), nil
 }
 
 func (a *returnAction) coerceComplex(x complex128, t reflect.Type) (interface{}, error) {
