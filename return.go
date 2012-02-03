@@ -94,7 +94,7 @@ func (a *returnAction) buildInvokeResult(
 
 func (a *returnAction) coerce(x interface{}, t reflect.Type) (interface{}, error) {
 	xv := reflect.ValueOf(x)
-	rv := reflect.New(t)
+	rv := reflect.New(t).Elem()
 
 	// If x is assignable to type t, let the reflect package do the heavy
 	// lifting.
