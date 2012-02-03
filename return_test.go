@@ -598,7 +598,7 @@ func (t *ReturnTest) ArrayOfInt() {
 		{ [1]int{17}, nil, "given [1]int" },
 
 		// Wrong element types.
-		{ [2]namedElemType{19, 23}, nil, "given [2]namedElemType" },
+		{ [2]namedElemType{19, 23}, nil, "given [2]oglemock_test.namedElemType" },
 		{ [2]string{"", ""}, nil, "given [2]string" },
 
 		// Wrong types.
@@ -628,7 +628,7 @@ func (t *ReturnTest) ChanOfInt() {
 
 		// Wrong element types.
 		{ make(chan string), nil, "given chan string" },
-		{ make(chan namedElemType), nil, "given chan namedElemType" },
+		{ make(chan namedElemType), nil, "given chan oglemock_test.namedElemType" },
 
 		// Wrong direction
 		{ (<-chan int)(someChan), nil, "given <-chan int" },
@@ -668,7 +668,7 @@ func (t *ReturnTest) SendChanOfInt() {
 
 		// Wrong element types.
 		{ make(chan string), nil, "given chan string" },
-		{ make(chan namedElemType), nil, "given chan namedElemType" },
+		{ make(chan namedElemType), nil, "given chan oglemock_test.namedElemType" },
 
 		// Wrong types.
 		{ (func())(nil), nil, "given func()" },
@@ -704,7 +704,7 @@ func (t *ReturnTest) RecvChanOfInt() {
 
 		// Wrong element types.
 		{ make(chan string), nil, "given chan string" },
-		{ make(chan namedElemType), nil, "given chan namedElemType" },
+		{ make(chan namedElemType), nil, "given chan oglemock_test.namedElemType" },
 
 		// Wrong types.
 		{ (func())(nil), nil, "given func()" },
@@ -783,7 +783,7 @@ func (t *ReturnTest) MapFromStringToInt() {
 
 		// Wrong element types.
 		{ make(map[int]int), nil, "given map[int]int" },
-		{ make(map[namedElemType]int), nil, "given map[namedElemType]int" },
+		{ make(map[namedElemType]int), nil, "given map[oglemock_test.namedElemType]int" },
 		{ make(map[string]string), nil, "given map[string]string" },
 
 		// Wrong types.
@@ -841,7 +841,7 @@ func (t *ReturnTest) SliceOfInts() {
 
 		// Wrong element types.
 		{ make([]string, 1), nil, "given []string" },
-		{ make([]namedElemType, 1), nil, "given []oglematchers_test.namedElemType" },
+		{ make([]namedElemType, 1), nil, "given []oglemock_test.namedElemType" },
 
 		// Wrong types.
 		{ (func())(nil), nil, "given func()" },
@@ -886,7 +886,7 @@ func (t *ReturnTest) Struct() {
 		{ myStruct{17}, myStruct{17}, "" },
 
 		// Wrong field types.
-		{ otherStruct{}, nil, "given oglematchers_test.otherStruct" },
+		{ otherStruct{}, nil, "given oglemock_test.otherStruct" },
 
 		// Wrong types.
 		{ nil, nil, "given <nil>" },
