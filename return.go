@@ -113,7 +113,7 @@ func (a *returnAction) coerce(x interface{}, t reflect.Type) (interface{}, error
 	// resulted from Return(nil).
 	if !xv.IsValid() {
 		switch t.Kind() {
-		case reflect.Ptr, reflect.Func, reflect.Interface, reflect.Chan, reflect.Slice, reflect.Map:
+		case reflect.Ptr, reflect.Func, reflect.Interface, reflect.Chan, reflect.Slice, reflect.Map, reflect.UnsafePointer:
 			return rv.Interface(), nil
 		}
 
