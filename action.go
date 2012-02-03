@@ -22,13 +22,15 @@ import (
 // Action represents an action to be taken in response to a call to a mock
 // method.
 type Action interface {
+	// Set the signature of the function with which this action is being used.
+	// This must be called exactly once, before Invoke is called.
+	SetSignature(signature reflect.Type) error
+
 	// Invoke runs the specified action, given the arguments to the mock method.
 	// It returns zero or more values that may be treated as the return values of
 	// the method. If the action doesn't return any values, it may return the nil
 	// slice.
+	//
+	// You must call SetSignature before calling Invoke.
 	Invoke(methodArgs []interface{}) []interface{}
-
-	// CheckType returns an error iff the action is not able to deal with methods
-	// of the specified type. The type's Kind must be Func.
-	CheckType(signature reflect.Type) error
 }
