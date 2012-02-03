@@ -41,9 +41,7 @@ func (m *mockReader) Oglemock_Description() string {
 	return m.description
 }
 
-func (m *mockReader) Read(p0 []uint8,
-) (o0 int, o1 error,
-) {
+func (m *mockReader) Read(p0 []uint8) (o0 int, o1 error) {
 	// Get a file name and line number for the caller.
 	_, file, line, _ := runtime.Caller(1)
 
