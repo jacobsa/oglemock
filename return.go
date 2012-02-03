@@ -26,10 +26,10 @@ import (
 // Given an argument x to Return and a corresponding type T in the method's
 // signature, at least one of the following must hold:
 //
-//  *  x is assignable to T. (See "Assignability" in the language spec.)
-//
-//  *  x is the nil literal and T is a pointer, function, interface, slice,
-//     channel, or map type.
+//  *  x is assignable to T. (See "Assignability" in the language spec.) Note
+//     that this in particular applies that x may be a type that implements an
+//     interface T. It also implies that the nil literal can be used if T is a
+//     pointer, function, interface, slice, channel, or map type.
 //
 //  *  T is any numeric type, and x is an int that is in-range for that type.
 //     This facilities using raw integer constants: Return(17).
