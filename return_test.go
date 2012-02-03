@@ -150,8 +150,6 @@ func (t *ReturnTest) Bool() {
 }
 
 func (t *ReturnTest) Int() {
-	type namedType int
-
 	sig := reflect.TypeOf(func() int { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
@@ -171,8 +169,6 @@ func (t *ReturnTest) Int() {
 }
 
 func (t *ReturnTest) Int8() {
-	type namedType int8
-
 	sig := reflect.TypeOf(func() int8 { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
@@ -200,8 +196,6 @@ func (t *ReturnTest) Int8() {
 }
 
 func (t *ReturnTest) Int16() {
-	type namedType int16
-
 	sig := reflect.TypeOf(func() int16 { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
@@ -229,8 +223,6 @@ func (t *ReturnTest) Int16() {
 }
 
 func (t *ReturnTest) Int32() {
-	type namedType int32
-
 	sig := reflect.TypeOf(func() int32 { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
@@ -257,8 +249,6 @@ func (t *ReturnTest) Int32() {
 }
 
 func (t *ReturnTest) Rune() {
-	type namedType rune
-
 	sig := reflect.TypeOf(func() rune { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
@@ -285,8 +275,6 @@ func (t *ReturnTest) Rune() {
 }
 
 func (t *ReturnTest) Int64() {
-	type namedType int64
-
 	sig := reflect.TypeOf(func() int64 { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
@@ -494,9 +482,6 @@ func (t *ReturnTest) Uintptr() {
 		// Identical types.
 		{ uintptr(17), uintptr(17), "" },
 
-		// Named version of same underlying type.
-		{ namedType(17), uintptr(17), "" },
-
 		// Wrong types.
 		{ nil, nil, "given <nil>" },
 		{ int(1), nil, "given int" },
@@ -517,9 +502,6 @@ func (t *ReturnTest) Float32() {
 		// Identical types.
 		{ float32(-17.5), float32(-17.5), "" },
 		{ float32(17.5), float32(17.5), "" },
-
-		// Named version of same underlying type.
-		{ namedType(17.5), float32(17.5), "" },
 
 		// In-range ints.
 		{ int(-17), float32(-17), "" },
@@ -549,9 +531,6 @@ func (t *ReturnTest) Float64() {
 		{ float64(-17.5), float64(-17.5), "" },
 		{ float64(17.5), float64(17.5), "" },
 
-		// Named version of same underlying type.
-		{ namedType(17.5), float64(17.5), "" },
-
 		// In-range ints.
 		{ int(-17), float64(-17), "" },
 		{ int(17), float64(17), "" },
@@ -576,9 +555,6 @@ func (t *ReturnTest) Complex64() {
 		// Identical types.
 		{ complex64(-17.5-1i), complex64(-17.5-1i), "" },
 		{ complex64(17.5+1i), complex64(17.5+1i), "" },
-
-		// Named version of same underlying type.
-		{ namedType(17.5+1i), complex64(17.5+1i), "" },
 
 		// In-range ints.
 		{ int(-17), complex64(-17), "" },
@@ -612,9 +588,6 @@ func (t *ReturnTest) Complex128() {
 		{ complex128(-17.5-1i), complex128(-17.5-1i), "" },
 		{ complex128(17.5+1i), complex128(17.5+1i), "" },
 
-		// Named version of same underlying type.
-		{ namedType(17.5+1i), complex128(17.5+1i), "" },
-
 		// In-range ints.
 		{ int(-17), complex128(-17), "" },
 		{ int(17), complex128(17), "" },
@@ -643,9 +616,6 @@ func (t *ReturnTest) ArrayOfInt() {
 	cases := []returnTestCase{
 		// Identical types.
 		{ [2]int{19, 23}, [2]int{19, 23}, "" },
-
-		// Named version of same underlying type.
-		{ namedType{19, 23}, [2]int{19, 23}, "" },
 
 		// Wrong length.
 		{ [1]int{17}, nil, "given [1]int" },
@@ -682,9 +652,6 @@ func (t *ReturnTest) ChanOfInt() {
 		{ (interface{})(nil), (chan int)(nil), "" },
 		{ (chan int)(nil), (chan int)(nil), "" },
 
-		// Named version of same underlying type.
-		{ someNamedTypeChan, (chan int)(someNamedTypeChan), "" },
-
 		// Wrong element types.
 		{ make(chan string), nil, "given chan string" },
 		{ make(chan namedElemType), nil, "given chan namedElemType" },
@@ -720,9 +687,6 @@ func (t *ReturnTest) SendChanOfInt() {
 		// Nil values.
 		{ (interface{})(nil), (chan<- int)(nil), "" },
 		{ (chan int)(nil), (chan<- int)(nil), "" },
-
-		// Named version of same underlying type.
-		{ someNamedTypeChan, (chan<- int)(someNamedTypeChan), "" },
 
 		// Bidirectional channel
 		{ someBidirectionalChannel, (chan<- int)(someBidirectionalChannel), "" },
@@ -762,9 +726,6 @@ func (t *ReturnTest) RecvChanOfInt() {
 		{ (interface{})(nil), (<-chan int)(nil), "" },
 		{ (chan int)(nil), (<-chan int)(nil), "" },
 
-		// Named version of same underlying type.
-		{ someNamedTypeChan, (<-chan int)(someNamedTypeChan), "" },
-
 		// Bidirectional channel
 		{ someBidirectionalChannel, (<-chan int)(someBidirectionalChannel), "" },
 
@@ -798,9 +759,6 @@ func (t *ReturnTest) Func() {
 		// Nil values.
 		{ (interface{})(nil), (func(string) int)(nil), "" },
 		{ (func(string) int)(nil), (func(string) int)(nil), "" },
-
-		// Named version of same underlying type.
-		{ namedType(someFunc), someFunc, "" },
 
 		// Wrong parameter and return types.
 		{ func(int) int { return 0 }, nil, "given func(int) int" },
@@ -856,9 +814,6 @@ func (t *ReturnTest) MapFromStringToInt() {
 		{ (interface{})(nil), (chan int)(nil), "" },
 		{ (map[string]int)(nil), (map[string]int)(nil), "" },
 
-		// Named version of same underlying type.
-		{ someNamedTypeMap, map[string]int(someNamedTypeMap), "" },
-
 		// Wrong element types.
 		{ make(map[int]int), nil, "given map[int]int" },
 		{ make(map[namedElemType]int), nil, "given map[namedElemType]int" },
@@ -891,9 +846,6 @@ func (t *ReturnTest) PointerToString() {
 		{ (interface{})(nil), (*string)(nil), "" },
 		{ (*string)(nil), (*string)(nil), "" },
 
-		// Named version of same underlying type.
-		{ namedType(&someStr), (*string)(&someStr), "" },
-
 		// Wrong element types.
 		{ &someInt, nil, "given *int" },
 		{ &someNamedStr, nil, "given *oglematchers_test.namedElemType" },
@@ -924,9 +876,6 @@ func (t *ReturnTest) SliceOfInts() {
 		{ (interface{})(nil), ([]int)(nil), "" },
 		{ ([]int)(nil), ([]int)(nil), "" },
 
-		// Named version of same underlying type.
-		{ namedType(someSlice), namedType(someSlice), "" },
-
 		// Wrong element types.
 		{ make([]string, 1), nil, "given []string" },
 		{ make([]namedElemType, 1), nil, "given []oglematchers_test.namedElemType" },
@@ -950,9 +899,6 @@ func (t *ReturnTest) String() {
 		// Identical types.
 		{ string(""), string(""), "" },
 		{ string("taco"), string("taco"), "" },
-
-		// Named version of same underlying type.
-		{ namedType("burrito"), string("burrito"), "" },
 
 		// Wrong types.
 		{ nil, nil, "given <nil>" },
@@ -978,9 +924,6 @@ func (t *ReturnTest) Struct() {
 	cases := []returnTestCase{
 		// Identical types.
 		{ myStruct{17}, myStruct{17}, "" },
-
-		// Named version of same underlying type.
-		{ myStruct{17}, nil, "given oglematchers_test.namedType" },
 
 		// Wrong field types.
 		{ otherStruct{}, nil, "given oglematchers_test.otherStruct" },
@@ -1010,9 +953,6 @@ func (t *ReturnTest) UnsafePointer() {
 		// Nil values.
 		{ (interface{})(nil), unsafe.Pointer(nil), "" },
 		{ unsafe.Pointer(nil), unsafe.Pointer(nil), "" },
-
-		// Named version of same underlying type.
-		{ namedType(&someStr), nil, "given unsafe.Pointer" },
 
 		// Wrong types.
 		{ (func())(nil), nil, "given func()" },
