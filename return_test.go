@@ -445,7 +445,7 @@ func (t *ReturnTest) Uint64() {
 
 		// In-range ints.
 		{ int(0), uint64(0), "" },
-		{ int(math.MaxInt32), uint32(math.MaxInt32), "" },
+		{ int(math.MaxInt32), uint64(math.MaxInt32), "" },
 
 		// Out of range ints.
 		{ int(-1), nil, "out of range" },
@@ -778,7 +778,7 @@ func (t *ReturnTest) MapFromStringToInt() {
 		{ someMap, someMap, "" },
 
 		// Nil values.
-		{ (interface{})(nil), (chan int)(nil), "" },
+		{ (interface{})(nil), (map[string]int)(nil), "" },
 		{ (map[string]int)(nil), (map[string]int)(nil), "" },
 
 		// Wrong element types.
@@ -906,7 +906,7 @@ func (t *ReturnTest) UnsafePointer() {
 	sig := reflect.TypeOf(func() unsafe.Pointer { return nil })
 	cases := []returnTestCase{
 		// Identical types.
-		{ unsafe.Pointer(&someStr), (*string)(&someStr), "" },
+		{ unsafe.Pointer(&someStr), unsafe.Pointer(&someStr), "" },
 
 		// Nil values.
 		{ (interface{})(nil), unsafe.Pointer(nil), "" },
