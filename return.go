@@ -117,5 +117,5 @@ func (a *returnAction) coerce(x interface{}, t reflect.Type) (interface{}, error
 		return rv.Interface(), nil
 	}
 
-	return nil, errors.New("TODO")
+	return nil, errors.New(fmt.Sprintf("expected %v, given %v", t, xv.Type()))
 }
