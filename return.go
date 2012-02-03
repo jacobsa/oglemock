@@ -96,9 +96,23 @@ func (a *returnAction) coerce(x interface{}, t reflect.Type) (interface{}, error
 	xv := reflect.ValueOf(x)
 	rv := reflect.New(t).Elem()
 
+	// Special case: the language spec says that the predeclared identifier nil
+	// is assignable to pointers, functions, interface, slices, channels, and map
+	// types. However, reflect.ValueOf(nil) returns an invalid value that will
+	// not cooperate below. So handle invalid values here, assuming that they
+	// resulted from Return(nil).
+	if !xv.IsValid() {
+		switch t.Kind() {
+		case reflect.Ptr, reflect.Func, reflect.Interface, reflect.Chan, reflect.Slice, reflect.Map:
+			return rv.Interface(), nil
+		}
+
+		return nil, errors.New(fmt.Sprintf("expected %v, given <nil>", t))
+	}
+
 	// If x is assignable to type t, let the reflect package do the heavy
 	// lifting.
-	if xv.Type().AssignableTo(t) {
+	if reflect.TypeOf(x).AssignableTo(t) {
 		rv.Set(xv)
 		return rv.Interface(), nil
 	}
