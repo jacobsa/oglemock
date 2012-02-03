@@ -757,7 +757,7 @@ func (t *ReturnTest) Interface() {
 		{ (interface{})(nil), (interface{})(nil), "" },
 
 		// Non-implementing types.
-		{ (chan int)(nil), (chan int)(nil), "" },
+		{ (chan int)(nil), nil, "given chan int" },
 		{ int(1), nil, "given int" },
 		{ float64(1), nil, "given float64" },
 		{ complex128(1), nil, "given complex128" },
