@@ -45,12 +45,12 @@ func (t *ReturnTest) EmptySet() {
 	result := action.Invoke([]interface{}{})
 	ExpectThat(len(result), Equals(0))
 
-	// CheckType
+	// SetSignature
 	emptyReturn := reflect.TypeOf(func(i int) {})
 	nonEmptyReturn := reflect.TypeOf(func(i int) string { return "" })
 
-	ExpectThat(action.CheckType(emptyReturn), Equals(nil))
-	ExpectThat(action.CheckType(nonEmptyReturn), Not(Equals(nil)))
+	ExpectThat(action.SetSignature(emptyReturn), Equals(nil))
+	ExpectThat(action.SetSignature(nonEmptyReturn), Not(Equals(nil)))
 }
 
 func (t *ReturnTest) OneValue() {
@@ -62,17 +62,17 @@ func (t *ReturnTest) OneValue() {
 	ExpectThat(len(result), Equals(1))
 	ExpectThat(result[0], Equals("taco"))
 
-	// CheckType
+	// SetSignature
 	type compatibleType string
 	emptyReturn := reflect.TypeOf(func(i int) {})
 	correctReturn := reflect.TypeOf(func(i int) string { return "" })
 	aliasedTypeReturn := reflect.TypeOf(func(i int) compatibleType { return "" })
 	tooManyReturn := reflect.TypeOf(func(i int) (string, int) { return "", i })
 
-	ExpectThat(action.CheckType(emptyReturn), Not(Equals(nil)))
-	ExpectThat(action.CheckType(correctReturn), Equals(nil))
-	ExpectThat(action.CheckType(aliasedTypeReturn), Not(Equals(nil)))
-	ExpectThat(action.CheckType(tooManyReturn), Not(Equals(nil)))
+	ExpectThat(action.SetSignature(emptyReturn), Not(Equals(nil)))
+	ExpectThat(action.SetSignature(correctReturn), Equals(nil))
+	ExpectThat(action.SetSignature(aliasedTypeReturn), Not(Equals(nil)))
+	ExpectThat(action.SetSignature(tooManyReturn), Not(Equals(nil)))
 }
 
 func (t *ReturnTest) MultipleValues() {
@@ -87,12 +87,12 @@ func (t *ReturnTest) MultipleValues() {
 	ExpectThat(result[1], Equals(&someInt))
 	ExpectThat(result[2], Equals(19))
 
-	// CheckType
+	// SetSignature
 	emptyReturn := reflect.TypeOf(func(i int) {})
 	correctReturn := reflect.TypeOf(func(i int) (string, *int, int) { return "", &someInt, 19 })
 	incorrectReturn := reflect.TypeOf(func(i int) (string, *int) { return "", &someInt })
 
-	ExpectThat(action.CheckType(emptyReturn), Not(Equals(nil)))
-	ExpectThat(action.CheckType(correctReturn), Equals(nil))
-	ExpectThat(action.CheckType(incorrectReturn), Not(Equals(nil)))
+	ExpectThat(action.SetSignature(emptyReturn), Not(Equals(nil)))
+	ExpectThat(action.SetSignature(correctReturn), Equals(nil))
+	ExpectThat(action.SetSignature(incorrectReturn), Not(Equals(nil)))
 }

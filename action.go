@@ -23,7 +23,7 @@ import (
 // method.
 type Action interface {
 	// Set the signature of the function with which this action is being used.
-	// This must be called exactly once, before Invoke is called.
+	// This must be called before Invoke is called.
 	SetSignature(signature reflect.Type) error
 
 	// Invoke runs the specified action, given the arguments to the mock method.
