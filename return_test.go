@@ -53,6 +53,10 @@ func (t *ReturnTest) runTestCases(signature reflect.Type, cases []returnTestCase
 		err := a.SetSignature(signature)
 		if c.expectedSetSignatureErrorSubstring == "" {
 			ExpectEq(nil, err, "Test case %d: %v", i, c)
+
+			if err != nil {
+				continue
+			}
 		} else {
 			ExpectThat(err, Error(HasSubstr(c.expectedSetSignatureErrorSubstring)),
 				"Test case %d: %v", i, c)
