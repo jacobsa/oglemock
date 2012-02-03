@@ -41,20 +41,20 @@ func TestOgletest(t *testing.T) { RunTests(t) }
 type returnTestCase struct {
 	suppliedVal interface{}
 	expectedVal interface{}
-	expectedCheckTypeResult bool
-	expectedCheckTypeErrorSubstring string
+	expectedSetSignatureResult bool
+	expectedSetSignatureErrorSubstring string
 }
 
 func (t *ReturnTest) runTestCases(signature reflect.Type, cases []returnTestCase) {
 	for i, c := range cases {
 		a := oglemock.Return(c.suppliedVal)
 
-		// CheckType
-		err := a.CheckType(signature)
-		if c.expectedCheckTypeResult {
+		// SetSignature
+		err := a.SetSignature(signature)
+		if c.expectedSetSignatureResult {
 			ExpectEq(nil, err, "Test case %d: %v", i, c)
 		} else {
-			ExpectThat(err, Error(HasSubstr(c.expectedCheckTypeErrorSubstring)),
+			ExpectThat(err, Error(HasSubstr(c.expectedSetSignatureErrorSubstring)),
 				"Test case %d: %v", i, c)
 			continue
 		}
@@ -78,7 +78,7 @@ func (t *ReturnTest) NoReturnValues() {
 
 	// No values.
 	a = oglemock.Return()
-	err = a.CheckType(sig)
+	err = a.SetSignature(sig)
 	AssertEq(nil, err)
 
 	vals = a.Invoke([]interface{}{})
@@ -86,13 +86,13 @@ func (t *ReturnTest) NoReturnValues() {
 
 	// One value.
 	a = oglemock.Return(17)
-	err = a.CheckType(sig)
+	err = a.SetSignature(sig)
 	ExpectThat(err, Error(HasSubstr("given 1 val")))
 	ExpectThat(err, Error(HasSubstr("expected 0")))
 
 	// Two values.
 	a = oglemock.Return(17, 19)
-	err = a.CheckType(sig)
+	err = a.SetSignature(sig)
 	ExpectThat(err, Error(HasSubstr("given 2 vals")))
 	ExpectThat(err, Error(HasSubstr("expected 0")))
 }
@@ -105,19 +105,19 @@ func (t *ReturnTest) MultipleReturnValues() {
 
 	// No values.
 	a = oglemock.Return()
-	err = a.CheckType(sig)
+	err = a.SetSignature(sig)
 	ExpectThat(err, Error(HasSubstr("given 0 vals")))
 	ExpectThat(err, Error(HasSubstr("expected 2")))
 
 	// One value.
 	a = oglemock.Return(17)
-	err = a.CheckType(sig)
+	err = a.SetSignature(sig)
 	ExpectThat(err, Error(HasSubstr("given 1 val")))
 	ExpectThat(err, Error(HasSubstr("expected 2")))
 
 	// Two values.
 	a = oglemock.Return(17, "taco")
-	err = a.CheckType(sig)
+	err = a.SetSignature(sig)
 	AssertEq(nil, err)
 
 	vals = a.Invoke([]interface{}{})
