@@ -123,13 +123,13 @@ func (a *returnAction) coerce(x interface{}, t reflect.Type) (interface{}, error
 
 	// Handle numeric types as described in the documentation on Return.
 	switch {
-	case t == intType && a.isNumeric(xv.Type()):
+	case xv.Type() == intType && a.isNumeric(t):
 		return a.coerceInt(xv.Int(), t)
 
-	case t == float64Type && (a.isFloatingPoint(xv.Type()) || a.isComplex(xv.Type())):
+	case xv.Type() == float64Type && (a.isFloatingPoint(t) || a.isComplex(t)):
 		return a.coerceFloat(xv.Float(), t)
 
-	case t == complex128Type && a.isComplex(xv.Type()):
+	case xv.Type() == complex128Type && a.isComplex(t):
 		return a.coerceComplex(xv.Complex(), t)
 	}
 
