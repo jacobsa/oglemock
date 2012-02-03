@@ -55,7 +55,12 @@ type returnAction struct {
 }
 
 func (a *returnAction) Invoke(vals []interface{}) []interface{} {
-	return a.returnVals
+	res, err := a.buildInvokeResult(a.signature)
+	if err != nil {
+		panic(err)
+	}
+
+	return res
 }
 
 func (a *returnAction) SetSignature(signature reflect.Type) error {
