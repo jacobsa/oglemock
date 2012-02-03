@@ -41,7 +41,6 @@ func TestOgletest(t *testing.T) { RunTests(t) }
 type returnTestCase struct {
 	suppliedVal interface{}
 	expectedVal interface{}
-	expectedSetSignatureResult bool
 	expectedSetSignatureErrorSubstring string
 }
 
@@ -51,7 +50,7 @@ func (t *ReturnTest) runTestCases(signature reflect.Type, cases []returnTestCase
 
 		// SetSignature
 		err := a.SetSignature(signature)
-		if c.expectedSetSignatureResult {
+		if c.expectedSetSignatureErrorSubstring == "" {
 			ExpectEq(nil, err, "Test case %d: %v", i, c)
 		} else {
 			ExpectThat(err, Error(HasSubstr(c.expectedSetSignatureErrorSubstring)),
@@ -130,19 +129,19 @@ func (t *ReturnTest) Bool() {
 	sig := reflect.TypeOf(func() bool { return false })
 	cases := []returnTestCase{
 		// Identical types.
-		{ bool(true), bool(true), true, "" },
-		{ bool(false), bool(false), true, "" },
+		{ bool(true), bool(true), "" },
+		{ bool(false), bool(false), "" },
 
 		// Named version of same underlying type.
-		{ namedType(true), bool(true), true, "" },
+		{ namedType(true), bool(true), "" },
 
 		// Wrong types.
-		{ nil, nil, false, "given <nil>" },
-		{ int(1), nil, false, "given int" },
-		{ float64(1), nil, false, "given float64" },
-		{ complex128(1), nil, false, "given complex128" },
-		{ &someInt, nil, false, "given *int" },
-		{ make(chan int), nil, false, "given chan int" },
+		{ nil, nil, "given <nil>" },
+		{ int(1), nil, "given int" },
+		{ float64(1), nil, "given float64" },
+		{ complex128(1), nil, "given complex128" },
+		{ &someInt, nil, "given *int" },
+		{ make(chan int), nil, "given chan int" },
 	}
 
 	t.runTestCases(sig, cases)
@@ -154,19 +153,19 @@ func (t *ReturnTest) Int() {
 	sig := reflect.TypeOf(func() int { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
-		{ int(math.MinInt32), int(math.MinInt32), true, "" },
-		{ int(math.MaxInt32), int(math.MaxInt32), true, "" },
+		{ int(math.MinInt32), int(math.MinInt32), "" },
+		{ int(math.MaxInt32), int(math.MaxInt32), "" },
 
 		// Named version of same underlying type.
-		{ namedType(17), int(17), true, "" },
+		{ namedType(17), int(17), "" },
 
 		// Wrong types.
-		{ nil, nil, false, "given <nil>" },
-		{ int16(1), nil, false, "given int16" },
-		{ float64(1), nil, false, "given float64" },
-		{ complex128(1), nil, false, "given complex128" },
-		{ &someInt, nil, false, "given *int" },
-		{ make(chan int), nil, false, "given chan int" },
+		{ nil, nil, "given <nil>" },
+		{ int16(1), nil, "given int16" },
+		{ float64(1), nil, "given float64" },
+		{ complex128(1), nil, "given complex128" },
+		{ &someInt, nil, "given *int" },
+		{ make(chan int), nil, "given chan int" },
 	}
 
 	t.runTestCases(sig, cases)
@@ -178,27 +177,27 @@ func (t *ReturnTest) Int8() {
 	sig := reflect.TypeOf(func() int8 { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
-		{ int8(math.MinInt8), int8(math.MinInt8), true, "" },
-		{ int8(math.MaxInt8), int8(math.MaxInt8), true, "" },
+		{ int8(math.MinInt8), int8(math.MinInt8), "" },
+		{ int8(math.MaxInt8), int8(math.MaxInt8), "" },
 
 		// Named version of same underlying type.
-		{ namedType(17), int8(17), true, "" },
+		{ namedType(17), int8(17), "" },
 
 		// In-range ints.
-		{ int(math.MinInt8), int8(math.MinInt8), true, "" },
-		{ int(math.MaxInt8), int8(math.MaxInt8), true, "" },
+		{ int(math.MinInt8), int8(math.MinInt8), "" },
+		{ int(math.MaxInt8), int8(math.MaxInt8), "" },
 
 		// Out of range ints.
-		{ int(math.MinInt8 - 1), nil, false, "out of range" },
-		{ int(math.MaxInt8 + 1), nil, false, "out of range" },
+		{ int(math.MinInt8 - 1), nil, "out of range" },
+		{ int(math.MaxInt8 + 1), nil, "out of range" },
 
 		// Wrong types.
-		{ nil, nil, false, "given <nil>" },
-		{ int16(1), nil, false, "given int16" },
-		{ float64(1), nil, false, "given float64" },
-		{ complex128(1), nil, false, "given complex128" },
-		{ &someInt, nil, false, "given *int" },
-		{ make(chan int), nil, false, "given chan int" },
+		{ nil, nil, "given <nil>" },
+		{ int16(1), nil, "given int16" },
+		{ float64(1), nil, "given float64" },
+		{ complex128(1), nil, "given complex128" },
+		{ &someInt, nil, "given *int" },
+		{ make(chan int), nil, "given chan int" },
 	}
 
 	t.runTestCases(sig, cases)
@@ -210,27 +209,27 @@ func (t *ReturnTest) Int16() {
 	sig := reflect.TypeOf(func() int16 { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
-		{ int16(math.MinInt16), int16(math.MinInt16), true, "" },
-		{ int16(math.MaxInt16), int16(math.MaxInt16), true, "" },
+		{ int16(math.MinInt16), int16(math.MinInt16), "" },
+		{ int16(math.MaxInt16), int16(math.MaxInt16), "" },
 
 		// Named version of same underlying type.
-		{ namedType(17), int16(17), true, "" },
+		{ namedType(17), int16(17), "" },
 
 		// In-range ints.
-		{ int(math.MinInt16), int16(math.MinInt16), true, "" },
-		{ int(math.MaxInt16), int16(math.MaxInt16), true, "" },
+		{ int(math.MinInt16), int16(math.MinInt16), "" },
+		{ int(math.MaxInt16), int16(math.MaxInt16), "" },
 
 		// Out of range ints.
-		{ int(math.MinInt16 - 1), nil, false, "out of range" },
-		{ int(math.MaxInt16 + 1), nil, false, "out of range" },
+		{ int(math.MinInt16 - 1), nil, "out of range" },
+		{ int(math.MaxInt16 + 1), nil, "out of range" },
 
 		// Wrong types.
-		{ nil, nil, false, "given <nil>" },
-		{ int8(1), nil, false, "given int8" },
-		{ float64(1), nil, false, "given float64" },
-		{ complex128(1), nil, false, "given complex128" },
-		{ &someInt, nil, false, "given *int" },
-		{ make(chan int), nil, false, "given chan int" },
+		{ nil, nil, "given <nil>" },
+		{ int8(1), nil, "given int8" },
+		{ float64(1), nil, "given float64" },
+		{ complex128(1), nil, "given complex128" },
+		{ &someInt, nil, "given *int" },
+		{ make(chan int), nil, "given chan int" },
 	}
 
 	t.runTestCases(sig, cases)
@@ -242,26 +241,26 @@ func (t *ReturnTest) Int32() {
 	sig := reflect.TypeOf(func() int32 { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
-		{ int32(math.MinInt32), int32(math.MinInt32), true, "" },
-		{ int32(math.MaxInt32), int32(math.MaxInt32), true, "" },
+		{ int32(math.MinInt32), int32(math.MinInt32), "" },
+		{ int32(math.MaxInt32), int32(math.MaxInt32), "" },
 
 		// Named version of same underlying type.
-		{ namedType(17), int32(17), true, "" },
+		{ namedType(17), int32(17), "" },
 
 		// Aliased version of type.
-		{ rune(17), int32(17), true, "" },
+		{ rune(17), int32(17), "" },
 
 		// In-range ints.
-		{ int(math.MinInt32), int32(math.MinInt32), true, "" },
-		{ int(math.MaxInt32), int32(math.MaxInt32), true, "" },
+		{ int(math.MinInt32), int32(math.MinInt32), "" },
+		{ int(math.MaxInt32), int32(math.MaxInt32), "" },
 
 		// Wrong types.
-		{ nil, nil, false, "given <nil>" },
-		{ int16(1), nil, false, "given int16" },
-		{ float64(1), nil, false, "given float64" },
-		{ complex128(1), nil, false, "given complex128" },
-		{ &someInt, nil, false, "given *int" },
-		{ make(chan int), nil, false, "given chan int" },
+		{ nil, nil, "given <nil>" },
+		{ int16(1), nil, "given int16" },
+		{ float64(1), nil, "given float64" },
+		{ complex128(1), nil, "given complex128" },
+		{ &someInt, nil, "given *int" },
+		{ make(chan int), nil, "given chan int" },
 	}
 
 	t.runTestCases(sig, cases)
@@ -273,26 +272,26 @@ func (t *ReturnTest) Rune() {
 	sig := reflect.TypeOf(func() rune { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
-		{ rune(math.MinInt32), rune(math.MinInt32), true, "" },
-		{ rune(math.MaxInt32), rune(math.MaxInt32), true, "" },
+		{ rune(math.MinInt32), rune(math.MinInt32), "" },
+		{ rune(math.MaxInt32), rune(math.MaxInt32), "" },
 
 		// Named version of same underlying type.
-		{ namedType(17), rune(17), true, "" },
+		{ namedType(17), rune(17), "" },
 
 		// Aliased version of type.
-		{ int32(17), rune(17), true, "" },
+		{ int32(17), rune(17), "" },
 
 		// In-range ints.
-		{ int(math.MinInt32), rune(math.MinInt32), true, "" },
-		{ int(math.MaxInt32), rune(math.MaxInt32), true, "" },
+		{ int(math.MinInt32), rune(math.MinInt32), "" },
+		{ int(math.MaxInt32), rune(math.MaxInt32), "" },
 
 		// Wrong types.
-		{ nil, nil, false, "given <nil>" },
-		{ int16(1), nil, false, "given int16" },
-		{ float64(1), nil, false, "given float64" },
-		{ complex128(1), nil, false, "given complex128" },
-		{ &someInt, nil, false, "given *int" },
-		{ make(chan int), nil, false, "given chan int" },
+		{ nil, nil, "given <nil>" },
+		{ int16(1), nil, "given int16" },
+		{ float64(1), nil, "given float64" },
+		{ complex128(1), nil, "given complex128" },
+		{ &someInt, nil, "given *int" },
+		{ make(chan int), nil, "given chan int" },
 	}
 
 	t.runTestCases(sig, cases)
@@ -304,23 +303,23 @@ func (t *ReturnTest) Int64() {
 	sig := reflect.TypeOf(func() int64 { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
-		{ int64(math.MinInt64), int64(math.MinInt64), true, "" },
-		{ int64(math.MaxInt64), int64(math.MaxInt64), true, "" },
+		{ int64(math.MinInt64), int64(math.MinInt64), "" },
+		{ int64(math.MaxInt64), int64(math.MaxInt64), "" },
 
 		// Named version of same underlying type.
-		{ namedType(17), int64(17), true, "" },
+		{ namedType(17), int64(17), "" },
 
 		// In-range ints.
-		{ int(math.MinInt32), int64(math.MinInt32), true, "" },
-		{ int(math.MaxInt32), int64(math.MaxInt32), true, "" },
+		{ int(math.MinInt32), int64(math.MinInt32), "" },
+		{ int(math.MaxInt32), int64(math.MaxInt32), "" },
 
 		// Wrong types.
-		{ nil, nil, false, "given <nil>" },
-		{ int16(1), nil, false, "given int16" },
-		{ float64(1), nil, false, "given float64" },
-		{ complex128(1), nil, false, "given complex128" },
-		{ &someInt, nil, false, "given *int" },
-		{ make(chan int), nil, false, "given chan int" },
+		{ nil, nil, "given <nil>" },
+		{ int16(1), nil, "given int16" },
+		{ float64(1), nil, "given float64" },
+		{ complex128(1), nil, "given complex128" },
+		{ &someInt, nil, "given *int" },
+		{ make(chan int), nil, "given chan int" },
 	}
 
 	t.runTestCases(sig, cases)
@@ -332,26 +331,26 @@ func (t *ReturnTest) Uint() {
 	sig := reflect.TypeOf(func() uint { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
-		{ uint(0), uint(0), true, "" },
-		{ uint(math.MaxUint32), uint(math.MaxUint32), true, "" },
+		{ uint(0), uint(0), "" },
+		{ uint(math.MaxUint32), uint(math.MaxUint32), "" },
 
 		// Named version of same underlying type.
-		{ namedType(17), uint(17), true, "" },
+		{ namedType(17), uint(17), "" },
 
 		// In-range ints.
-		{ int(0), uint(0), true, "" },
-		{ int(math.MaxInt32), uint(math.MaxUint32), true, "" },
+		{ int(0), uint(0), "" },
+		{ int(math.MaxInt32), uint(math.MaxUint32), "" },
 
 		// Out of range ints.
-		{ int(-1), nil, false, "out of range" },
+		{ int(-1), nil, "out of range" },
 
 		// Wrong types.
-		{ nil, nil, false, "given <nil>" },
-		{ int16(1), nil, false, "given int16" },
-		{ float64(1), nil, false, "given float64" },
-		{ complex128(1), nil, false, "given complex128" },
-		{ &someInt, nil, false, "given *int" },
-		{ make(chan int), nil, false, "given chan int" },
+		{ nil, nil, "given <nil>" },
+		{ int16(1), nil, "given int16" },
+		{ float64(1), nil, "given float64" },
+		{ complex128(1), nil, "given complex128" },
+		{ &someInt, nil, "given *int" },
+		{ make(chan int), nil, "given chan int" },
 	}
 
 	t.runTestCases(sig, cases)
@@ -363,30 +362,30 @@ func (t *ReturnTest) Uint8() {
 	sig := reflect.TypeOf(func() uint8 { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
-		{ uint8(0), uint8(0), true, "" },
-		{ uint8(math.MaxUint8), uint8(math.MaxUint8), true, "" },
+		{ uint8(0), uint8(0), "" },
+		{ uint8(math.MaxUint8), uint8(math.MaxUint8), "" },
 
 		// Named version of same underlying type.
-		{ namedType(17), uint8(17), true, "" },
+		{ namedType(17), uint8(17), "" },
 
 		// Aliased version of type.
-		{ byte(17), uint8(17), true, "" },
+		{ byte(17), uint8(17), "" },
 
 		// In-range ints.
-		{ int(0), uint8(0), true, "" },
-		{ int(math.MaxUint8), uint8(math.MaxUint8), true, "" },
+		{ int(0), uint8(0), "" },
+		{ int(math.MaxUint8), uint8(math.MaxUint8), "" },
 
 		// Out of range ints.
-		{ int(-1), nil, false, "out of range" },
-		{ int(math.MaxUint8 + 1), nil, false, "out of range" },
+		{ int(-1), nil, "out of range" },
+		{ int(math.MaxUint8 + 1), nil, "out of range" },
 
 		// Wrong types.
-		{ nil, nil, false, "given <nil>" },
-		{ int16(1), nil, false, "given int16" },
-		{ float64(1), nil, false, "given float64" },
-		{ complex128(1), nil, false, "given complex128" },
-		{ &someInt, nil, false, "given *int" },
-		{ make(chan int), nil, false, "given chan int" },
+		{ nil, nil, "given <nil>" },
+		{ int16(1), nil, "given int16" },
+		{ float64(1), nil, "given float64" },
+		{ complex128(1), nil, "given complex128" },
+		{ &someInt, nil, "given *int" },
+		{ make(chan int), nil, "given chan int" },
 	}
 
 	t.runTestCases(sig, cases)
@@ -398,30 +397,30 @@ func (t *ReturnTest) Byte() {
 	sig := reflect.TypeOf(func() byte { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
-		{ byte(0), byte(0), true, "" },
-		{ byte(math.MaxUint8), byte(math.MaxUint8), true, "" },
+		{ byte(0), byte(0), "" },
+		{ byte(math.MaxUint8), byte(math.MaxUint8), "" },
 
 		// Named version of same underlying type.
-		{ namedType(17), byte(17), true, "" },
+		{ namedType(17), byte(17), "" },
 
 		// Aliased version of type.
-		{ uint8(17), byte(17), true, "" },
+		{ uint8(17), byte(17), "" },
 
 		// In-range ints.
-		{ int(0), byte(0), true, "" },
-		{ int(math.MaxUint8), byte(math.MaxUint8), true, "" },
+		{ int(0), byte(0), "" },
+		{ int(math.MaxUint8), byte(math.MaxUint8), "" },
 
 		// Out of range ints.
-		{ int(-1), nil, false, "out of range" },
-		{ int(math.MaxUint8 + 1), nil, false, "out of range" },
+		{ int(-1), nil, "out of range" },
+		{ int(math.MaxUint8 + 1), nil, "out of range" },
 
 		// Wrong types.
-		{ nil, nil, false, "given <nil>" },
-		{ int16(1), nil, false, "given int16" },
-		{ float64(1), nil, false, "given float64" },
-		{ complex128(1), nil, false, "given complex128" },
-		{ &someInt, nil, false, "given *int" },
-		{ make(chan int), nil, false, "given chan int" },
+		{ nil, nil, "given <nil>" },
+		{ int16(1), nil, "given int16" },
+		{ float64(1), nil, "given float64" },
+		{ complex128(1), nil, "given complex128" },
+		{ &someInt, nil, "given *int" },
+		{ make(chan int), nil, "given chan int" },
 	}
 
 	t.runTestCases(sig, cases)
@@ -433,27 +432,27 @@ func (t *ReturnTest) Uint16() {
 	sig := reflect.TypeOf(func() uint16 { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
-		{ uint32(0), uint16(0), true, "" },
-		{ uint32(math.MaxUint16), uint16(math.MaxUint16), true, "" },
+		{ uint32(0), uint16(0), "" },
+		{ uint32(math.MaxUint16), uint16(math.MaxUint16), "" },
 
 		// Named version of same underlying type.
-		{ namedType(17), uint16(17), true, "" },
+		{ namedType(17), uint16(17), "" },
 
 		// In-range ints.
-		{ int(0), uint16(0), true, "" },
-		{ int(math.MaxUint16), uint16(math.MaxUint16), true, "" },
+		{ int(0), uint16(0), "" },
+		{ int(math.MaxUint16), uint16(math.MaxUint16), "" },
 
 		// Out of range ints.
-		{ int(-1), nil, false, "out of range" },
-		{ int(math.MaxUint16 + 1), nil, false, "out of range" },
+		{ int(-1), nil, "out of range" },
+		{ int(math.MaxUint16 + 1), nil, "out of range" },
 
 		// Wrong types.
-		{ nil, nil, false, "given <nil>" },
-		{ int16(1), nil, false, "given int16" },
-		{ float64(1), nil, false, "given float64" },
-		{ complex128(1), nil, false, "given complex128" },
-		{ &someInt, nil, false, "given *int" },
-		{ make(chan int), nil, false, "given chan int" },
+		{ nil, nil, "given <nil>" },
+		{ int16(1), nil, "given int16" },
+		{ float64(1), nil, "given float64" },
+		{ complex128(1), nil, "given complex128" },
+		{ &someInt, nil, "given *int" },
+		{ make(chan int), nil, "given chan int" },
 	}
 
 	t.runTestCases(sig, cases)
@@ -465,26 +464,26 @@ func (t *ReturnTest) Uint32() {
 	sig := reflect.TypeOf(func() uint32 { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
-		{ uint32(0), uint32(0), true, "" },
-		{ uint32(math.MaxUint32), uint32(math.MaxUint32), true, "" },
+		{ uint32(0), uint32(0), "" },
+		{ uint32(math.MaxUint32), uint32(math.MaxUint32), "" },
 
 		// Named version of same underlying type.
-		{ namedType(17), uint32(17), true, "" },
+		{ namedType(17), uint32(17), "" },
 
 		// In-range ints.
-		{ int(0), uint32(0), true, "" },
-		{ int(math.MaxInt32), uint32(math.MaxInt32), true, "" },
+		{ int(0), uint32(0), "" },
+		{ int(math.MaxInt32), uint32(math.MaxInt32), "" },
 
 		// Out of range ints.
-		{ int(-1), nil, false, "out of range" },
+		{ int(-1), nil, "out of range" },
 
 		// Wrong types.
-		{ nil, nil, false, "given <nil>" },
-		{ int16(1), nil, false, "given int16" },
-		{ float64(1), nil, false, "given float64" },
-		{ complex128(1), nil, false, "given complex128" },
-		{ &someInt, nil, false, "given *int" },
-		{ make(chan int), nil, false, "given chan int" },
+		{ nil, nil, "given <nil>" },
+		{ int16(1), nil, "given int16" },
+		{ float64(1), nil, "given float64" },
+		{ complex128(1), nil, "given complex128" },
+		{ &someInt, nil, "given *int" },
+		{ make(chan int), nil, "given chan int" },
 	}
 
 	t.runTestCases(sig, cases)
@@ -496,26 +495,26 @@ func (t *ReturnTest) Uint64() {
 	sig := reflect.TypeOf(func() uint64 { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
-		{ uint64(0), uint64(0), true, "" },
-		{ uint64(math.MaxUint64), uint64(math.MaxUint64), true, "" },
+		{ uint64(0), uint64(0), "" },
+		{ uint64(math.MaxUint64), uint64(math.MaxUint64), "" },
 
 		// Named version of same underlying type.
-		{ namedType(17), uint64(17), true, "" },
+		{ namedType(17), uint64(17), "" },
 
 		// In-range ints.
-		{ int(0), uint64(0), true, "" },
-		{ int(math.MaxInt32), uint32(math.MaxInt32), true, "" },
+		{ int(0), uint64(0), "" },
+		{ int(math.MaxInt32), uint32(math.MaxInt32), "" },
 
 		// Out of range ints.
-		{ int(-1), nil, false, "out of range" },
+		{ int(-1), nil, "out of range" },
 
 		// Wrong types.
-		{ nil, nil, false, "given <nil>" },
-		{ int16(1), nil, false, "given int16" },
-		{ float64(1), nil, false, "given float64" },
-		{ complex128(1), nil, false, "given complex128" },
-		{ &someInt, nil, false, "given *int" },
-		{ make(chan int), nil, false, "given chan int" },
+		{ nil, nil, "given <nil>" },
+		{ int16(1), nil, "given int16" },
+		{ float64(1), nil, "given float64" },
+		{ complex128(1), nil, "given complex128" },
+		{ &someInt, nil, "given *int" },
+		{ make(chan int), nil, "given chan int" },
 	}
 
 	t.runTestCases(sig, cases)
@@ -527,18 +526,18 @@ func (t *ReturnTest) Uintptr() {
 	sig := reflect.TypeOf(func() uintptr { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
-		{ uintptr(17), uintptr(17), true, "" },
+		{ uintptr(17), uintptr(17), "" },
 
 		// Named version of same underlying type.
-		{ namedType(17), uintptr(17), true, "" },
+		{ namedType(17), uintptr(17), "" },
 
 		// Wrong types.
-		{ nil, nil, false, "given <nil>" },
-		{ int(1), nil, false, "given int" },
-		{ float64(1), nil, false, "given float64" },
-		{ complex128(1), nil, false, "given complex128" },
-		{ &someInt, nil, false, "given *int" },
-		{ make(chan int), nil, false, "given chan int" },
+		{ nil, nil, "given <nil>" },
+		{ int(1), nil, "given int" },
+		{ float64(1), nil, "given float64" },
+		{ complex128(1), nil, "given complex128" },
+		{ &someInt, nil, "given *int" },
+		{ make(chan int), nil, "given chan int" },
 	}
 
 	t.runTestCases(sig, cases)
@@ -550,26 +549,26 @@ func (t *ReturnTest) Float32() {
 	sig := reflect.TypeOf(func() float32 { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
-		{ float32(-17.5), float32(-17.5), true, "" },
-		{ float32(17.5), float32(17.5), true, "" },
+		{ float32(-17.5), float32(-17.5), "" },
+		{ float32(17.5), float32(17.5), "" },
 
 		// Named version of same underlying type.
-		{ namedType(17.5), float32(17.5), true, "" },
+		{ namedType(17.5), float32(17.5), "" },
 
 		// In-range ints.
-		{ int(-17), float32(-17), true, "" },
-		{ int(17), float32(17), true, "" },
+		{ int(-17), float32(-17), "" },
+		{ int(17), float32(17), "" },
 
 		// Float64s
-		{ float64(-17.5), float32(-17.5), true, "" },
-		{ float64(17.5), float32(17.5), true, "" },
+		{ float64(-17.5), float32(-17.5), "" },
+		{ float64(17.5), float32(17.5), "" },
 
 		// Wrong types.
-		{ nil, nil, false, "given <nil>" },
-		{ int16(1), nil, false, "given int8" },
-		{ complex128(1), nil, false, "given complex128" },
-		{ &someInt, nil, false, "given *int" },
-		{ make(chan int), nil, false, "given chan int" },
+		{ nil, nil, "given <nil>" },
+		{ int16(1), nil, "given int8" },
+		{ complex128(1), nil, "given complex128" },
+		{ &someInt, nil, "given *int" },
+		{ make(chan int), nil, "given chan int" },
 	}
 
 	t.runTestCases(sig, cases)
@@ -581,23 +580,23 @@ func (t *ReturnTest) Float64() {
 	sig := reflect.TypeOf(func() float64 { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
-		{ float64(-17.5), float64(-17.5), true, "" },
-		{ float64(17.5), float64(17.5), true, "" },
+		{ float64(-17.5), float64(-17.5), "" },
+		{ float64(17.5), float64(17.5), "" },
 
 		// Named version of same underlying type.
-		{ namedType(17.5), float64(17.5), true, "" },
+		{ namedType(17.5), float64(17.5), "" },
 
 		// In-range ints.
-		{ int(-17), float64(-17), true, "" },
-		{ int(17), float64(17), true, "" },
+		{ int(-17), float64(-17), "" },
+		{ int(17), float64(17), "" },
 
 		// Wrong types.
-		{ nil, nil, false, "given <nil>" },
-		{ int16(1), nil, false, "given int8" },
-		{ float32(1), nil, false, "given float32" },
-		{ complex128(1), nil, false, "given complex128" },
-		{ &someInt, nil, false, "given *int" },
-		{ make(chan int), nil, false, "given chan int" },
+		{ nil, nil, "given <nil>" },
+		{ int16(1), nil, "given int8" },
+		{ float32(1), nil, "given float32" },
+		{ complex128(1), nil, "given complex128" },
+		{ &someInt, nil, "given *int" },
+		{ make(chan int), nil, "given chan int" },
 	}
 
 	t.runTestCases(sig, cases)
@@ -609,30 +608,30 @@ func (t *ReturnTest) Complex64() {
 	sig := reflect.TypeOf(func() complex64 { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
-		{ complex64(-17.5-1i), complex64(-17.5-1i), true, "" },
-		{ complex64(17.5+1i), complex64(17.5+1i), true, "" },
+		{ complex64(-17.5-1i), complex64(-17.5-1i), "" },
+		{ complex64(17.5+1i), complex64(17.5+1i), "" },
 
 		// Named version of same underlying type.
-		{ namedType(17.5+1i), complex64(17.5+1i), true, "" },
+		{ namedType(17.5+1i), complex64(17.5+1i), "" },
 
 		// In-range ints.
-		{ int(-17), complex64(-17), true, "" },
-		{ int(17), complex64(17), true, "" },
+		{ int(-17), complex64(-17), "" },
+		{ int(17), complex64(17), "" },
 
 		// Float64s
-		{ float64(-17.5), complex64(-17.5), true, "" },
-		{ float64(17.5), complex64(17.5), true, "" },
+		{ float64(-17.5), complex64(-17.5), "" },
+		{ float64(17.5), complex64(17.5), "" },
 
 		// Complex128s
-		{ complex128(-17.5-1i), complex64(-17.5-1i), true, "" },
-		{ complex128(17.5+1i), complex64(17.5+1i), true, "" },
+		{ complex128(-17.5-1i), complex64(-17.5-1i), "" },
+		{ complex128(17.5+1i), complex64(17.5+1i), "" },
 
 		// Wrong types.
-		{ nil, nil, false, "given <nil>" },
-		{ int16(1), nil, false, "given int8" },
-		{ float32(1), nil, false, "given float32" },
-		{ &someInt, nil, false, "given *int" },
-		{ make(chan int), nil, false, "given chan int" },
+		{ nil, nil, "given <nil>" },
+		{ int16(1), nil, "given int8" },
+		{ float32(1), nil, "given float32" },
+		{ &someInt, nil, "given *int" },
+		{ make(chan int), nil, "given chan int" },
 	}
 
 	t.runTestCases(sig, cases)
@@ -644,27 +643,27 @@ func (t *ReturnTest) Complex128() {
 	sig := reflect.TypeOf(func() complex128 { return 0 })
 	cases := []returnTestCase{
 		// Identical types.
-		{ complex128(-17.5-1i), complex128(-17.5-1i), true, "" },
-		{ complex128(17.5+1i), complex128(17.5+1i), true, "" },
+		{ complex128(-17.5-1i), complex128(-17.5-1i), "" },
+		{ complex128(17.5+1i), complex128(17.5+1i), "" },
 
 		// Named version of same underlying type.
-		{ namedType(17.5+1i), complex128(17.5+1i), true, "" },
+		{ namedType(17.5+1i), complex128(17.5+1i), "" },
 
 		// In-range ints.
-		{ int(-17), complex128(-17), true, "" },
-		{ int(17), complex128(17), true, "" },
+		{ int(-17), complex128(-17), "" },
+		{ int(17), complex128(17), "" },
 
 		// Float64s
-		{ float64(-17.5), complex128(-17.5), true, "" },
-		{ float64(17.5), complex128(17.5), true, "" },
+		{ float64(-17.5), complex128(-17.5), "" },
+		{ float64(17.5), complex128(17.5), "" },
 
 		// Wrong types.
-		{ nil, nil, false, "given <nil>" },
-		{ int16(1), nil, false, "given int8" },
-		{ float32(1), nil, false, "given float32" },
-		{ complex64(1), nil, false, "given complex64" },
-		{ &someInt, nil, false, "given *int" },
-		{ make(chan int), nil, false, "given chan int" },
+		{ nil, nil, "given <nil>" },
+		{ int16(1), nil, "given int8" },
+		{ float32(1), nil, "given float32" },
+		{ complex64(1), nil, "given complex64" },
+		{ &someInt, nil, "given *int" },
+		{ make(chan int), nil, "given chan int" },
 	}
 
 	t.runTestCases(sig, cases)
@@ -677,25 +676,25 @@ func (t *ReturnTest) ArrayOfInt() {
 	sig := reflect.TypeOf(func() [2]int { return [2]int{0, 0} })
 	cases := []returnTestCase{
 		// Identical types.
-		{ [2]int{19, 23}, [2]int{19, 23}, true, "" },
+		{ [2]int{19, 23}, [2]int{19, 23}, "" },
 
 		// Named version of same underlying type.
-		{ namedType{19, 23}, [2]int{19, 23}, true, "" },
+		{ namedType{19, 23}, [2]int{19, 23}, "" },
 
 		// Wrong length.
-		{ [1]int{17}, nil, false, "given [1]int" },
+		{ [1]int{17}, nil, "given [1]int" },
 
 		// Wrong element types.
-		{ [2]namedElemType{19, 23}, nil, false, "given [2]namedElemType" },
-		{ [2]string{"", ""}, nil, false, "given [2]string" },
+		{ [2]namedElemType{19, 23}, nil, "given [2]namedElemType" },
+		{ [2]string{"", ""}, nil, "given [2]string" },
 
 		// Wrong types.
-		{ nil, nil, false, "given <nil>" },
-		{ int(1), nil, false, "given int" },
-		{ float64(1), nil, false, "given float64" },
-		{ complex128(1), nil, false, "given complex128" },
-		{ &someInt, nil, false, "given *int" },
-		{ make(chan int), nil, false, "given chan int" },
+		{ nil, nil, "given <nil>" },
+		{ int(1), nil, "given int" },
+		{ float64(1), nil, "given float64" },
+		{ complex128(1), nil, "given complex128" },
+		{ &someInt, nil, "given *int" },
+		{ make(chan int), nil, "given chan int" },
 	}
 
 	t.runTestCases(sig, cases)
@@ -711,29 +710,29 @@ func (t *ReturnTest) ChanOfInt() {
 	sig := reflect.TypeOf(func() chan int { return nil })
 	cases := []returnTestCase{
 		// Identical types.
-		{ someChan, someChan, true, "" },
+		{ someChan, someChan, "" },
 
 		// Nil values.
-		{ (interface{})(nil), (chan int)(nil), true, "" },
-		{ (chan int)(nil), (chan int)(nil), true, "" },
+		{ (interface{})(nil), (chan int)(nil), "" },
+		{ (chan int)(nil), (chan int)(nil), "" },
 
 		// Named version of same underlying type.
-		{ someNamedTypeChan, (chan int)(someNamedTypeChan), true, "" },
+		{ someNamedTypeChan, (chan int)(someNamedTypeChan), "" },
 
 		// Wrong element types.
-		{ make(chan string), nil, false, "given chan string" },
-		{ make(chan namedElemType), nil, false, "given chan namedElemType" },
+		{ make(chan string), nil, "given chan string" },
+		{ make(chan namedElemType), nil, "given chan namedElemType" },
 
 		// Wrong direction
-		{ (<-chan int)(someChan), nil, false, "given <-chan int" },
-		{ (chan<- int)(someChan), nil, false, "given chan<- int" },
+		{ (<-chan int)(someChan), nil, "given <-chan int" },
+		{ (chan<- int)(someChan), nil, "given chan<- int" },
 
 		// Wrong types.
-		{ (func())(nil), nil, false, "given func()" },
-		{ int(1), nil, false, "given int" },
-		{ float64(1), nil, false, "given float64" },
-		{ complex128(1), nil, false, "given complex128" },
-		{ &someInt, nil, false, "given *int" },
+		{ (func())(nil), nil, "given func()" },
+		{ int(1), nil, "given int" },
+		{ float64(1), nil, "given float64" },
+		{ complex128(1), nil, "given complex128" },
+		{ &someInt, nil, "given *int" },
 	}
 
 	t.runTestCases(sig, cases)
@@ -750,31 +749,31 @@ func (t *ReturnTest) SendChanOfInt() {
 	sig := reflect.TypeOf(func() chan<- int { return nil })
 	cases := []returnTestCase{
 		// Identical types.
-		{ someChan, someChan, true, "" },
+		{ someChan, someChan, "" },
 
 		// Nil values.
-		{ (interface{})(nil), (chan<- int)(nil), true, "" },
-		{ (chan int)(nil), (chan<- int)(nil), true, "" },
+		{ (interface{})(nil), (chan<- int)(nil), "" },
+		{ (chan int)(nil), (chan<- int)(nil), "" },
 
 		// Named version of same underlying type.
-		{ someNamedTypeChan, (chan<- int)(someNamedTypeChan), true, "" },
+		{ someNamedTypeChan, (chan<- int)(someNamedTypeChan), "" },
 
 		// Bidirectional channel
-		{ someBidirectionalChannel, (chan<- int)(someBidirectionalChannel), true, "" },
+		{ someBidirectionalChannel, (chan<- int)(someBidirectionalChannel), "" },
 
 		// Wrong direction
-		{ (<-chan int)(someBidirectionalChannel), nil, false, "given <-chan int" },
+		{ (<-chan int)(someBidirectionalChannel), nil, "given <-chan int" },
 
 		// Wrong element types.
-		{ make(chan string), nil, false, "given chan string" },
-		{ make(chan namedElemType), nil, false, "given chan namedElemType" },
+		{ make(chan string), nil, "given chan string" },
+		{ make(chan namedElemType), nil, "given chan namedElemType" },
 
 		// Wrong types.
-		{ (func())(nil), nil, false, "given func()" },
-		{ int(1), nil, false, "given int" },
-		{ float64(1), nil, false, "given float64" },
-		{ complex128(1), nil, false, "given complex128" },
-		{ &someInt, nil, false, "given *int" },
+		{ (func())(nil), nil, "given func()" },
+		{ int(1), nil, "given int" },
+		{ float64(1), nil, "given float64" },
+		{ complex128(1), nil, "given complex128" },
+		{ &someInt, nil, "given *int" },
 	}
 
 	t.runTestCases(sig, cases)
@@ -791,31 +790,31 @@ func (t *ReturnTest) RecvChanOfInt() {
 	sig := reflect.TypeOf(func() <-chan int { return nil })
 	cases := []returnTestCase{
 		// Identical types.
-		{ someChan, someChan, true, "" },
+		{ someChan, someChan, "" },
 
 		// Nil values.
-		{ (interface{})(nil), (<-chan int)(nil), true, "" },
-		{ (chan int)(nil), (<-chan int)(nil), true, "" },
+		{ (interface{})(nil), (<-chan int)(nil), "" },
+		{ (chan int)(nil), (<-chan int)(nil), "" },
 
 		// Named version of same underlying type.
-		{ someNamedTypeChan, (<-chan int)(someNamedTypeChan), true, "" },
+		{ someNamedTypeChan, (<-chan int)(someNamedTypeChan), "" },
 
 		// Bidirectional channel
-		{ someBidirectionalChannel, (<-chan int)(someBidirectionalChannel), true, "" },
+		{ someBidirectionalChannel, (<-chan int)(someBidirectionalChannel), "" },
 
 		// Wrong direction
-		{ (chan<- int)(someBidirectionalChannel), nil, false, "given chan<- int" },
+		{ (chan<- int)(someBidirectionalChannel), nil, "given chan<- int" },
 
 		// Wrong element types.
-		{ make(chan string), nil, false, "given chan string" },
-		{ make(chan namedElemType), nil, false, "given chan namedElemType" },
+		{ make(chan string), nil, "given chan string" },
+		{ make(chan namedElemType), nil, "given chan namedElemType" },
 
 		// Wrong types.
-		{ (func())(nil), nil, false, "given func()" },
-		{ int(1), nil, false, "given int" },
-		{ float64(1), nil, false, "given float64" },
-		{ complex128(1), nil, false, "given complex128" },
-		{ &someInt, nil, false, "given *int" },
+		{ (func())(nil), nil, "given func()" },
+		{ int(1), nil, "given int" },
+		{ float64(1), nil, "given float64" },
+		{ complex128(1), nil, "given complex128" },
+		{ &someInt, nil, "given *int" },
 	}
 
 	t.runTestCases(sig, cases)
@@ -828,25 +827,25 @@ func (t *ReturnTest) Func() {
 	sig := reflect.TypeOf(func() func(string) int { return nil })
 	cases := []returnTestCase{
 		// Identical types.
-		{ someFunc, someFunc, true, "" },
+		{ someFunc, someFunc, "" },
 
 		// Nil values.
-		{ (interface{})(nil), (func(string) int)(nil), true, "" },
-		{ (func(string) int)(nil), (func(string) int)(nil), true, "" },
+		{ (interface{})(nil), (func(string) int)(nil), "" },
+		{ (func(string) int)(nil), (func(string) int)(nil), "" },
 
 		// Named version of same underlying type.
-		{ namedType(someFunc), someFunc, true, "" },
+		{ namedType(someFunc), someFunc, "" },
 
 		// Wrong parameter and return types.
-		{ func(int) int { return 0 }, nil, false, "given func(int) int" },
-		{ func(string) string { return "" }, nil, false, "given func(string) string" },
+		{ func(int) int { return 0 }, nil, "given func(int) int" },
+		{ func(string) string { return "" }, nil, "given func(string) string" },
 
 		// Wrong types.
-		{ int(1), nil, false, "given int" },
-		{ float64(1), nil, false, "given float64" },
-		{ complex128(1), nil, false, "given complex128" },
-		{ &someInt, nil, false, "given *int" },
-		{ (chan int)(nil), nil, false, "given chan int" },
+		{ int(1), nil, "given int" },
+		{ float64(1), nil, "given float64" },
+		{ complex128(1), nil, "given complex128" },
+		{ &someInt, nil, "given *int" },
+		{ (chan int)(nil), nil, "given chan int" },
 	}
 
 	t.runTestCases(sig, cases)
@@ -859,17 +858,17 @@ func (t *ReturnTest) Interface() {
 
 	cases := []returnTestCase{
 		// Type that implements interface.
-		{ someBuffer, someBuffer, true, "" },
+		{ someBuffer, someBuffer, "" },
 
 		// Nil value.
-		{ (interface{})(nil), (interface{})(nil), true, "" },
+		{ (interface{})(nil), (interface{})(nil), "" },
 
 		// Non-implementing types.
-		{ (chan int)(nil), (chan int)(nil), true, "" },
-		{ int(1), nil, false, "given int" },
-		{ float64(1), nil, false, "given float64" },
-		{ complex128(1), nil, false, "given complex128" },
-		{ &someInt, nil, false, "given *int" },
+		{ (chan int)(nil), (chan int)(nil), "" },
+		{ int(1), nil, "given int" },
+		{ float64(1), nil, "given float64" },
+		{ complex128(1), nil, "given complex128" },
+		{ &someInt, nil, "given *int" },
 	}
 
 	t.runTestCases(sig, cases)
@@ -885,26 +884,26 @@ func (t *ReturnTest) MapFromStringToInt() {
 	sig := reflect.TypeOf(func() map[string]int { return nil })
 	cases := []returnTestCase{
 		// Identical types.
-		{ someMap, someMap, true, "" },
+		{ someMap, someMap, "" },
 
 		// Nil values.
-		{ (interface{})(nil), (chan int)(nil), true, "" },
-		{ (map[string]int)(nil), (map[string]int)(nil), true, "" },
+		{ (interface{})(nil), (chan int)(nil), "" },
+		{ (map[string]int)(nil), (map[string]int)(nil), "" },
 
 		// Named version of same underlying type.
-		{ someNamedTypeMap, map[string]int(someNamedTypeMap), true, "" },
+		{ someNamedTypeMap, map[string]int(someNamedTypeMap), "" },
 
 		// Wrong element types.
-		{ make(map[int]int), nil, false, "given map[int]int" },
-		{ make(map[namedElemType]int), nil, false, "given map[namedElemType]int" },
-		{ make(map[string]string), nil, false, "given map[string]string" },
+		{ make(map[int]int), nil, "given map[int]int" },
+		{ make(map[namedElemType]int), nil, "given map[namedElemType]int" },
+		{ make(map[string]string), nil, "given map[string]string" },
 
 		// Wrong types.
-		{ (func())(nil), nil, false, "given func()" },
-		{ int(1), nil, false, "given int" },
-		{ float64(1), nil, false, "given float64" },
-		{ complex128(1), nil, false, "given complex128" },
-		{ &someInt, nil, false, "given *int" },
+		{ (func())(nil), nil, "given func()" },
+		{ int(1), nil, "given int" },
+		{ float64(1), nil, "given float64" },
+		{ complex128(1), nil, "given complex128" },
+		{ &someInt, nil, "given *int" },
 	}
 
 	t.runTestCases(sig, cases)
@@ -920,24 +919,24 @@ func (t *ReturnTest) PointerToString() {
 	sig := reflect.TypeOf(func() *string { return nil })
 	cases := []returnTestCase{
 		// Identical types.
-		{ (*string)(&someStr), (*string)(&someStr), true, "" },
+		{ (*string)(&someStr), (*string)(&someStr), "" },
 
 		// Nil values.
-		{ (interface{})(nil), (*string)(nil), true, "" },
-		{ (*string)(nil), (*string)(nil), true, "" },
+		{ (interface{})(nil), (*string)(nil), "" },
+		{ (*string)(nil), (*string)(nil), "" },
 
 		// Named version of same underlying type.
-		{ namedType(&someStr), (*string)(&someStr), true, "" },
+		{ namedType(&someStr), (*string)(&someStr), "" },
 
 		// Wrong element types.
-		{ &someInt, nil, false, "given *int" },
-		{ &someNamedStr, nil, false, "given *oglematchers_test.namedElemType" },
+		{ &someInt, nil, "given *int" },
+		{ &someNamedStr, nil, "given *oglematchers_test.namedElemType" },
 
 		// Wrong types.
-		{ (func())(nil), nil, false, "given func()" },
-		{ int(1), nil, false, "given int" },
-		{ float64(1), nil, false, "given float64" },
-		{ complex128(1), nil, false, "given complex128" },
+		{ (func())(nil), nil, "given func()" },
+		{ int(1), nil, "given int" },
+		{ float64(1), nil, "given float64" },
+		{ complex128(1), nil, "given complex128" },
 	}
 
 	t.runTestCases(sig, cases)
@@ -952,25 +951,25 @@ func (t *ReturnTest) SliceOfInts() {
 	sig := reflect.TypeOf(func() []int { return nil })
 	cases := []returnTestCase{
 		// Identical types.
-		{ someSlice, someSlice, true, "" },
+		{ someSlice, someSlice, "" },
 
 		// Nil values.
-		{ (interface{})(nil), ([]int)(nil), true, "" },
-		{ ([]int)(nil), ([]int)(nil), true, "" },
+		{ (interface{})(nil), ([]int)(nil), "" },
+		{ ([]int)(nil), ([]int)(nil), "" },
 
 		// Named version of same underlying type.
-		{ namedType(someSlice), namedType(someSlice), true, "" },
+		{ namedType(someSlice), namedType(someSlice), "" },
 
 		// Wrong element types.
-		{ make([]string, 1), nil, false, "given []string" },
-		{ make([]namedElemType, 1), nil, false, "given []oglematchers_test.namedElemType" },
+		{ make([]string, 1), nil, "given []string" },
+		{ make([]namedElemType, 1), nil, "given []oglematchers_test.namedElemType" },
 
 		// Wrong types.
-		{ (func())(nil), nil, false, "given func()" },
-		{ int(1), nil, false, "given int" },
-		{ float64(1), nil, false, "given float64" },
-		{ complex128(1), nil, false, "given complex128" },
-		{ &someInt, nil, false, "given *int" },
+		{ (func())(nil), nil, "given func()" },
+		{ int(1), nil, "given int" },
+		{ float64(1), nil, "given float64" },
+		{ complex128(1), nil, "given complex128" },
+		{ &someInt, nil, "given *int" },
 	}
 
 	t.runTestCases(sig, cases)
@@ -982,19 +981,19 @@ func (t *ReturnTest) String() {
 	sig := reflect.TypeOf(func() string { return "" })
 	cases := []returnTestCase{
 		// Identical types.
-		{ string(""), string(""), true, "" },
-		{ string("taco"), string("taco"), true, "" },
+		{ string(""), string(""), "" },
+		{ string("taco"), string("taco"), "" },
 
 		// Named version of same underlying type.
-		{ namedType("burrito"), string("burrito"), true, "" },
+		{ namedType("burrito"), string("burrito"), "" },
 
 		// Wrong types.
-		{ nil, nil, false, "given <nil>" },
-		{ int(1), nil, false, "given int" },
-		{ float64(1), nil, false, "given float64" },
-		{ complex128(1), nil, false, "given complex128" },
-		{ &someInt, nil, false, "given *int" },
-		{ make(chan int), nil, false, "given chan int" },
+		{ nil, nil, "given <nil>" },
+		{ int(1), nil, "given int" },
+		{ float64(1), nil, "given float64" },
+		{ complex128(1), nil, "given complex128" },
+		{ &someInt, nil, "given *int" },
+		{ make(chan int), nil, "given chan int" },
 	}
 
 	t.runTestCases(sig, cases)
@@ -1011,21 +1010,21 @@ func (t *ReturnTest) Struct() {
 	sig := reflect.TypeOf(func() myStruct { return myStruct{0} })
 	cases := []returnTestCase{
 		// Identical types.
-		{ myStruct{17}, myStruct{17}, true, "" },
+		{ myStruct{17}, myStruct{17}, "" },
 
 		// Named version of same underlying type.
-		{ myStruct{17}, nil, false, "given oglematchers_test.namedType" },
+		{ myStruct{17}, nil, "given oglematchers_test.namedType" },
 
 		// Wrong field types.
-		{ otherStruct{}, nil, false, "given oglematchers_test.otherStruct" },
+		{ otherStruct{}, nil, "given oglematchers_test.otherStruct" },
 
 		// Wrong types.
-		{ nil, nil, false, "given <nil>" },
-		{ int(1), nil, false, "given int" },
-		{ float64(1), nil, false, "given float64" },
-		{ complex128(1), nil, false, "given complex128" },
-		{ &someInt, nil, false, "given *int" },
-		{ make(chan int), nil, false, "given chan int" },
+		{ nil, nil, "given <nil>" },
+		{ int(1), nil, "given int" },
+		{ float64(1), nil, "given float64" },
+		{ complex128(1), nil, "given complex128" },
+		{ &someInt, nil, "given *int" },
+		{ make(chan int), nil, "given chan int" },
 	}
 
 	t.runTestCases(sig, cases)
