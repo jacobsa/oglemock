@@ -46,7 +46,7 @@ type Controller interface {
 	// For example:
 	//
 	//     mockWriter := [...]
-	//     controller.ExpectCall(mockWriter, "Write")(ElementsAre(0x1))
+	//     controller.ExpectCall(mockWriter, "Write", "foo.go", 17)(ElementsAre(0x1))
 	//         .WillOnce(Return(1, nil))
 	//
 	// If the mock object doesn't have a method of the supplied name, the
