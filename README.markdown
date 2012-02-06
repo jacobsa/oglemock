@@ -66,8 +66,27 @@ The snippet above creates a mock `io.Reader` that reports failures to
 passed to your code under test that uses an `io.Reader`.
 
 
+Getting ahold of a controller
+-----------------------------
+
+[oglemock.Controller][controller-ref] is used to create mock objects, and to set
+up and verify expectations for them. You can create one by calling
+`NewController` with an `ErrorReporter`, which is the basic type used to
+interface between `oglemock` and the testing framework within which it is being
+used.
+
+If you are using [ogletest][] you don't need to worry about any of this -- the
+`TestInfo` struct provided to your test's `SetUp` function already contains a
+working `Controller`. (See the [ogletest documentation][ogletest-docs] for more
+info.) Otherwise, you will need to implement the simple
+[ErrorReporter interface][reporter-ref] for your test environment.
+
+
+[controller-ref]: http://gopkgdoc.appspot.com/pkg/github.com/jacobsa/oglemock#Controller
+[reporter-ref]: http://gopkgdoc.appspot.com/pkg/github.com/jacobsa/oglemock#ErrorReporter
 [golang-install]: http://golang.org/doc/install.html#releases
 [google-js-test]: http://code.google.com/p/google-js-test/
 [googlemock]: http://code.google.com/p/googlemock/
 [oglematchers]: https://github.com/jacobsa/oglematchers
 [ogletest]: https://github.com/jacobsa/oglematchers
+[ogletest-docs]: http://gopkgdoc.appspot.com/pkg/github.com/jacobsa/ogletest
