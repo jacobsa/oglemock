@@ -75,11 +75,20 @@ up and verify expectations for them. You can create one by calling
 interface between `oglemock` and the testing framework within which it is being
 used.
 
-If you are using [ogletest][] you don't need to worry about any of this -- the
-`TestInfo` struct provided to your test's `SetUp` function already contains a
-working `Controller`. (See the [ogletest documentation][ogletest-docs] for more
-info.) Otherwise, you will need to implement the simple
-[ErrorReporter interface][reporter-ref] for your test environment.
+If you are using [ogletest][] you don't need to worry about any of this, since
+the `TestInfo` struct provided to your test's `SetUp` function already contains
+a working `Controller` that you can use to create mock object, and you can use
+the built-in `ExpectCall` function for setting expectations. (See the
+[ogletest documentation][ogletest-docs] for more info.) Otherwise, you will need
+to implement the simple [ErrorReporter interface][reporter-ref] for your test
+environment.
+
+
+Documentation
+-------------
+
+For thorough documentation, including information on how to set up expectations,
+see [here][oglemock-docs].
 
 
 [controller-ref]: http://gopkgdoc.appspot.com/pkg/github.com/jacobsa/oglemock#Controller
@@ -88,5 +97,6 @@ info.) Otherwise, you will need to implement the simple
 [google-js-test]: http://code.google.com/p/google-js-test/
 [googlemock]: http://code.google.com/p/googlemock/
 [oglematchers]: https://github.com/jacobsa/oglematchers
+[oglemock-docs]: http://gopkgdoc.appspot.com/pkg/github.com/jacobsa/oglemock
 [ogletest]: https://github.com/jacobsa/oglematchers
 [ogletest-docs]: http://gopkgdoc.appspot.com/pkg/github.com/jacobsa/ogletest
