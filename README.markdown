@@ -49,6 +49,22 @@ For example, to create a `mock_io` package containing mock implementations of
     mkdir mock_io
     createmock io Reader Writer > mock_io/mock_io.go
 
+The new package will be named `mock_io`, and contain types called `MockReader`
+and `MockWriter`, which implement `io.Reader` and `io.Writer` respectively.
+
+For each generated mock type, there is a corresponding function for creating an
+instance of that type given a `Controller` object (see below). For example, to
+create a mock reader:
+
+```go
+someController := [...]  // See next section.
+someReader := mock_io.NewMockReader(someController, "Mock file reader")
+```
+
+The snippet above creates a mock `io.Reader` that reports failures to
+`someController`. The reader can subsequently have expectations set up and be
+passed to your code under test that uses an `io.Reader`.
+
 
 [golang-install]: http://golang.org/doc/install.html#releases
 [google-js-test]: http://code.google.com/p/google-js-test/
