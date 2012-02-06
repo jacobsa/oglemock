@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"github.com/jacobsa/oglematchers"
 	"reflect"
+	"sync"
 )
 
 // InternalExpectation is exported for purposes of testing only. You should not
@@ -35,6 +36,9 @@ type InternalExpectation struct {
 	// An error reporter to use for reporting errors in the way that expectations
 	// are set.
 	errorReporter ErrorReporter
+
+	// A mutex protecting mutable fields of the struct.
+	mutex sync.Mutex
 
 	// Matchers that the arguments to the mock method must satisfy in order to
 	// match this expectation.
@@ -97,6 +101,9 @@ func InternalNewExpectation(
 }
 
 func (e *InternalExpectation) Times(n uint) Expectation {
+	e.mutex.Lock()
+	defer e.mutex.Unlock()
+
 	// It is illegal to call this more than once.
 	if e.ExpectedNumMatches != -1 {
 		e.reportFatalError("Times called more than once.")
@@ -125,6 +132,9 @@ func (e *InternalExpectation) Times(n uint) Expectation {
 }
 
 func (e *InternalExpectation) WillOnce(a Action) Expectation {
+	e.mutex.Lock()
+	defer e.mutex.Unlock()
+
 	// It is illegal to call this after WillRepeatedly.
 	if e.FallbackAction != nil {
 		e.reportFatalError("WillOnce called after WillRepeatedly.")
@@ -144,6 +154,9 @@ func (e *InternalExpectation) WillOnce(a Action) Expectation {
 }
 
 func (e *InternalExpectation) WillRepeatedly(a Action) Expectation {
+	e.mutex.Lock()
+	defer e.mutex.Unlock()
+
 	// It is illegal to call this twice.
 	if e.FallbackAction != nil {
 		e.reportFatalError("WillRepeatedly called more than once.")
