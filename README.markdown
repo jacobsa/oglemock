@@ -30,7 +30,24 @@ keep them up to date:
     goinstall -u github.com/jacobsa/oglemock/createmock
 
 Those commands will install the `oglemock` package itself, along with the
-`createmock` tool that is used to auto-generate mock classes.
+`createmock` tool that is used to auto-generate mock types.
+
+
+Generating and using mock types
+-------------------------------
+
+Automatically generating a mock implementation of an interface is easy. If you
+want to mock interfaces `Bar` and `Baz` from package `foo`, simply run the
+following:
+
+    createmock foo Bar Baz
+
+That will print source code that can be saved to a file and used in your tests.
+For example, to create a `mock_io` package containing mock implementations of
+`io.Reader` and `io.Writer`:
+
+    mkdir mock_io
+    createmock io Reader Write r> mock_io/mock_io.go
 
 
 [golang-install]: http://golang.org/doc/install.html#releases
