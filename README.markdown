@@ -47,7 +47,7 @@ For example, to create a `mock_io` package containing mock implementations of
 `io.Reader` and `io.Writer`:
 
     mkdir mock_io
-    createmock io Reader Write r> mock_io/mock_io.go
+    createmock io Reader Writer > mock_io/mock_io.go
 
 
 [golang-install]: http://golang.org/doc/install.html#releases
