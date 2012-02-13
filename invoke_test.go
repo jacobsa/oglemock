@@ -36,7 +36,10 @@ func init() { RegisterTestSuite(&InvokeTest{}) }
 ////////////////////////////////////////////////////////////
 
 func (t *InvokeTest) SetSignatureNotCalled() {
-	ExpectTrue(false, "TODO")
+	a := oglemock.Invoke(func() {})
+	f := func() { a.Invoke([]interface{}{}) }
+
+	ExpectThat(f, Panics(MatchesRegexp("Invoke.*SetSignature.*called")))
 }
 
 func (t *InvokeTest) ArgumentIsNil() {
