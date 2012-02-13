@@ -80,7 +80,7 @@ func (t *InvokeTest) CallsFunction() {
 	expectedArg0 := uintptr(17)
 	expectedArg1 := int8(-7)
 
-	a.Invoke([]interface{}{actualArg0, actualArg1})
+	a.Invoke([]interface{}{expectedArg0, expectedArg1})
 
 	ExpectThat(actualArg0, IdenticalTo(expectedArg0));
 	ExpectThat(actualArg1, IdenticalTo(expectedArg1));
