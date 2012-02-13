@@ -27,8 +27,15 @@ import (
 func Invoke(f interface{}) Action {
 	// Make sure f is a function.
 	fv := reflect.ValueOf(f)
-	if fv.Kind() != reflect.Func {
-		panic(fmt.Sprintf("Invoke: expected function, got %v", fv.Type()))
+	fk := fv.Kind()
+
+	if fk != reflect.Func {
+		desc := "<nil>"
+		if fk != reflect.Invalid {
+			desc = fv.Type().String()
+		}
+
+		panic(fmt.Sprintf("Invoke: expected function, got %s", desc))
 	}
 
 	return &invokeAction{fv}
