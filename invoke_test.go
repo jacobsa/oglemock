@@ -32,5 +32,20 @@ func init()                     { RegisterTestSuite(&InvokeTest{}) }
 // Tests
 ////////////////////////////////////////////////////////////
 
-func (t *InvokeTest) DoesFoo() {
+func (t *InvokeTest) ArgumentIsNil() {
+}
+
+func (t *InvokeTest) ArgumentIsInteger() {
+}
+
+func (t *InvokeTest) FunctionHasOneWrongInputType() {
+}
+
+func (t *InvokeTest) FunctionHasOneWrongOutputType() {
+}
+
+func (t *InvokeTest) CallsFunction() {
+}
+
+func (t *InvokeTest) ReturnsFunctionResult() {
 }
