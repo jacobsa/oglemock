@@ -87,7 +87,7 @@ type tmplArg struct {
 
 var unknownPackageRegexp =
 	regexp.MustCompile(
-		`(?s)imports ([\pL_0-9/]+): package could not be found`)
+		`imports ([\pL_0-9/]+): .*: package could not be found`)
 
 var undefinedInterfaceRegexp =
 	regexp.MustCompile(`tool\.go:\d+: undefined: [\pL_0-9]+\.([\pL_0-9]+)`)
