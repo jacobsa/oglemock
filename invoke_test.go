@@ -19,6 +19,7 @@ import (
 	. "github.com/jacobsa/oglematchers"
 	. "github.com/jacobsa/ogletest"
 	"github.com/jacobsa/oglemock"
+	"reflect"
 )
 
 ////////////////////////////////////////////////////////////
@@ -39,10 +40,18 @@ func (t *InvokeTest) ArgumentIsNil() {
 	ExpectThat(f, Panics(MatchesRegexp("Invoke.*function.*<nil>")))
 }
 
-func (t *InvokeTest) ArgumentIsInteger() {
+func (t *InvokeTest) ArgumentIsInt() {
+	f := func() { oglemock.Invoke(17) }
+	ExpectThat(f, Panics(MatchesRegexp("Invoke.*function.*int")))
 }
 
 func (t *InvokeTest) FunctionHasOneWrongInputType() {
+	f := func(a int, b int32, c string) {}
+	g := func(a int, b int, c string) {}
+
+	err := oglemock.Invoke(f).SetSignature(reflect.TypeOf(g))
+	ExpectThat(err, Error(HasSubstr("func(int, int32, string)")))
+	ExpectThat(err, Error(HasSubstr("func(int, int, string)")))
 }
 
 func (t *InvokeTest) FunctionHasOneWrongOutputType() {
