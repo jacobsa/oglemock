@@ -35,6 +35,10 @@ func init() { RegisterTestSuite(&InvokeTest{}) }
 // Tests
 ////////////////////////////////////////////////////////////
 
+func (t *InvokeTest) SetSignatureNotCalled() {
+	ExpectTrue(false, "TODO")
+}
+
 func (t *InvokeTest) ArgumentIsNil() {
 	f := func() { oglemock.Invoke(nil) }
 	ExpectThat(f, Panics(MatchesRegexp("Invoke.*function.*<nil>")))
@@ -64,7 +68,47 @@ func (t *InvokeTest) FunctionHasOneWrongOutputType() {
 }
 
 func (t *InvokeTest) CallsFunction() {
+	var actualArg0, actualArg1 interface{}
+
+	f := func(a uintptr, b int8) {
+		actualArg0 = a
+		actualArg1 = b
+	}
+
+	a := oglemock.Invoke(f)
+
+	// Set signature.
+	AssertEq(nil, a.SetSignature(reflect.TypeOf(f)))
+
+	// Call the action.
+	expectedArg0 := uintptr(17)
+	expectedArg1 := int8(-7)
+
+	a.Invoke([]interface{}{actualArg0, actualArg1})
+
+	ExpectThat(actualArg0, IdenticalTo(expectedArg0));
+	ExpectThat(actualArg1, IdenticalTo(expectedArg1));
 }
 
 func (t *InvokeTest) ReturnsFunctionResult() {
+	expectedReturn0 := int16(3)
+	expectedReturn1 := "taco"
+
+	f := func() (int16, string) {
+		return expectedReturn0, expectedReturn1
+	}
+
+	a := oglemock.Invoke(f)
+
+	// Set signature.
+	AssertEq(nil, a.SetSignature(reflect.TypeOf(f)))
+
+	// Call the action.
+	res := a.Invoke([]interface{}{})
+
+	ExpectThat(
+		res,
+		ElementsAre(
+			IdenticalTo(expectedReturn0),
+			IdenticalTo(expectedReturn1)))
 }
