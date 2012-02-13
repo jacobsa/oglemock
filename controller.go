@@ -155,9 +155,9 @@ func (c *controllerImpl) ExpectCall(
 	fileName string,
 	lineNumber int) PartialExpecation {
 	// Find the signature for the requested method.
-	oType := reflect.TypeOf(o)
-	method, ok := oType.MethodByName(methodName)
-	if !ok {
+	ov := reflect.ValueOf(o)
+	method := ov.MethodByName(methodName)
+	if method.Kind() == reflect.Invalid {
 		c.reporter.ReportFatalError(
 			fileName,
 			lineNumber,
@@ -183,7 +183,7 @@ func (c *controllerImpl) ExpectCall(
 
 		// Make sure that the number of args is legal. Keep in mind that the
 		// method's type has an extra receiver arg.
-		if len(args) != method.Type.NumIn() - 1 {
+		if len(args) != method.Type().NumIn() {
 			c.reporter.ReportFatalError(
 				fileName,
 				lineNumber,
@@ -192,7 +192,7 @@ func (c *controllerImpl) ExpectCall(
 						"Expectation for %s given wrong number of arguments: " +
 						"expected %d, got %d.",
 						methodName,
-						method.Type.NumIn() - 1,
+						method.Type().NumIn(),
 						len(args))))
 			return nil
 		}
@@ -200,7 +200,7 @@ func (c *controllerImpl) ExpectCall(
 		// Create an expectation and insert it into the controller's map.
 		exp := InternalNewExpectation(
 			c.reporter,
-			method.Type,
+			method.Type(),
 			args,
 			fileName,
 			lineNumber)
@@ -286,12 +286,11 @@ func (c *controllerImpl) chooseExpectationLocked(
 
 // makeZeroReturnValues creates a []interface{} containing appropriate zero
 // values for returning from the supplied method type.
-func makeZeroReturnValues(method reflect.Method) []interface{} {
-	methodType := method.Type
-	result := make([]interface{}, methodType.NumOut())
+func makeZeroReturnValues(signature reflect.Type) []interface{} {
+	result := make([]interface{}, signature.NumOut())
 
 	for i, _ := range result {
-		outType := methodType.Out(i)
+		outType := signature.Out(i)
 		zeroVal := reflect.Zero(outType)
 		result[i] = zeroVal.Interface()
 	}
@@ -363,9 +362,9 @@ func (c *controllerImpl) HandleMethodCall(
 	defer c.mutex.Unlock()
 
 	// Find the signature for the requested method.
-	oType := reflect.TypeOf(o)
-	method, ok := oType.MethodByName(methodName)
-	if !ok {
+	ov := reflect.ValueOf(o)
+	method := ov.MethodByName(methodName)
+	if method.Kind() == reflect.Invalid {
 		c.reporter.ReportFatalError(
 			fileName,
 			lineNumber,
@@ -375,14 +374,14 @@ func (c *controllerImpl) HandleMethodCall(
 
 	// HACK(jacobsa): Make sure we got the correct number of arguments. This will
 	// need to be refined when issue #5 (variadic methods) is handled.
-	if len(args) != method.Type.NumIn() - 1 {
+	if len(args) != method.Type().NumIn() {
 		c.reporter.ReportFatalError(
 			fileName,
 			lineNumber,
 			errors.New(
 				fmt.Sprintf(
 					"Wrong number of arguments: expected %d; got %d",
-					method.Type.NumIn() - 1,
+					method.Type().NumIn(),
 					len(args))))
 		return nil
 	}
@@ -396,7 +395,7 @@ func (c *controllerImpl) HandleMethodCall(
 			errors.New(
 				fmt.Sprintf("Unexpected call to %s with args: %v", methodName, args)))
 
-		return makeZeroReturnValues(method)
+		return makeZeroReturnValues(method.Type())
 	}
 
 	expectation.mutex.Lock()
@@ -418,13 +417,13 @@ func (c *controllerImpl) HandleMethodCall(
 					maxCardinality,
 					expectation.NumMatches)))
 
-		return makeZeroReturnValues(method)
+		return makeZeroReturnValues(method.Type())
 	}
 
 	// Choose an action to invoke. If there is none, just return zero values.
 	action := chooseActionLocked(expectation.NumMatches - 1, expectation)
 	if action == nil {
-		return makeZeroReturnValues(method)
+		return makeZeroReturnValues(method.Type())
 	}
 
 	// Let the action take over.

@@ -801,9 +801,19 @@ func (t *ControllerTest) InvokesOneTimeActions() {
 		"burrito.go",
 		117)
 
+  suppliedArg := ""
+	expectedReturn := 17
+
+	f := func(s string) int {
+		suppliedArg = s
+		return expectedReturn
+	}
+
 	exp := partial(HasSubstr(""))
-	exp.WillOnce(Return(0))
+	exp.WillOnce(Invoke(f))
 	exp.WillOnce(Return(1))
+
+	AssertThat(t.reporter.fatalErrors, ElementsAre())
 
 	// Call 0
 	res = t.controller.HandleMethodCall(
@@ -811,10 +821,10 @@ func (t *ControllerTest) InvokesOneTimeActions() {
 		"StringToInt",
 		"",
 		0,
-		[]interface{}{""})
+		[]interface{}{"taco"})
 
-  ExpectThat(len(res), Equals(1))
-  ExpectThat(res[0], Equals(0))
+	ExpectEq("taco", suppliedArg)
+  ExpectThat(res, ElementsAre(IdenticalTo(expectedReturn)))
 
 	// Call 1
 	res = t.controller.HandleMethodCall(
