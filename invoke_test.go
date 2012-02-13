@@ -16,6 +16,8 @@
 package oglemock_test
 
 import (
+	. "github.com/jacobsa/oglematchers"
+	. "github.com/jacobsa/ogletest"
 	"github.com/jacobsa/oglemock"
 )
 
@@ -26,13 +28,15 @@ import (
 type InvokeTest struct {
 }
 
-func init()                     { RegisterTestSuite(&InvokeTest{}) }
+func init() { RegisterTestSuite(&InvokeTest{}) }
 
 ////////////////////////////////////////////////////////////
 // Tests
 ////////////////////////////////////////////////////////////
 
 func (t *InvokeTest) ArgumentIsNil() {
+	f := func() { oglemock.Invoke(nil) }
+	ExpectThat(f, Panics(MatchesRegexp("Invoke.*function.*<nil>")))
 }
 
 func (t *InvokeTest) ArgumentIsInteger() {
