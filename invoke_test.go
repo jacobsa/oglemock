@@ -55,6 +55,12 @@ func (t *InvokeTest) FunctionHasOneWrongInputType() {
 }
 
 func (t *InvokeTest) FunctionHasOneWrongOutputType() {
+	f := func() (int32, string) { return 0, "" }
+	g := func() (int, string) { return 0, "" }
+
+	err := oglemock.Invoke(f).SetSignature(reflect.TypeOf(g))
+	ExpectThat(err, Error(HasSubstr("func() (int32, string)")))
+	ExpectThat(err, Error(HasSubstr("func() (int, string)")))
 }
 
 func (t *InvokeTest) CallsFunction() {
