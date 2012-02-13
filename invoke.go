@@ -16,11 +16,51 @@
 package oglemock
 
 import (
+	"errors"
+	"fmt"
+	"reflect"
 )
 
 // Create an Action that invokes the supplied function, returning whatever it
 // returns. The signature of the function must match that of the mocked method
 // exactly.
 func Invoke(f interface{}) Action {
-	return Return(17)
+	// Make sure f is a function.
+	fv := reflect.ValueOf(f)
+	if fv.Kind() != reflect.Func {
+		panic(fmt.Sprintf("Invoke: expected function, got %v", fv.Type()))
+	}
+
+	return &invokeAction{fv}
+}
+
+type invokeAction struct {
+	f reflect.Value
+}
+
+func (a *invokeAction) SetSignature(signature reflect.Type) error {
+	// The signature must match exactly.
+	ft := a.f.Type()
+	if ft != signature {
+		return errors.New(fmt.Sprintf("Invoke: expected %v, got %v", signature, ft))
+	}
+
+	return nil
+}
+
+func (a *invokeAction) Invoke(vals []interface{}) []interface{} {
+	// Create a slice of args for the function.
+	in := make([]reflect.Value, len(vals))
+	for i, x := range vals {
+		in[i] = reflect.ValueOf(x)
+	}
+
+	// Call the function and return its return values.
+	out := a.f.Call(in)
+	result := make([]interface{}, len(out))
+	for i, v := range out {
+		result[i] = v.Interface()
+	}
+
+	return result
 }
