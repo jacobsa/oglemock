@@ -129,12 +129,12 @@ func run() error {
 	}
 
 	// Create a temporary directory inside of $GOPATH to hold generated code.
-	tree, _, err := build.FindTree("github.com/jacobsa/oglemock")
+	buildPkg, err := build.Import("github.com/jacobsa/oglemock", "", build.FindOnly)
 	if err != nil {
 		return errors.New(fmt.Sprintf("Couldn't find oglemock in $GOPATH: %v", err))
 	}
 
-	tmpDir, err := ioutil.TempDir(path.Join(tree.Path, "src"), "tmp-createmock-")
+	tmpDir, err := ioutil.TempDir(buildPkg.SrcRoot, "tmp-createmock-")
 	if err != nil {
 		return errors.New(fmt.Sprintf("Creating temp dir: %v", err))
 	}

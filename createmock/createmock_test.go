@@ -25,6 +25,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"syscall"
 	"testing"
 )
 
@@ -82,7 +83,7 @@ func (t *CreateMockTest) runGoldenTest(
 	// Extract a return code.
 	var actualReturnCode int
 	if exitError != nil {
-		actualReturnCode = exitError.ExitStatus()
+		actualReturnCode = exitError.Sys().(syscall.WaitStatus).ExitStatus()
 	}
 
 	// Make sure the return code is correct.
@@ -106,10 +107,10 @@ func (t *CreateMockTest) runGoldenTest(
 // output that can be compiled.
 func (t *CreateMockTest) runCompilationTest(createmockArgs ...string) {
 	// Create a temporary directory inside of $GOPATH to hold generated code.
-	tree, _, err := build.FindTree("github.com/jacobsa/oglemock")
+	buildPkg, err := build.Import("github.com/jacobsa/oglemock", "", build.FindOnly)
 	AssertEq(nil, err)
 
-	tmpDir, err := ioutil.TempDir(path.Join(tree.Path, "src"), "tmp-createmock_test-")
+	tmpDir, err := ioutil.TempDir(buildPkg.SrcRoot, "tmp-createmock_test-")
 	AssertEq(nil, err)
 	defer os.RemoveAll(tmpDir)
 
