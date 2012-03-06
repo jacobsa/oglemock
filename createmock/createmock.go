@@ -87,7 +87,7 @@ type tmplArg struct {
 
 var unknownPackageRegexp =
 	regexp.MustCompile(
-		`(?s)imports ([\pL_0-9/]+): package could not be found`)
+		`tool\.go:\d+:\d+: import "([^"]+)": cannot find package`)
 
 var undefinedInterfaceRegexp =
 	regexp.MustCompile(`tool\.go:\d+: undefined: [\pL_0-9]+\.([\pL_0-9]+)`)
@@ -195,7 +195,7 @@ func run() error {
 		// Otherwise return a generic error.
 		return errors.New(fmt.Sprintf(
 			"%s\n\nError building generated code:\n\n" +
-				"    %v\n\n Please report this oglemock bug.",
+				"    %v\n\nPlease report this oglemock bug.",
 			buildOutput,
 		err))
 	}
