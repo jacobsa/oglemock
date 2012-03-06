@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"math"
 	"reflect"
+	"sync"
 )
 
 // PartialExpecation is a function that should be called exactly once with
@@ -46,7 +47,7 @@ type Controller interface {
 	// For example:
 	//
 	//     mockWriter := [...]
-	//     controller.ExpectCall(mockWriter, "Write")(ElementsAre(0x1))
+	//     controller.ExpectCall(mockWriter, "Write", "foo.go", 17)(ElementsAre(0x1))
 	//         .WillOnce(Return(1, nil))
 	//
 	// If the mock object doesn't have a method of the supplied name, the
@@ -96,19 +97,23 @@ type objectMap map[uintptr]methodMap
 // NewController sets up a fresh controller, without any expectations set, and
 // configures the controller to use the supplied error reporter.
 func NewController(reporter ErrorReporter) Controller {
-	return &controllerImpl{reporter, objectMap{}}
+	return &controllerImpl{reporter, sync.RWMutex{}, objectMap{}}
 }
 
 type controllerImpl struct {
 	reporter ErrorReporter
-	expectationsByObject objectMap
+
+	mutex sync.RWMutex
+	expectationsByObject objectMap  // Protected by mutex
 }
 
-// getExpectations returns the list of registered expectations for the named
-// method of the supplied object, or an empty slice if none have been
-// registered. When this method returns, it is guaranteed that
-// c.expectationsByObject has an entry for the object.
-func (c *controllerImpl) getExpectations(
+// Return the list of registered expectations for the named method of the
+// supplied object, or an empty slice if none have been registered. When this
+// method returns, it is guaranteed that c.expectationsByObject has an entry
+// for the object.
+//
+// c.mutex must be held for reading.
+func (c *controllerImpl) getExpectationsLocked(
 	o MockObject,
 	methodName string) []*InternalExpectation {
 	id := o.Oglemock_Id()
@@ -128,14 +133,16 @@ func (c *controllerImpl) getExpectations(
 	return result
 }
 
-// addExpectation adds an expectation to the list registered for the named
-// method of the supplied mock object.
-func (c *controllerImpl) addExpectation(
+// Add an expectation to the list registered for the named method of the
+// supplied mock object.
+//
+// c.mutex must be held for writing.
+func (c *controllerImpl) addExpectationLocked(
 	o MockObject,
 	methodName string,
 	exp *InternalExpectation) {
 	// Get the existing list.
-	existing := c.getExpectations(o, methodName)
+	existing := c.getExpectationsLocked(o, methodName)
 
 	// Store a modified list.
 	id := o.Oglemock_Id()
@@ -148,9 +155,9 @@ func (c *controllerImpl) ExpectCall(
 	fileName string,
 	lineNumber int) PartialExpecation {
 	// Find the signature for the requested method.
-	oType := reflect.TypeOf(o)
-	method, ok := oType.MethodByName(methodName)
-	if !ok {
+	ov := reflect.ValueOf(o)
+	method := ov.MethodByName(methodName)
+	if method.Kind() == reflect.Invalid {
 		c.reporter.ReportFatalError(
 			fileName,
 			lineNumber,
@@ -158,8 +165,11 @@ func (c *controllerImpl) ExpectCall(
 		return nil
 	}
 
-	partialAlreadyCalled := false
+	partialAlreadyCalled := false  // Protected by c.mutex
 	return func(args ...interface{}) Expectation {
+		c.mutex.Lock()
+		defer c.mutex.Unlock()
+
 		// This function should only be called once.
 		if partialAlreadyCalled {
 			c.reporter.ReportFatalError(
@@ -173,7 +183,7 @@ func (c *controllerImpl) ExpectCall(
 
 		// Make sure that the number of args is legal. Keep in mind that the
 		// method's type has an extra receiver arg.
-		if len(args) != method.Type.NumIn() - 1 {
+		if len(args) != method.Type().NumIn() {
 			c.reporter.ReportFatalError(
 				fileName,
 				lineNumber,
@@ -182,7 +192,7 @@ func (c *controllerImpl) ExpectCall(
 						"Expectation for %s given wrong number of arguments: " +
 						"expected %d, got %d.",
 						methodName,
-						method.Type.NumIn() - 1,
+						method.Type().NumIn(),
 						len(args))))
 			return nil
 		}
@@ -190,12 +200,12 @@ func (c *controllerImpl) ExpectCall(
 		// Create an expectation and insert it into the controller's map.
 		exp := InternalNewExpectation(
 			c.reporter,
-			method.Type,
+			method.Type(),
 			args,
 			fileName,
 			lineNumber)
 
-		c.addExpectation(o, methodName, exp)
+		c.addExpectationLocked(o, methodName, exp)
 
 		// Return the expectation to the user.
 		return exp
@@ -203,12 +213,18 @@ func (c *controllerImpl) ExpectCall(
 }
 
 func (c *controllerImpl) Finish() {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+
 	// Check whether the minimum cardinality for each registered expectation has
 	// been satisfied.
 	for _, expectationsByMethod := range c.expectationsByObject {
 		for methodName, expectations := range expectationsByMethod {
 			for _, exp := range expectations {
-				minCardinality, _ := computeCardinality(exp)
+				exp.mutex.Lock()
+				defer exp.mutex.Unlock()
+
+				minCardinality, _ := computeCardinalityLocked(exp)
 				if exp.NumMatches < minCardinality {
 					c.reporter.ReportError(
 						exp.FileName,
@@ -244,16 +260,17 @@ func expectationMatches(exp *InternalExpectation, args []interface{}) bool {
 	return true
 }
 
-// chooseExpectation returns the expectation that matches the supplied
-// arguments. If there is more than one such expectation, the one furthest
-// along in the list for the method is returned. If there is no such
-// expectation, nil is returned.
-func (c *controllerImpl) chooseExpectation(
+// Return the expectation that matches the supplied arguments. If there is more
+// than one such expectation, the one furthest along in the list for the method
+// is returned. If there is no such expectation, nil is returned.
+//
+// c.mutex must be held for reading.
+func (c *controllerImpl) chooseExpectationLocked(
 	o MockObject,
 	methodName string,
 	args []interface{}) *InternalExpectation {
 	// Do we have any expectations for this method?
-	expectations := c.getExpectations(o, methodName)
+	expectations := c.getExpectationsLocked(o, methodName)
 	if len(expectations) == 0 {
 		return nil
 	}
@@ -269,12 +286,11 @@ func (c *controllerImpl) chooseExpectation(
 
 // makeZeroReturnValues creates a []interface{} containing appropriate zero
 // values for returning from the supplied method type.
-func makeZeroReturnValues(method reflect.Method) []interface{} {
-	methodType := method.Type
-	result := make([]interface{}, methodType.NumOut())
+func makeZeroReturnValues(signature reflect.Type) []interface{} {
+	result := make([]interface{}, signature.NumOut())
 
 	for i, _ := range result {
-		outType := methodType.Out(i)
+		outType := signature.Out(i)
 		zeroVal := reflect.Zero(outType)
 		result[i] = zeroVal.Interface()
 	}
@@ -285,7 +301,9 @@ func makeZeroReturnValues(method reflect.Method) []interface{} {
 // computeCardinality decides on the [min, max] range of the number of expected
 // matches for the supplied expectations, according to the rules documented in
 // expectation.go.
-func computeCardinality(exp *InternalExpectation) (min, max uint) {
+//
+// exp.mutex must be held for reading.
+func computeCardinalityLocked(exp *InternalExpectation) (min, max uint) {
 	// Explicit cardinality.
 	if exp.ExpectedNumMatches >= 0 {
 		min = uint(exp.ExpectedNumMatches)
@@ -322,7 +340,9 @@ func computeCardinality(exp *InternalExpectation) (min, max uint) {
 // chooseAction returns the action that should be invoked for the i'th match to
 // the supplied expectation (counting from zero). If the implicit "return zero
 // values" action should be used, it returns nil.
-func chooseAction(i uint, exp *InternalExpectation) Action {
+//
+// exp.mutex must be held for reading.
+func chooseActionLocked(i uint, exp *InternalExpectation) Action {
 	// Exhaust one-time actions first.
 	if i < uint(len(exp.OneTimeActions)) {
 		return exp.OneTimeActions[i]
@@ -338,10 +358,13 @@ func (c *controllerImpl) HandleMethodCall(
 	fileName string,
 	lineNumber int,
 	args []interface{}) []interface{} {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+
 	// Find the signature for the requested method.
-	oType := reflect.TypeOf(o)
-	method, ok := oType.MethodByName(methodName)
-	if !ok {
+	ov := reflect.ValueOf(o)
+	method := ov.MethodByName(methodName)
+	if method.Kind() == reflect.Invalid {
 		c.reporter.ReportFatalError(
 			fileName,
 			lineNumber,
@@ -351,20 +374,20 @@ func (c *controllerImpl) HandleMethodCall(
 
 	// HACK(jacobsa): Make sure we got the correct number of arguments. This will
 	// need to be refined when issue #5 (variadic methods) is handled.
-	if len(args) != method.Type.NumIn() - 1 {
+	if len(args) != method.Type().NumIn() {
 		c.reporter.ReportFatalError(
 			fileName,
 			lineNumber,
 			errors.New(
 				fmt.Sprintf(
 					"Wrong number of arguments: expected %d; got %d",
-					method.Type.NumIn() - 1,
+					method.Type().NumIn(),
 					len(args))))
 		return nil
 	}
 
 	// Find an expectation matching this call.
-	expectation := c.chooseExpectation(o, methodName, args)
+	expectation := c.chooseExpectationLocked(o, methodName, args)
 	if expectation == nil {
 		c.reporter.ReportError(
 			fileName,
@@ -372,13 +395,16 @@ func (c *controllerImpl) HandleMethodCall(
 			errors.New(
 				fmt.Sprintf("Unexpected call to %s with args: %v", methodName, args)))
 
-		return makeZeroReturnValues(method)
+		return makeZeroReturnValues(method.Type())
 	}
+
+	expectation.mutex.Lock()
+	defer expectation.mutex.Unlock()
 
 	// Increase the number of matches recorded, and check whether we're over the
 	// number expected.
 	expectation.NumMatches++
-	_, maxCardinality := computeCardinality(expectation)
+	_, maxCardinality := computeCardinalityLocked(expectation)
 	if expectation.NumMatches > maxCardinality {
 		c.reporter.ReportError(
 			expectation.FileName,
@@ -391,13 +417,13 @@ func (c *controllerImpl) HandleMethodCall(
 					maxCardinality,
 					expectation.NumMatches)))
 
-		return makeZeroReturnValues(method)
+		return makeZeroReturnValues(method.Type())
 	}
 
 	// Choose an action to invoke. If there is none, just return zero values.
-	action := chooseAction(expectation.NumMatches - 1, expectation)
+	action := chooseActionLocked(expectation.NumMatches - 1, expectation)
 	if action == nil {
-		return makeZeroReturnValues(method)
+		return makeZeroReturnValues(method.Type())
 	}
 
 	// Let the action take over.
