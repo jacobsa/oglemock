@@ -20,8 +20,8 @@ Installation
 ------------
 
 First, make sure you have installed a version of the Go tools at least as new as
-`weekly/2012-01-27`. See [here][golang-install] for instructions. Until
-release `r61` comes out, this involes using the `weekly` tag.
+`weekly.2012-03-04`. See [here][golang-install] for instructions. Until release
+`r61` comes out, this involes using the `weekly` tag.
 
 Use the following command to install `oglemock` and its dependencies, and to
 keep them up to date:
