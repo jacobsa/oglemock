@@ -35,6 +35,7 @@ var dumpNew = flag.Bool("dump_new", false, "Dump new golden files.")
 // Helpers
 ////////////////////////////////////////////////////////////
 
+var tempDir string
 var createmockPath string
 
 type CreateMockTest struct {
@@ -45,13 +46,12 @@ func init() { RegisterTestSuite(&CreateMockTest{}) }
 
 func (t *CreateMockTest) SetUpTestSuite() {
 	// Create a temporary file to hold the built createmock binary.
-	f, err := ioutil.TempFile("", "createmock-")
+	tempDir, err := ioutil.TempDir("", "createmock-")
 	if err != nil {
-		panic("Creating temporary file: " + err.Error())
+		panic("Creating temporary directory: " + err.Error())
 	}
 
-	createmockPath = f.Name()
-	f.Close()
+	createmockPath = path.Join(tempDir, "createmock")
 
 	// Build the createmock tool so that it can be used in the tests below.
 	cmd := exec.Command("go", "build", "-o", createmockPath, "github.com/jacobsa/oglemock/createmock")
@@ -62,7 +62,8 @@ func (t *CreateMockTest) SetUpTestSuite() {
 
 func (t *CreateMockTest) TearDownTestSuite() {
 	// Delete the createmock binary we built above.
-	os.Remove(createmockPath)
+	os.RemoveAll(tempDir)
+	tempDir = ""
 	createmockPath = ""
 }
 
