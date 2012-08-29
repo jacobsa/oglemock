@@ -91,7 +91,7 @@ func (t *CreateMockTest) runGoldenTest(
 	ExpectEq(expectedReturnCode, actualReturnCode)
 
 	// Read the golden file.
-	goldenPath := path.Join("test_cases", "golden." + caseName + ".go")
+	goldenPath := path.Join("test_cases", "golden." + caseName)
 	goldenData := readFileOrDie(goldenPath)
 
 	// Compare the two.
