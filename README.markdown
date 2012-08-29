@@ -19,15 +19,14 @@ easiest place to use it.
 Installation
 ------------
 
-First, make sure you have installed a version of the Go tools at least as new as
-`weekly.2012-03-04`. See [here][golang-install] for instructions. Until release
-`r61` comes out, this involes using the `weekly` tag.
+First, make sure you have installed Go 1.0.2 or newer. See
+[here][golang-install] for instructions.
 
 Use the following command to install `oglemock` and its dependencies, and to
 keep them up to date:
 
-    goinstall -u github.com/jacobsa/oglemock
-    goinstall -u github.com/jacobsa/oglemock/createmock
+    go get -u github.com/jacobsa/oglemock
+    go get -u github.com/jacobsa/oglemock/createmock
 
 Those commands will install the `oglemock` package itself, along with the
 `createmock` tool that is used to auto-generate mock types.
@@ -93,7 +92,7 @@ see [here][oglemock-docs].
 
 [controller-ref]: http://gopkgdoc.appspot.com/pkg/github.com/jacobsa/oglemock#Controller
 [reporter-ref]: http://gopkgdoc.appspot.com/pkg/github.com/jacobsa/oglemock#ErrorReporter
-[golang-install]: http://golang.org/doc/install.html#releases
+[golang-install]: http://golang.org/doc/install.html
 [google-js-test]: http://code.google.com/p/google-js-test/
 [googlemock]: http://code.google.com/p/googlemock/
 [oglematchers]: https://github.com/jacobsa/oglematchers
