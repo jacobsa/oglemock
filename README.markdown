@@ -4,7 +4,7 @@ following features:
  *  An extensive and extensible set of matchers for expressing call
     expectations (provided by the [oglematchers][] package).
 
- *  Clean, readable output that tells you exaclty what you need to know.
+ *  Clean, readable output that tells you exactly what you need to know.
 
  *  Style and semantics similar to [Google Mock][googlemock] and
     [Google JS Test][google-js-test].
