@@ -7,10 +7,10 @@
 package some_pkg
 
 import (
-	color "image/color"
 	fmt "fmt"
-	image "image"
 	oglemock "github.com/jacobsa/oglemock"
+	image "image"
+	color "image/color"
 	runtime "runtime"
 	unsafe "unsafe"
 )

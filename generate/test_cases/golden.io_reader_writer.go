@@ -8,8 +8,8 @@ package some_pkg
 
 import (
 	fmt "fmt"
-	io "io"
 	oglemock "github.com/jacobsa/oglemock"
+	io "io"
 	runtime "runtime"
 	unsafe "unsafe"
 )

@@ -7,14 +7,14 @@
 package some_pkg
 
 import (
-	complicated_pkg "github.com/jacobsa/oglemock/generate/test_cases/complicated_pkg"
 	fmt "fmt"
+	oglemock "github.com/jacobsa/oglemock"
+	complicated_pkg "github.com/jacobsa/oglemock/generate/test_cases/complicated_pkg"
+	tony "github.com/jacobsa/oglemock/generate/test_cases/renamed_pkg"
 	image "image"
 	io "io"
 	net "net"
-	oglemock "github.com/jacobsa/oglemock"
 	runtime "runtime"
-	tony "github.com/jacobsa/oglemock/generate/test_cases/renamed_pkg"
 	unsafe "unsafe"
 )
 

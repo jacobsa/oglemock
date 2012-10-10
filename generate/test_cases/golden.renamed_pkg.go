@@ -9,8 +9,8 @@ package some_pkg
 import (
 	fmt "fmt"
 	oglemock "github.com/jacobsa/oglemock"
-	runtime "runtime"
 	tony "github.com/jacobsa/oglemock/generate/test_cases/renamed_pkg"
+	runtime "runtime"
 	unsafe "unsafe"
 )
 

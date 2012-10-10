@@ -21,6 +21,7 @@ package generate
 import (
 	"bytes"
 	"errors"
+	"go/ast"
 	"go/parser"
 	"go/printer"
 	"go/token"
@@ -313,8 +314,10 @@ func GenerateMockSource(w io.Writer, pkg string, interfaces []reflect.Type) erro
 		return errors.New("Error parsing generated code: " + err.Error())
 	}
 
-	// Pretty-print the resulting AST, using the same options that gofmt does by
-	// default.
+	// Sort the import lines in the AST in the same way that gofmt does.
+	ast.SortImports(fset, astFile)
+
+	// Pretty-print the AST, using the same options that gofmt does by default.
 	cfg := &printer.Config{
 		Mode: printer.UseSpaces|printer.TabIndent,
 		Tabwidth: 8,
