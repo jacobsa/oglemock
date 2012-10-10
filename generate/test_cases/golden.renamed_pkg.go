@@ -20,16 +20,16 @@ type MockSomeInterface interface {
 }
 
 type mockSomeInterface struct {
-	controller	oglemock.Controller
-	description	string
+	controller  oglemock.Controller
+	description string
 }
 
 func NewMockSomeInterface(
 	c oglemock.Controller,
 	desc string) MockSomeInterface {
 	return &mockSomeInterface{
-		controller:	c,
-		description:	desc,
+		controller:  c,
+		description: desc,
 	}
 }
 

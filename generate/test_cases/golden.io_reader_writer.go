@@ -20,16 +20,16 @@ type MockReader interface {
 }
 
 type mockReader struct {
-	controller	oglemock.Controller
-	description	string
+	controller  oglemock.Controller
+	description string
 }
 
 func NewMockReader(
 	c oglemock.Controller,
 	desc string) MockReader {
 	return &mockReader{
-		controller:	c,
-		description:	desc,
+		controller:  c,
+		description: desc,
 	}
 }
 
@@ -76,16 +76,16 @@ type MockWriter interface {
 }
 
 type mockWriter struct {
-	controller	oglemock.Controller
-	description	string
+	controller  oglemock.Controller
+	description string
 }
 
 func NewMockWriter(
 	c oglemock.Controller,
 	desc string) MockWriter {
 	return &mockWriter{
-		controller:	c,
-		description:	desc,
+		controller:  c,
+		description: desc,
 	}
 }
 

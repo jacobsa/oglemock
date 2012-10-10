@@ -306,14 +306,21 @@ func GenerateMockSource(w io.Writer, pkg string, interfaces []reflect.Type) erro
 		return err
 	}
 
-	// Pretty-print the output.
+	// Parse the output.
 	fset := token.NewFileSet()
 	astFile, err := parser.ParseFile(fset, pkg + ".go", buf, parser.ParseComments)
 	if err != nil {
 		return errors.New("Error parsing generated code: " + err.Error())
 	}
 
-	if err = printer.Fprint(w, fset, astFile); err != nil {
+	// Pretty-print the resulting AST, using the same options that gofmt does by
+	// default.
+	cfg := &printer.Config{
+		Mode: printer.UseSpaces|printer.TabIndent,
+		Tabwidth: 8,
+	}
+
+	if err = cfg.Fprint(w, fset, astFile); err != nil {
 		return errors.New("Error pretty printing: " + err.Error())
 	}
 

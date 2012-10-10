@@ -21,16 +21,16 @@ type MockImage interface {
 }
 
 type mockImage struct {
-	controller	oglemock.Controller
-	description	string
+	controller  oglemock.Controller
+	description string
 }
 
 func NewMockImage(
 	c oglemock.Controller,
 	desc string) MockImage {
 	return &mockImage{
-		controller:	c,
-		description:	desc,
+		controller:  c,
+		description: desc,
 	}
 }
 
@@ -120,16 +120,16 @@ type MockPalettedImage interface {
 }
 
 type mockPalettedImage struct {
-	controller	oglemock.Controller
-	description	string
+	controller  oglemock.Controller
+	description string
 }
 
 func NewMockPalettedImage(
 	c oglemock.Controller,
 	desc string) MockPalettedImage {
 	return &mockPalettedImage{
-		controller:	c,
-		description:	desc,
+		controller:  c,
+		description: desc,
 	}
 }
 

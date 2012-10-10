@@ -24,16 +24,16 @@ type MockComplicatedThing interface {
 }
 
 type mockComplicatedThing struct {
-	controller	oglemock.Controller
-	description	string
+	controller  oglemock.Controller
+	description string
 }
 
 func NewMockComplicatedThing(
 	c oglemock.Controller,
 	desc string) MockComplicatedThing {
 	return &mockComplicatedThing{
-		controller:	c,
-		description:	desc,
+		controller:  c,
+		description: desc,
 	}
 }
 
