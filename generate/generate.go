@@ -31,8 +31,7 @@ import (
 	"text/template"
 )
 
-const tmplStr =
-`
+const tmplStr = `
 // This file was auto-generated using createmock. See the following page for
 // more information:
 //
@@ -139,7 +138,7 @@ func init() {
 
 func getInputTypeString(i int, ft reflect.Type) string {
 	numInputs := ft.NumIn()
-	if i == numInputs - 1 && ft.IsVariadic() {
+	if i == numInputs-1 && ft.IsVariadic() {
 		return "..." + getTypeString(ft.In(i).Elem())
 	}
 
@@ -187,8 +186,7 @@ func getOutputs(ft reflect.Type) []reflect.Type {
 // containing elements for each import needed by a set of mocked interfaces.
 type importMap map[string]string
 
-var typePackageIdentifierRegexp =
-	regexp.MustCompile(`^([\pL_0-9]+)\.[\pL_0-9]+$`)
+var typePackageIdentifierRegexp = regexp.MustCompile(`^([\pL_0-9]+)\.[\pL_0-9]+$`)
 
 // Add an import for the supplied type, without recursing.
 func addImportForType(imports importMap, t reflect.Type) {
@@ -309,7 +307,7 @@ func GenerateMockSource(w io.Writer, pkg string, interfaces []reflect.Type) erro
 
 	// Parse the output.
 	fset := token.NewFileSet()
-	astFile, err := parser.ParseFile(fset, pkg + ".go", buf, parser.ParseComments)
+	astFile, err := parser.ParseFile(fset, pkg+".go", buf, parser.ParseComments)
 	if err != nil {
 		return errors.New("Error parsing generated code: " + err.Error())
 	}
@@ -319,7 +317,7 @@ func GenerateMockSource(w io.Writer, pkg string, interfaces []reflect.Type) erro
 
 	// Pretty-print the AST, using the same options that gofmt does by default.
 	cfg := &printer.Config{
-		Mode: printer.UseSpaces|printer.TabIndent,
+		Mode:     printer.UseSpaces | printer.TabIndent,
 		Tabwidth: 8,
 	}
 

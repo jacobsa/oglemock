@@ -8,8 +8,8 @@ package mock_io
 
 import (
 	fmt "fmt"
-	io "io"
 	oglemock "github.com/jacobsa/oglemock"
+	io "io"
 	runtime "runtime"
 	unsafe "unsafe"
 )
@@ -20,16 +20,16 @@ type MockReader interface {
 }
 
 type mockReader struct {
-	controller	oglemock.Controller
-	description	string
+	controller  oglemock.Controller
+	description string
 }
 
 func NewMockReader(
 	c oglemock.Controller,
 	desc string) MockReader {
 	return &mockReader{
-		controller:	c,
-		description:	desc,
+		controller:  c,
+		description: desc,
 	}
 }
 

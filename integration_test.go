@@ -16,11 +16,11 @@
 package oglemock_test
 
 import (
-	. "github.com/jacobsa/oglematchers"
-	. "github.com/jacobsa/ogletest"
 	"errors"
+	. "github.com/jacobsa/oglematchers"
 	"github.com/jacobsa/oglemock"
 	"github.com/jacobsa/oglemock/sample/mock_io"
+	. "github.com/jacobsa/ogletest"
 	"path"
 	"runtime"
 )
@@ -35,7 +35,7 @@ func getLineNumber() int {
 }
 
 type IntegrationTest struct {
-	reporter fakeErrorReporter
+	reporter   fakeErrorReporter
 	controller oglemock.Controller
 
 	reader mock_io.MockReader
@@ -89,7 +89,7 @@ func (t *IntegrationTest) ExpectedCalls() {
 	t.controller.ExpectCall(t.reader, "Read", "", 112)(Not(Equals(nil))).
 		WillOnce(oglemock.Return(23, errors.New("taco")))
 
-  // Calls
+	// Calls
 	var n int
 	var err error
 

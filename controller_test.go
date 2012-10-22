@@ -27,13 +27,13 @@ import (
 ////////////////////////////////////////////////////////////
 
 type errorReport struct {
-	fileName string
+	fileName   string
 	lineNumber int
-	err error
+	err        error
 }
 
 type fakeErrorReporter struct {
-	errors []errorReport
+	errors      []errorReport
 	fatalErrors []errorReport
 }
 
@@ -48,7 +48,7 @@ func (r *fakeErrorReporter) ReportFatalError(fileName string, lineNumber int, er
 }
 
 type trivialMockObject struct {
-	id uintptr
+	id   uintptr
 	desc string
 }
 
@@ -71,7 +71,7 @@ func (o *trivialMockObject) TwoIntsToString(i, j int) string {
 }
 
 type ControllerTest struct {
-	reporter fakeErrorReporter
+	reporter   fakeErrorReporter
 	controller Controller
 
 	mock1 MockObject
@@ -238,7 +238,6 @@ func (t *ControllerTest) ExpectThenNonMatchingCall() {
 		"taco.go",
 		112,
 		[]interface{}{8, 1})
-
 
 	// The error should be reported immediately.
 	AssertEq(1, len(t.reporter.errors))
@@ -801,7 +800,7 @@ func (t *ControllerTest) InvokesOneTimeActions() {
 		"burrito.go",
 		117)
 
-  suppliedArg := ""
+	suppliedArg := ""
 	expectedReturn := 17
 
 	f := func(s string) int {
@@ -824,7 +823,7 @@ func (t *ControllerTest) InvokesOneTimeActions() {
 		[]interface{}{"taco"})
 
 	ExpectEq("taco", suppliedArg)
-  ExpectThat(res, ElementsAre(IdenticalTo(expectedReturn)))
+	ExpectThat(res, ElementsAre(IdenticalTo(expectedReturn)))
 
 	// Call 1
 	res = t.controller.HandleMethodCall(
@@ -834,8 +833,8 @@ func (t *ControllerTest) InvokesOneTimeActions() {
 		0,
 		[]interface{}{""})
 
-  ExpectThat(len(res), Equals(1))
-  ExpectThat(res[0], Equals(1))
+	ExpectThat(len(res), Equals(1))
+	ExpectThat(res[0], Equals(1))
 }
 
 func (t *ControllerTest) InvokesFallbackActionAfterOneTimeActions() {
@@ -861,8 +860,8 @@ func (t *ControllerTest) InvokesFallbackActionAfterOneTimeActions() {
 		0,
 		[]interface{}{""})
 
-  ExpectThat(len(res), Equals(1))
-  ExpectThat(res[0], Equals(0))
+	ExpectThat(len(res), Equals(1))
+	ExpectThat(res[0], Equals(0))
 
 	// Call 1
 	res = t.controller.HandleMethodCall(
@@ -872,8 +871,8 @@ func (t *ControllerTest) InvokesFallbackActionAfterOneTimeActions() {
 		0,
 		[]interface{}{""})
 
-  ExpectThat(len(res), Equals(1))
-  ExpectThat(res[0], Equals(1))
+	ExpectThat(len(res), Equals(1))
+	ExpectThat(res[0], Equals(1))
 
 	// Call 2
 	res = t.controller.HandleMethodCall(
@@ -883,8 +882,8 @@ func (t *ControllerTest) InvokesFallbackActionAfterOneTimeActions() {
 		0,
 		[]interface{}{""})
 
-  ExpectThat(len(res), Equals(1))
-  ExpectThat(res[0], Equals(2))
+	ExpectThat(len(res), Equals(1))
+	ExpectThat(res[0], Equals(2))
 
 	// Call 3
 	res = t.controller.HandleMethodCall(
@@ -894,8 +893,8 @@ func (t *ControllerTest) InvokesFallbackActionAfterOneTimeActions() {
 		0,
 		[]interface{}{""})
 
-  ExpectThat(len(res), Equals(1))
-  ExpectThat(res[0], Equals(2))
+	ExpectThat(len(res), Equals(1))
+	ExpectThat(res[0], Equals(2))
 }
 
 func (t *ControllerTest) InvokesFallbackActionWithoutOneTimeActions() {
@@ -919,8 +918,8 @@ func (t *ControllerTest) InvokesFallbackActionWithoutOneTimeActions() {
 		0,
 		[]interface{}{""})
 
-  ExpectThat(len(res), Equals(1))
-  ExpectThat(res[0], Equals(2))
+	ExpectThat(len(res), Equals(1))
+	ExpectThat(res[0], Equals(2))
 
 	// Call 1
 	res = t.controller.HandleMethodCall(
@@ -930,8 +929,8 @@ func (t *ControllerTest) InvokesFallbackActionWithoutOneTimeActions() {
 		0,
 		[]interface{}{""})
 
-  ExpectThat(len(res), Equals(1))
-  ExpectThat(res[0], Equals(2))
+	ExpectThat(len(res), Equals(1))
+	ExpectThat(res[0], Equals(2))
 
 	// Call 2
 	res = t.controller.HandleMethodCall(
@@ -941,8 +940,8 @@ func (t *ControllerTest) InvokesFallbackActionWithoutOneTimeActions() {
 		0,
 		[]interface{}{""})
 
-  ExpectThat(len(res), Equals(1))
-  ExpectThat(res[0], Equals(2))
+	ExpectThat(len(res), Equals(1))
+	ExpectThat(res[0], Equals(2))
 }
 
 func (t *ControllerTest) ImplicitActionReturnsZeroInts() {
@@ -966,9 +965,9 @@ func (t *ControllerTest) ImplicitActionReturnsZeroInts() {
 		0,
 		[]interface{}{""})
 
-  ExpectThat(len(res), Equals(1))
+	ExpectThat(len(res), Equals(1))
 	ExpectThat(reflect.TypeOf(res[0]), Equals(reflect.TypeOf(int(0))))
-  ExpectThat(res[0], Equals(0))
+	ExpectThat(res[0], Equals(0))
 
 	// Call 1
 	res = t.controller.HandleMethodCall(
@@ -978,9 +977,9 @@ func (t *ControllerTest) ImplicitActionReturnsZeroInts() {
 		0,
 		[]interface{}{""})
 
-  ExpectThat(len(res), Equals(1))
+	ExpectThat(len(res), Equals(1))
 	ExpectThat(reflect.TypeOf(res[0]), Equals(reflect.TypeOf(int(0))))
-  ExpectThat(res[0], Equals(0))
+	ExpectThat(res[0], Equals(0))
 }
 
 func (t *ControllerTest) ImplicitActionReturnsEmptyStrings() {
@@ -993,7 +992,7 @@ func (t *ControllerTest) ImplicitActionReturnsEmptyStrings() {
 		"burrito.go",
 		117)
 
-  exp := partial(LessThan(100), LessThan(100))
+	exp := partial(LessThan(100), LessThan(100))
 	exp.Times(2)
 
 	// Call 0
@@ -1004,8 +1003,8 @@ func (t *ControllerTest) ImplicitActionReturnsEmptyStrings() {
 		0,
 		[]interface{}{0, 0})
 
-  ExpectThat(len(res), Equals(1))
-  ExpectThat(res[0], Equals(""))
+	ExpectThat(len(res), Equals(1))
+	ExpectThat(res[0], Equals(""))
 
 	// Call 1
 	res = t.controller.HandleMethodCall(
@@ -1015,8 +1014,8 @@ func (t *ControllerTest) ImplicitActionReturnsEmptyStrings() {
 		0,
 		[]interface{}{0, 0})
 
-  ExpectThat(len(res), Equals(1))
-  ExpectThat(res[0], Equals(""))
+	ExpectThat(len(res), Equals(1))
+	ExpectThat(res[0], Equals(""))
 }
 
 func (t *ControllerTest) ExpectationsAreMatchedLastToFirst() {
@@ -1050,8 +1049,8 @@ func (t *ControllerTest) ExpectationsAreMatchedLastToFirst() {
 		0,
 		[]interface{}{"taco"})
 
-  ExpectThat(len(res), Equals(1))
-  ExpectThat(res[0], Equals(19))
+	ExpectThat(len(res), Equals(1))
+	ExpectThat(res[0], Equals(19))
 
 	// Call -- the first expectation should match because the second doesn't.
 	res = t.controller.HandleMethodCall(
@@ -1061,8 +1060,8 @@ func (t *ControllerTest) ExpectationsAreMatchedLastToFirst() {
 		0,
 		[]interface{}{"burrito"})
 
-  ExpectThat(len(res), Equals(1))
-  ExpectThat(res[0], Equals(17))
+	ExpectThat(len(res), Equals(1))
+	ExpectThat(res[0], Equals(17))
 }
 
 func (t *ControllerTest) ExpectationsAreSegregatedByMockObject() {
@@ -1096,8 +1095,8 @@ func (t *ControllerTest) ExpectationsAreSegregatedByMockObject() {
 		0,
 		[]interface{}{""})
 
-  ExpectThat(len(res), Equals(1))
-  ExpectThat(res[0], Equals(17))
+	ExpectThat(len(res), Equals(1))
+	ExpectThat(res[0], Equals(17))
 
 	// Call mock2.
 	res = t.controller.HandleMethodCall(
@@ -1107,8 +1106,8 @@ func (t *ControllerTest) ExpectationsAreSegregatedByMockObject() {
 		0,
 		[]interface{}{""})
 
-  ExpectThat(len(res), Equals(1))
-  ExpectThat(res[0], Equals(19))
+	ExpectThat(len(res), Equals(1))
+	ExpectThat(res[0], Equals(19))
 }
 
 func (t *ControllerTest) ExpectationsAreSegregatedByMethodName() {
@@ -1142,8 +1141,8 @@ func (t *ControllerTest) ExpectationsAreSegregatedByMethodName() {
 		0,
 		[]interface{}{""})
 
-  ExpectThat(len(res), Equals(1))
-  ExpectThat(res[0], Equals(17))
+	ExpectThat(len(res), Equals(1))
+	ExpectThat(res[0], Equals(17))
 
 	// Call TwoIntsToString.
 	res = t.controller.HandleMethodCall(
@@ -1153,8 +1152,8 @@ func (t *ControllerTest) ExpectationsAreSegregatedByMethodName() {
 		0,
 		[]interface{}{1, 2})
 
-  ExpectThat(len(res), Equals(1))
-  ExpectThat(res[0], Equals("taco"))
+	ExpectThat(len(res), Equals(1))
+	ExpectThat(res[0], Equals("taco"))
 }
 
 func (t *ControllerTest) ActionCallsAgainMatchingDifferentExpectation() {
@@ -1197,7 +1196,7 @@ func (t *ControllerTest) ActionCallsAgainMatchingDifferentExpectation() {
 		0,
 		[]interface{}{1, 2})
 
-  AssertThat(res, ElementsAre("queso"))
+	AssertThat(res, ElementsAre("queso"))
 
 	// Finish. Everything should be satisfied.
 	t.controller.Finish()
@@ -1240,7 +1239,7 @@ func (t *ControllerTest) ActionCallsAgainMatchingSameExpectation() {
 		0,
 		[]interface{}{""})
 
-  AssertThat(res, ElementsAre(17 + 19))
+	AssertThat(res, ElementsAre(17+19))
 
 	// Finish. Everything should be satisfied.
 	t.controller.Finish()

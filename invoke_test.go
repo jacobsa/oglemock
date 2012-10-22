@@ -17,8 +17,8 @@ package oglemock_test
 
 import (
 	. "github.com/jacobsa/oglematchers"
-	. "github.com/jacobsa/ogletest"
 	"github.com/jacobsa/oglemock"
+	. "github.com/jacobsa/ogletest"
 	"reflect"
 )
 
@@ -82,8 +82,8 @@ func (t *InvokeTest) CallsFunction() {
 
 	a.Invoke([]interface{}{expectedArg0, expectedArg1})
 
-	ExpectThat(actualArg0, IdenticalTo(expectedArg0));
-	ExpectThat(actualArg1, IdenticalTo(expectedArg1));
+	ExpectThat(actualArg0, IdenticalTo(expectedArg0))
+	ExpectThat(actualArg1, IdenticalTo(expectedArg1))
 }
 
 func (t *InvokeTest) ReturnsFunctionResult() {

@@ -42,7 +42,7 @@ func (t *InternalExpectationTest) SetUp(c *TestInfo) {
 
 func (t *InternalExpectationTest) makeExpectation(
 	sig reflect.Type,
-	args[]interface{},
+	args []interface{},
 	fileName string,
 	lineNumber int) *InternalExpectation {
 	return InternalNewExpectation(&t.reporter, sig, args, fileName, lineNumber)

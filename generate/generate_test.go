@@ -16,13 +16,13 @@
 package generate_test
 
 import (
-	. "github.com/jacobsa/oglematchers"
-	. "github.com/jacobsa/ogletest"
 	"bytes"
 	"flag"
+	. "github.com/jacobsa/oglematchers"
 	"github.com/jacobsa/oglemock/generate"
 	"github.com/jacobsa/oglemock/generate/test_cases/complicated_pkg"
 	"github.com/jacobsa/oglemock/generate/test_cases/renamed_pkg"
+	. "github.com/jacobsa/ogletest"
 	"image"
 	"io"
 	"io/ioutil"
@@ -41,12 +41,12 @@ type GenerateTest struct {
 }
 
 func TestOgletest(t *testing.T) { RunTests(t) }
-func init() { RegisterTestSuite(&GenerateTest{}) }
+func init()                     { RegisterTestSuite(&GenerateTest{}) }
 
 func (t *GenerateTest) runGoldenTest(
 	caseName string,
 	nilPtrs ...interface{}) {
-  // Make a slice of interface types to give to GenerateMockSource.
+	// Make a slice of interface types to give to GenerateMockSource.
 	interfaces := make([]reflect.Type, len(nilPtrs))
 	for i, ptr := range nilPtrs {
 		interfaces[i] = reflect.TypeOf(ptr).Elem()
@@ -58,7 +58,7 @@ func (t *GenerateTest) runGoldenTest(
 	AssertEq(nil, err, "Error from GenerateMockSource: %v", err)
 
 	// Read the golden file.
-	goldenPath := path.Join("test_cases", "golden." + caseName + ".go")
+	goldenPath := path.Join("test_cases", "golden."+caseName+".go")
 	goldenData := readFileOrDie(goldenPath)
 
 	// Compare the two.
@@ -98,8 +98,8 @@ func (t *GenerateTest) EmptyPackageName() {
 			reflect.TypeOf((*io.Reader)(nil)).Elem(),
 		})
 
-  ExpectThat(err, Error(HasSubstr("Package name")))
-  ExpectThat(err, Error(HasSubstr("non-empty")))
+	ExpectThat(err, Error(HasSubstr("Package name")))
+	ExpectThat(err, Error(HasSubstr("non-empty")))
 }
 
 func (t *GenerateTest) EmptySetOfInterfaces() {
@@ -108,8 +108,8 @@ func (t *GenerateTest) EmptySetOfInterfaces() {
 		"foo",
 		[]reflect.Type{})
 
-  ExpectThat(err, Error(HasSubstr("interfaces")))
-  ExpectThat(err, Error(HasSubstr("non-empty")))
+	ExpectThat(err, Error(HasSubstr("interfaces")))
+	ExpectThat(err, Error(HasSubstr("non-empty")))
 }
 
 func (t *GenerateTest) NonInterfaceType() {
@@ -122,7 +122,7 @@ func (t *GenerateTest) NonInterfaceType() {
 			reflect.TypeOf((*io.Writer)(nil)).Elem(),
 		})
 
-  ExpectThat(err, Error(HasSubstr("Invalid type")))
+	ExpectThat(err, Error(HasSubstr("Invalid type")))
 }
 
 func (t *GenerateTest) IoReaderAndWriter() {

@@ -51,7 +51,7 @@ func Return(vals ...interface{}) Action {
 
 type returnAction struct {
 	returnVals []interface{}
-	signature reflect.Type
+	signature  reflect.Type
 }
 
 func (a *returnAction) Invoke(vals []interface{}) []interface{} {

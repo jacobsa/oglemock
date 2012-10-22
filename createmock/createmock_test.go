@@ -16,10 +16,10 @@
 package main
 
 import (
-	. "github.com/jacobsa/ogletest"
 	"bytes"
 	"flag"
 	"fmt"
+	. "github.com/jacobsa/ogletest"
 	"go/build"
 	"io/ioutil"
 	"os"
@@ -42,7 +42,7 @@ type CreateMockTest struct {
 }
 
 func TestOgletest(t *testing.T) { RunTests(t) }
-func init() { RegisterTestSuite(&CreateMockTest{}) }
+func init()                     { RegisterTestSuite(&CreateMockTest{}) }
 
 func (t *CreateMockTest) SetUpTestSuite() {
 	// Create a temporary file to hold the built createmock binary.
@@ -71,7 +71,7 @@ func (t *CreateMockTest) runGoldenTest(
 	caseName string,
 	expectedReturnCode int,
 	createmockArgs ...string) {
-  // Run createmock.
+	// Run createmock.
 	cmd := exec.Command(createmockPath, createmockArgs...)
 	output, err := cmd.CombinedOutput()
 
@@ -91,7 +91,7 @@ func (t *CreateMockTest) runGoldenTest(
 	ExpectEq(expectedReturnCode, actualReturnCode)
 
 	// Read the golden file.
-	goldenPath := path.Join("test_cases", "golden." + caseName)
+	goldenPath := path.Join("test_cases", "golden."+caseName)
 	goldenData := readFileOrDie(goldenPath)
 
 	// Compare the two.
@@ -119,7 +119,7 @@ func (t *CreateMockTest) runCompilationTest(createmockArgs ...string) {
 	codeFile, err := os.Create(path.Join(tmpDir, "mock.go"))
 	AssertEq(nil, err)
 
-  // Run createmock and save its output to the file created above.
+	// Run createmock and save its output to the file created above.
 	stdErrBuf := new(bytes.Buffer)
 
 	cmd := exec.Command(createmockPath, createmockArgs...)
@@ -161,14 +161,14 @@ func readFileOrDie(path string) []byte {
 func (t *CreateMockTest) NoPackage() {
 	t.runGoldenTest(
 		"no_package",
-		1);
+		1)
 }
 
 func (t *CreateMockTest) NoInterfaces() {
 	t.runGoldenTest(
 		"no_interfaces",
 		1,
-		"io");
+		"io")
 }
 
 func (t *CreateMockTest) UnknownPackage() {
@@ -176,7 +176,7 @@ func (t *CreateMockTest) UnknownPackage() {
 		"unknown_package",
 		1,
 		"foo/bar",
-		"Reader");
+		"Reader")
 }
 
 func (t *CreateMockTest) UnknownInterface() {
@@ -184,7 +184,7 @@ func (t *CreateMockTest) UnknownInterface() {
 		"unknown_interface",
 		1,
 		"io",
-		"Frobnicator");
+		"Frobnicator")
 }
 
 func (t *CreateMockTest) IoReaderAndWriter() {

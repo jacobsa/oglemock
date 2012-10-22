@@ -36,8 +36,7 @@ import (
 )
 
 // A template for generated code that is used to print the result.
-const tmplStr =
-`
+const tmplStr = `
 {{$inputPkg := .InputPkg}}
 {{$outputPkg := .OutputPkg}}
 
@@ -75,7 +74,7 @@ func main() {
 type importMap map[string]string
 
 type tmplArg struct {
-	InputPkg string
+	InputPkg  string
 	OutputPkg string
 
 	// Imports needed by the generated code.
@@ -85,12 +84,10 @@ type tmplArg struct {
 	TypeNames []string
 }
 
-var unknownPackageRegexp =
-	regexp.MustCompile(
-		`tool\.go:\d+:\d+: import "([^"]+)": cannot find package`)
+var unknownPackageRegexp = regexp.MustCompile(
+	`tool\.go:\d+:\d+: import "([^"]+)": cannot find package`)
 
-var undefinedInterfaceRegexp =
-	regexp.MustCompile(`tool\.go:\d+: undefined: [\pL_0-9]+\.([\pL_0-9]+)`)
+var undefinedInterfaceRegexp = regexp.MustCompile(`tool\.go:\d+: undefined: [\pL_0-9]+\.([\pL_0-9]+)`)
 
 // Does the 'go build' output indicate that a package wasn't found? If so,
 // return the name of the package.
@@ -168,8 +165,8 @@ func run() error {
 	tmpl := template.Must(
 		template.New("code").Funcs(
 			template.FuncMap{
-			"base": path.Base,
-		}).Parse(tmplStr))
+				"base": path.Base,
+			}).Parse(tmplStr))
 	if err := tmpl.Execute(codeFile, arg); err != nil {
 		return errors.New(fmt.Sprintf("Error executing template: %v", err))
 	}
@@ -194,10 +191,10 @@ func run() error {
 
 		// Otherwise return a generic error.
 		return errors.New(fmt.Sprintf(
-			"%s\n\nError building generated code:\n\n" +
+			"%s\n\nError building generated code:\n\n"+
 				"    %v\n\nPlease report this oglemock bug.",
 			buildOutput,
-		err))
+			err))
 	}
 
 	// Run the binary.
@@ -206,10 +203,10 @@ func run() error {
 
 	if err != nil {
 		return errors.New(fmt.Sprintf(
-			"%s\n\nError running generated code:\n\n" +
+			"%s\n\nError running generated code:\n\n"+
 				"    %v\n\n Please report this oglemock bug.",
 			binaryOutput,
-		err))
+			err))
 	}
 
 	// Copy its output.

@@ -104,8 +104,8 @@ func NewController(reporter ErrorReporter) Controller {
 type controllerImpl struct {
 	reporter ErrorReporter
 
-	mutex sync.RWMutex
-	expectationsByObject objectMap  // Protected by mutex
+	mutex                sync.RWMutex
+	expectationsByObject objectMap // Protected by mutex
 }
 
 // Return the list of registered expectations for the named method of the
@@ -162,11 +162,11 @@ func (c *controllerImpl) ExpectCall(
 		c.reporter.ReportFatalError(
 			fileName,
 			lineNumber,
-			errors.New("Unknown method: " + methodName))
+			errors.New("Unknown method: "+methodName))
 		return nil
 	}
 
-	partialAlreadyCalled := false  // Protected by c.mutex
+	partialAlreadyCalled := false // Protected by c.mutex
 	return func(args ...interface{}) Expectation {
 		c.mutex.Lock()
 		defer c.mutex.Unlock()
@@ -190,8 +190,8 @@ func (c *controllerImpl) ExpectCall(
 				lineNumber,
 				errors.New(
 					fmt.Sprintf(
-						"Expectation for %s given wrong number of arguments: " +
-						"expected %d, got %d.",
+						"Expectation for %s given wrong number of arguments: "+
+							"expected %d, got %d.",
 						methodName,
 						method.Type().NumIn(),
 						len(args))))
@@ -232,8 +232,8 @@ func (c *controllerImpl) Finish() {
 						exp.LineNumber,
 						errors.New(
 							fmt.Sprintf(
-								"Unsatisfied expectation; expected %s to be called " +
-								"at least %d times; called %d times.",
+								"Unsatisfied expectation; expected %s to be called "+
+									"at least %d times; called %d times.",
 								methodName,
 								minCardinality,
 								exp.NumMatches)))
@@ -277,7 +277,7 @@ func (c *controllerImpl) chooseExpectationLocked(
 	}
 
 	for i := len(expectations) - 1; i >= 0; i-- {
-		if (expectationMatches(expectations[i], args)) {
+		if expectationMatches(expectations[i], args) {
 			return expectations[i]
 		}
 	}
@@ -376,7 +376,7 @@ func (c *controllerImpl) chooseActionAndUpdateExpectations(
 		c.reporter.ReportFatalError(
 			fileName,
 			lineNumber,
-			errors.New("Unknown method: " + methodName),
+			errors.New("Unknown method: "+methodName),
 		)
 
 		// Should never get here in real code.
@@ -432,7 +432,7 @@ func (c *controllerImpl) chooseActionAndUpdateExpectations(
 			expectation.LineNumber,
 			errors.New(
 				fmt.Sprintf(
-					"Unexpected call to %s: " +
+					"Unexpected call to %s: "+
 						"expected to be called at most %d times; called %d times.",
 					methodName,
 					maxCardinality,
@@ -446,7 +446,7 @@ func (c *controllerImpl) chooseActionAndUpdateExpectations(
 	}
 
 	// Choose an action to invoke. If there is none, just return zero values.
-	action = chooseActionLocked(expectation.NumMatches - 1, expectation)
+	action = chooseActionLocked(expectation.NumMatches-1, expectation)
 	if action == nil {
 		zeroVals = makeZeroReturnValues(method.Type())
 		return
