@@ -74,8 +74,8 @@ type ControllerTest struct {
 	reporter fakeErrorReporter
 	controller Controller
 
-	mock1 MockObject
-	mock2 MockObject
+	mock1 *trivialMockObject
+	mock2 *trivialMockObject
 }
 
 func (t *ControllerTest) SetUp(c *TestInfo) {
@@ -1158,7 +1158,47 @@ func (t *ControllerTest) ExpectationsAreSegregatedByMethodName() {
 }
 
 func (t *ControllerTest) ActionCallsAgainMatchingDifferentExpectation() {
-	ExpectEq("TODO", "")
+	var res []interface{}
+
+	// Expectation for StringToInt
+	partial := t.controller.ExpectCall(
+		t.mock1,
+		"StringToInt",
+		"burrito.go",
+		117)
+
+	exp := partial(HasSubstr(""))
+	exp.WillOnce(Return(17))
+
+	// Expectation for TwoIntsToString -- call StringToInt.
+	partial = t.controller.ExpectCall(
+		t.mock1,
+		"TwoIntsToString",
+		"burrito.go",
+		117)
+
+	exp = partial(1, 2)
+	exp.WillOnce(Invoke(func(int, int) string {
+		t.mock1.StringToInt("")
+		return "taco"
+	}))
+
+	// Call TwoIntsToString.
+	res = t.controller.HandleMethodCall(
+		t.mock1,
+		"TwoIntsToString",
+		"",
+		0,
+		[]interface{}{1, 2})
+
+  ExpectThat(len(res), Equals(1))
+  ExpectThat(res[0], Equals("taco"))
+
+	// Finish. Everything should be satisfied.
+	t.controller.Finish()
+
+	ExpectThat(t.reporter.errors, ElementsAre())
+	ExpectThat(t.reporter.fatalErrors, ElementsAre())
 }
 
 func (t *ControllerTest) ActionCallsAgainMatchingSameExpectation() {
