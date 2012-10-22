@@ -1156,3 +1156,11 @@ func (t *ControllerTest) ExpectationsAreSegregatedByMethodName() {
   ExpectThat(len(res), Equals(1))
   ExpectThat(res[0], Equals("taco"))
 }
+
+func (t *ControllerTest) ActionCallsAgainMatchingDifferentExpectation() {
+	ExpectEq("TODO", "")
+}
+
+func (t *ControllerTest) ActionCallsAgainMatchingSameExpectation() {
+	ExpectEq("TODO", "")
+}
