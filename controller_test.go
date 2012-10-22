@@ -1156,3 +1156,95 @@ func (t *ControllerTest) ExpectationsAreSegregatedByMethodName() {
   ExpectThat(len(res), Equals(1))
   ExpectThat(res[0], Equals("taco"))
 }
+
+func (t *ControllerTest) ActionCallsAgainMatchingDifferentExpectation() {
+	var res []interface{}
+
+	// Expectation for StringToInt
+	partial := t.controller.ExpectCall(
+		t.mock1,
+		"StringToInt",
+		"burrito.go",
+		117)
+
+	exp := partial(HasSubstr(""))
+	exp.WillOnce(Return(17))
+
+	// Expectation for TwoIntsToString -- pretend we call StringToInt.
+	partial = t.controller.ExpectCall(
+		t.mock1,
+		"TwoIntsToString",
+		"burrito.go",
+		117)
+
+	exp = partial(1, 2)
+	exp.WillOnce(Invoke(func(int, int) string {
+		t.controller.HandleMethodCall(
+			t.mock1,
+			"StringToInt",
+			"taco.go",
+			112,
+			[]interface{}{""})
+
+		return "queso"
+	}))
+
+	// Call TwoIntsToString.
+	res = t.controller.HandleMethodCall(
+		t.mock1,
+		"TwoIntsToString",
+		"",
+		0,
+		[]interface{}{1, 2})
+
+  AssertThat(res, ElementsAre("queso"))
+
+	// Finish. Everything should be satisfied.
+	t.controller.Finish()
+
+	ExpectThat(t.reporter.errors, ElementsAre())
+	ExpectThat(t.reporter.fatalErrors, ElementsAre())
+}
+
+func (t *ControllerTest) ActionCallsAgainMatchingSameExpectation() {
+	var res []interface{}
+
+	// Expectation for StringToInt -- should be called twice. The first time it
+	// should call itself.
+	partial := t.controller.ExpectCall(
+		t.mock1,
+		"StringToInt",
+		"burrito.go",
+		117)
+
+	exp := partial(HasSubstr(""))
+	exp.Times(2)
+	exp.WillOnce(Invoke(func(string) int {
+		subCallRes := t.controller.HandleMethodCall(
+			t.mock1,
+			"StringToInt",
+			"taco.go",
+			112,
+			[]interface{}{""})
+
+		return subCallRes[0].(int) + 19
+	}))
+
+	exp.WillOnce(Return(17))
+
+	// Call.
+	res = t.controller.HandleMethodCall(
+		t.mock1,
+		"StringToInt",
+		"",
+		0,
+		[]interface{}{""})
+
+  AssertThat(res, ElementsAre(17 + 19))
+
+	// Finish. Everything should be satisfied.
+	t.controller.Finish()
+
+	ExpectThat(t.reporter.errors, ElementsAre())
+	ExpectThat(t.reporter.fatalErrors, ElementsAre())
+}

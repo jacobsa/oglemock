@@ -352,12 +352,19 @@ func chooseActionLocked(i uint, exp *InternalExpectation) Action {
 	return exp.FallbackAction
 }
 
-func (c *controllerImpl) HandleMethodCall(
+// Find an action for the method call, updating expectation match state in the
+// process. Return either an action that should be invoked or a set of zero
+// values to return immediately.
+//
+// This is split out from HandleMethodCall in order to more easily avoid
+// invoking the action with locks held.
+func (c *controllerImpl) chooseActionAndUpdateExpectations(
 	o MockObject,
 	methodName string,
 	fileName string,
 	lineNumber int,
-	args []interface{}) []interface{} {
+	args []interface{},
+) (action Action, zeroVals []interface{}) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
@@ -368,8 +375,10 @@ func (c *controllerImpl) HandleMethodCall(
 		c.reporter.ReportFatalError(
 			fileName,
 			lineNumber,
-			errors.New("Unknown method: " + methodName))
-		return nil
+			errors.New("Unknown method: " + methodName),
+		)
+
+		panic("ReportFatalError unexpectedly returned.")
 	}
 
 	// HACK(jacobsa): Make sure we got the correct number of arguments. This will
@@ -382,8 +391,12 @@ func (c *controllerImpl) HandleMethodCall(
 				fmt.Sprintf(
 					"Wrong number of arguments: expected %d; got %d",
 					method.Type().NumIn(),
-					len(args))))
-		return nil
+					len(args),
+				),
+			),
+		)
+
+		panic("ReportFatalError unexpectedly returned.")
 	}
 
 	// Find an expectation matching this call.
@@ -393,9 +406,12 @@ func (c *controllerImpl) HandleMethodCall(
 			fileName,
 			lineNumber,
 			errors.New(
-				fmt.Sprintf("Unexpected call to %s with args: %v", methodName, args)))
+				fmt.Sprintf("Unexpected call to %s with args: %v", methodName, args),
+			),
+		)
 
-		return makeZeroReturnValues(method.Type())
+		zeroVals = makeZeroReturnValues(method.Type())
+		return
 	}
 
 	expectation.mutex.Lock()
@@ -415,17 +431,45 @@ func (c *controllerImpl) HandleMethodCall(
 						"expected to be called at most %d times; called %d times.",
 					methodName,
 					maxCardinality,
-					expectation.NumMatches)))
+					expectation.NumMatches,
+				),
+			),
+		)
 
-		return makeZeroReturnValues(method.Type())
+		zeroVals = makeZeroReturnValues(method.Type())
+		return
 	}
 
 	// Choose an action to invoke. If there is none, just return zero values.
-	action := chooseActionLocked(expectation.NumMatches - 1, expectation)
+	action = chooseActionLocked(expectation.NumMatches - 1, expectation)
 	if action == nil {
-		return makeZeroReturnValues(method.Type())
+		zeroVals = makeZeroReturnValues(method.Type())
+		return
 	}
 
 	// Let the action take over.
-	return action.Invoke(args)
+	return
+}
+
+func (c *controllerImpl) HandleMethodCall(
+	o MockObject,
+	methodName string,
+	fileName string,
+	lineNumber int,
+	args []interface{},
+) []interface{} {
+	// Figure out whether to invoke an action or return zero values.
+	action, zeroVals := c.chooseActionAndUpdateExpectations(
+		o,
+		methodName,
+		fileName,
+		lineNumber,
+		args,
+	)
+
+	if action != nil {
+		return action.Invoke(args)
+	}
+
+	return zeroVals
 }
