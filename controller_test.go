@@ -1207,5 +1207,43 @@ func (t *ControllerTest) ActionCallsAgainMatchingDifferentExpectation() {
 }
 
 func (t *ControllerTest) ActionCallsAgainMatchingSameExpectation() {
-	ExpectEq("TODO", "")
+	var res []interface{}
+
+	// Expectation for StringToInt -- should be called twice. The second time it
+	// should call itself.
+	partial := t.controller.ExpectCall(
+		t.mock1,
+		"StringToInt",
+		"burrito.go",
+		117)
+
+	exp := partial(HasSubstr(""))
+	exp.Times(2)
+	exp.WillOnce(Return(17))
+	exp.WillOnce(Invoke(func(string) int {
+		subCallRes := t.controller.HandleMethodCall(
+			t.mock1,
+			"StringToInt",
+			"taco.go",
+			112,
+			[]interface{}{""})
+
+		return subCallRes[0].(int) + 19
+	}))
+
+	// Call.
+	res = t.controller.HandleMethodCall(
+		t.mock1,
+		"StringToInt",
+		"",
+		0,
+		[]interface{}{""})
+
+  AssertThat(res, ElementsAre(17 + 19))
+
+	// Finish. Everything should be satisfied.
+	t.controller.Finish()
+
+	ExpectThat(t.reporter.errors, ElementsAre())
+	ExpectThat(t.reporter.fatalErrors, ElementsAre())
 }
