@@ -18,6 +18,7 @@ package oglemock
 import (
 	"errors"
 	"fmt"
+	"log"
 	"math"
 	"reflect"
 	"sync"
@@ -378,7 +379,9 @@ func (c *controllerImpl) chooseActionAndUpdateExpectations(
 			errors.New("Unknown method: " + methodName),
 		)
 
-		panic("ReportFatalError unexpectedly returned.")
+		// Should never get here in real code.
+		log.Println("ReportFatalError unexpectedly returned.")
+		return
 	}
 
 	// HACK(jacobsa): Make sure we got the correct number of arguments. This will
@@ -396,7 +399,9 @@ func (c *controllerImpl) chooseActionAndUpdateExpectations(
 			),
 		)
 
-		panic("ReportFatalError unexpectedly returned.")
+		// Should never get here in real code.
+		log.Println("ReportFatalError unexpectedly returned.")
+		return
 	}
 
 	// Find an expectation matching this call.
