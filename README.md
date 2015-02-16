@@ -99,5 +99,5 @@ see [here][oglemock-docs].
 [googlemock]: http://code.google.com/p/googlemock/
 [oglematchers]: https://github.com/jacobsa/oglematchers
 [oglemock-docs]: http://godoc.org/github.com/jacobsa/oglemock
-[ogletest]: https://github.com/jacobsa/oglematchers
+[ogletest]: https://github.com/jacobsa/ogletest
 [ogletest-docs]: http://godoc.org/github.com/jacobsa/ogletest
