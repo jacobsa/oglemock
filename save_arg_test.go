@@ -44,7 +44,15 @@ func (t *SaveArgTest) ArgumentIndexOutOfRange() {
 	AssertFalse(true, "TODO")
 }
 
-func (t *SaveArgTest) DestinationNotAPointer() {
+func (t *SaveArgTest) DestinationIsLiteralNil() {
+	AssertFalse(true, "TODO")
+}
+
+func (t *SaveArgTest) DestinationIsNotAPointer() {
+	AssertFalse(true, "TODO")
+}
+
+func (t *SaveArgTest) DestinationIsNilPointer() {
 	AssertFalse(true, "TODO")
 }
 
