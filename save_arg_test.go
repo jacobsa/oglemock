@@ -16,8 +16,11 @@
 package oglemock_test
 
 import (
+	"reflect"
 	"testing"
 
+	. "github.com/jacobsa/oglematchers"
+	"github.com/jacobsa/oglemock"
 	. "github.com/jacobsa/ogletest"
 )
 
@@ -37,7 +40,13 @@ func init() { RegisterTestSuite(&SaveArgTest{}) }
 ////////////////////////////////////////////////////////////
 
 func (t *SaveArgTest) FunctionHasNoArguments() {
-	AssertFalse(true, "TODO")
+	const index = 0
+	var dst int
+	f := func() (int, string) { return 0, "" }
+
+	err := oglemock.SaveArg(0, &dst).SetSignature(reflect.TypeOf(f))
+	ExpectThat(err, Error(HasSubstr("index 0")))
+	ExpectThat(err, Error(HasSubstr("func() (int, string)")))
 }
 
 func (t *SaveArgTest) ArgumentIndexOutOfRange() {
