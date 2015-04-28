@@ -73,5 +73,16 @@ func (t *DoAllTest) SingleAction() {
 }
 
 func (t *DoAllTest) MultipleActions() {
-	AssertFalse(true, "TODO")
+	f := func(a int) string { return "" }
+
+	var saved int
+	a0 := oglemock.SaveArg(0, &saved)
+	a1 := oglemock.Return("taco")
+
+	action := oglemock.DoAll(a0, a1)
+	AssertEq(nil, action.SetSignature(reflect.TypeOf(f)))
+
+	rets := action.Invoke([]interface{}{17})
+	ExpectEq(17, saved)
+	ExpectThat(rets, ElementsAre("taco"))
 }
