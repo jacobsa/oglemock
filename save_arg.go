@@ -16,7 +16,7 @@
 package oglemock
 
 import (
-	"errors"
+	"fmt"
 	"reflect"
 )
 
@@ -25,18 +25,55 @@ import (
 // assignable from the argument type.
 func SaveArg(index int, dst interface{}) Action {
 	return &saveArg{
-		index: index,
-		dst:   dst,
+		index:      index,
+		dstPointer: dst,
 	}
 }
 
 type saveArg struct {
-	index int
-	dst   interface{}
+	index      int
+	dstPointer interface{}
+
+	// Set by SetSignature.
+	dstValue reflect.Value
 }
 
 func (a *saveArg) SetSignature(signature reflect.Type) (err error) {
-	err = errors.New("TODO")
+	// Extract the source type.
+	if a.index >= signature.NumIn() {
+		err = fmt.Errorf(
+			"Out of range argument index %v for function type %v",
+			a.index,
+			signature)
+		return
+	}
+
+	srcType := signature.In(a.index)
+
+	// The destination must be a pointer.
+	v := reflect.ValueOf(a.dstPointer)
+	if v.Kind() != reflect.Ptr {
+		err = fmt.Errorf("Destination is %v, not a pointer", v.Type())
+		return
+	}
+
+	// Dereference the pointer.
+	if v.IsNil() {
+		err = fmt.Errorf("Destination pointer must be non-nil")
+		return
+	}
+
+	a.dstValue = v.Elem()
+
+	// The destination must be assignable from the source.
+	if !srcType.AssignableTo(a.dstValue.Type()) {
+		err = fmt.Errorf(
+			"%v is not assignable to %v",
+			srcType,
+			a.dstValue.Type())
+		return
+	}
+
 	return
 }
 
