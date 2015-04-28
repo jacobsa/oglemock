@@ -36,6 +36,14 @@ func init() { RegisterTestSuite(&DoAllTest{}) }
 // Test functions
 ////////////////////////////////////////////////////////////
 
-func (t *DoAllTest) DoesFoo() {
+func (t *DoAllTest) OneActionDoesntLikeSignature() {
+	AssertFalse(true, "TODO")
+}
+
+func (t *DoAllTest) SingleAction() {
+	AssertFalse(true, "TODO")
+}
+
+func (t *DoAllTest) MultipleActions() {
 	AssertFalse(true, "TODO")
 }
