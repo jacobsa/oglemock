@@ -20,7 +20,9 @@ import "reflect"
 // Create an Action that invokes the supplied actions one after another. The
 // return values from the final action are used; others are ignored.
 func DoAll(first Action, others ...Action) Action {
-	panic("TODO")
+	return &doAll{
+		wrapped: append([]Action{first}, others...),
+	}
 }
 
 type doAll struct {
