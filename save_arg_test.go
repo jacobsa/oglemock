@@ -36,6 +36,26 @@ func init() { RegisterTestSuite(&SaveArgTest{}) }
 // Test functions
 ////////////////////////////////////////////////////////////
 
-func (t *SaveArgTest) DoesFoo() {
+func (t *SaveArgTest) FunctionHasNoArguments() {
+	AssertFalse(true, "TODO")
+}
+
+func (t *SaveArgTest) ArgumentIndexOutOfRange() {
+	AssertFalse(true, "TODO")
+}
+
+func (t *SaveArgTest) DestinationNotAPointer() {
+	AssertFalse(true, "TODO")
+}
+
+func (t *SaveArgTest) DestinationNotAssignable() {
+	AssertFalse(true, "TODO")
+}
+
+func (t *SaveArgTest) ExactTypeMatch() {
+	AssertFalse(true, "TODO")
+}
+
+func (t *SaveArgTest) AssignableTypeMatch() {
 	AssertFalse(true, "TODO")
 }
