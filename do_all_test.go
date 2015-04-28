@@ -16,8 +16,11 @@
 package oglemock_test
 
 import (
+	"reflect"
 	"testing"
 
+	. "github.com/jacobsa/oglematchers"
+	"github.com/jacobsa/oglemock"
 	. "github.com/jacobsa/ogletest"
 )
 
@@ -36,7 +39,18 @@ func init() { RegisterTestSuite(&DoAllTest{}) }
 // Test functions
 ////////////////////////////////////////////////////////////
 
-func (t *DoAllTest) OneActionDoesntLikeSignature() {
+func (t *DoAllTest) FirstActionDoesntLikeSignature() {
+	f := func(a int, b string) {}
+
+	a0 := oglemock.Invoke(func() {})
+	a1 := oglemock.Invoke(f)
+	a2 := oglemock.Return()
+
+	err := oglemock.DoAll(a0, a1, a2).SetSignature(reflect.TypeOf(f))
+	ExpectThat(err, Error(HasSubstr("TODO")))
+}
+
+func (t *DoAllTest) LastActionDoesntLikeSignature() {
 	AssertFalse(true, "TODO")
 }
 
