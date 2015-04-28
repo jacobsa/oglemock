@@ -46,7 +46,7 @@ func (t *SaveArgTest) FunctionHasNoArguments() {
 
 	err := oglemock.SaveArg(index, &dst).SetSignature(reflect.TypeOf(f))
 	ExpectThat(err, Error(HasSubstr("index 0")))
-	ExpectThat(err, Error(HasSubstr("out of range")))
+	ExpectThat(err, Error(HasSubstr("Out of range")))
 	ExpectThat(err, Error(HasSubstr("func() (int, string)")))
 }
 
@@ -57,7 +57,7 @@ func (t *SaveArgTest) ArgumentIndexOutOfRange() {
 
 	err := oglemock.SaveArg(index, &dst).SetSignature(reflect.TypeOf(f))
 	ExpectThat(err, Error(HasSubstr("index 2")))
-	ExpectThat(err, Error(HasSubstr("out of range")))
+	ExpectThat(err, Error(HasSubstr("Out of range")))
 	ExpectThat(err, Error(HasSubstr("func(int, int)")))
 }
 
