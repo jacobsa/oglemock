@@ -78,5 +78,6 @@ func (a *saveArg) SetSignature(signature reflect.Type) (err error) {
 }
 
 func (a *saveArg) Invoke(methodArgs []interface{}) (rets []interface{}) {
-	panic("TODO")
+	a.dstValue.Set(reflect.ValueOf(methodArgs[a.index]))
+	return
 }
