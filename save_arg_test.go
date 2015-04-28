@@ -71,11 +71,22 @@ func (t *SaveArgTest) DestinationIsLiteralNil() {
 }
 
 func (t *SaveArgTest) DestinationIsNotAPointer() {
-	AssertFalse(true, "TODO")
+	const index = 0
+	f := func(a int, b int) {}
+
+	err := oglemock.SaveArg(index, uint(17)).SetSignature(reflect.TypeOf(f))
+	ExpectThat(err, Error(HasSubstr("pointer")))
+	ExpectThat(err, Error(HasSubstr("uint")))
 }
 
 func (t *SaveArgTest) DestinationIsNilPointer() {
-	AssertFalse(true, "TODO")
+	const index = 2
+	var dst *int
+	f := func(a int, b int) {}
+
+	err := oglemock.SaveArg(index, dst).SetSignature(reflect.TypeOf(f))
+	ExpectThat(err, Error(HasSubstr("pointer")))
+	ExpectThat(err, Error(HasSubstr("non-nil")))
 }
 
 func (t *SaveArgTest) DestinationNotAssignable() {
