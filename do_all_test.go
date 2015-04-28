@@ -47,7 +47,8 @@ func (t *DoAllTest) FirstActionDoesntLikeSignature() {
 	a2 := oglemock.Return()
 
 	err := oglemock.DoAll(a0, a1, a2).SetSignature(reflect.TypeOf(f))
-	ExpectThat(err, Error(HasSubstr("TODO")))
+	ExpectThat(err, Error(HasSubstr("Action 0")))
+	ExpectThat(err, Error(HasSubstr("func()")))
 }
 
 func (t *DoAllTest) LastActionDoesntLikeSignature() {
@@ -58,7 +59,8 @@ func (t *DoAllTest) LastActionDoesntLikeSignature() {
 	a2 := oglemock.Return(17)
 
 	err := oglemock.DoAll(a0, a1, a2).SetSignature(reflect.TypeOf(f))
-	ExpectThat(err, Error(HasSubstr("TODO")))
+	ExpectThat(err, Error(HasSubstr("Action 2")))
+	ExpectThat(err, Error(HasSubstr("1 vals; expected 0")))
 }
 
 func (t *DoAllTest) SingleAction() {
