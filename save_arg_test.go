@@ -16,6 +16,8 @@
 package oglemock_test
 
 import (
+	"io"
+	"os"
 	"reflect"
 	"testing"
 
@@ -115,18 +117,16 @@ func (t *SaveArgTest) ExactTypeMatch() {
 }
 
 func (t *SaveArgTest) AssignableTypeMatch() {
-	type NamedInt int
-
 	const index = 1
-	var dst int
-	f := func(a int, b NamedInt) {}
+	var dst io.Reader
+	f := func(a int, b *os.File) {}
 
 	action := oglemock.SaveArg(index, &dst)
 	AssertEq(nil, action.SetSignature(reflect.TypeOf(f)))
 
 	var a int = 17
-	var b NamedInt = 19
+	var b *os.File = os.Stdout
 	_ = action.Invoke([]interface{}{a, b})
 
-	ExpectEq(19, dst)
+	ExpectEq(os.Stdout, dst)
 }
