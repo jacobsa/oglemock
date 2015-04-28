@@ -15,7 +15,10 @@
 
 package oglemock
 
-import "reflect"
+import (
+	"fmt"
+	"reflect"
+)
 
 // Create an Action that invokes the supplied actions one after another. The
 // return values from the final action are used; others are ignored.
@@ -30,7 +33,15 @@ type doAll struct {
 }
 
 func (a *doAll) SetSignature(signature reflect.Type) (err error) {
-	panic("TODO")
+	for i, w := range a.wrapped {
+		err = w.SetSignature(signature)
+		if err != nil {
+			err = fmt.Errorf("Action %v: %v", i, err)
+			return
+		}
+	}
+
+	return
 }
 
 func (a *doAll) Invoke(methodArgs []interface{}) (rets []interface{}) {
