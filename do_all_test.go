@@ -51,7 +51,14 @@ func (t *DoAllTest) FirstActionDoesntLikeSignature() {
 }
 
 func (t *DoAllTest) LastActionDoesntLikeSignature() {
-	AssertFalse(true, "TODO")
+	f := func(a int, b string) {}
+
+	a0 := oglemock.Invoke(f)
+	a1 := oglemock.Invoke(f)
+	a2 := oglemock.Return(17)
+
+	err := oglemock.DoAll(a0, a1, a2).SetSignature(reflect.TypeOf(f))
+	ExpectThat(err, Error(HasSubstr("TODO")))
 }
 
 func (t *DoAllTest) SingleAction() {
