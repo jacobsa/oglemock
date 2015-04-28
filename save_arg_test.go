@@ -44,7 +44,7 @@ func (t *SaveArgTest) FunctionHasNoArguments() {
 	var dst int
 	f := func() (int, string) { return 0, "" }
 
-	err := oglemock.SaveArg(0, &dst).SetSignature(reflect.TypeOf(f))
+	err := oglemock.SaveArg(index, &dst).SetSignature(reflect.TypeOf(f))
 	ExpectThat(err, Error(HasSubstr("index 0")))
 	ExpectThat(err, Error(HasSubstr("out of range")))
 	ExpectThat(err, Error(HasSubstr("func() (int, string)")))
@@ -55,14 +55,19 @@ func (t *SaveArgTest) ArgumentIndexOutOfRange() {
 	var dst int
 	f := func(a int, b int) {}
 
-	err := oglemock.SaveArg(0, &dst).SetSignature(reflect.TypeOf(f))
+	err := oglemock.SaveArg(index, &dst).SetSignature(reflect.TypeOf(f))
 	ExpectThat(err, Error(HasSubstr("index 2")))
 	ExpectThat(err, Error(HasSubstr("out of range")))
 	ExpectThat(err, Error(HasSubstr("func(int, int)")))
 }
 
 func (t *SaveArgTest) DestinationIsLiteralNil() {
-	AssertFalse(true, "TODO")
+	const index = 0
+	f := func(a int, b int) {}
+
+	err := oglemock.SaveArg(index, nil).SetSignature(reflect.TypeOf(f))
+	ExpectThat(err, Error(HasSubstr("pointer")))
+	ExpectThat(err, Error(HasSubstr("<nil>")))
 }
 
 func (t *SaveArgTest) DestinationIsNotAPointer() {
