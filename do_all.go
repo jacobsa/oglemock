@@ -45,5 +45,9 @@ func (a *doAll) SetSignature(signature reflect.Type) (err error) {
 }
 
 func (a *doAll) Invoke(methodArgs []interface{}) (rets []interface{}) {
-	panic("TODO")
+	for _, w := range a.wrapped {
+		rets = w.Invoke(methodArgs)
+	}
+
+	return
 }
