@@ -101,7 +101,18 @@ func (t *SaveArgTest) DestinationNotAssignableFromSource() {
 }
 
 func (t *SaveArgTest) ExactTypeMatch() {
-	AssertFalse(true, "TODO")
+	const index = 1
+	var dst int
+	f := func(a int, b int) {}
+
+	action := oglemock.SaveArg(index, &dst)
+	AssertEq(nil, action.SetSignature(reflect.TypeOf(f)))
+
+	var a int = 17
+	var b int = 19
+	_ = action.Invoke([]interface{}{a, b})
+
+	ExpectEq(19, dst)
 }
 
 func (t *SaveArgTest) AssignableTypeMatch() {
