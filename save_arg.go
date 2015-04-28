@@ -53,7 +53,7 @@ func (a *saveArg) SetSignature(signature reflect.Type) (err error) {
 	// The destination must be a pointer.
 	v := reflect.ValueOf(a.dstPointer)
 	if v.Kind() != reflect.Ptr {
-		err = fmt.Errorf("Destination is %v, not a pointer", v.Type())
+		err = fmt.Errorf("Destination is %v, not a pointer", v.Kind())
 		return
 	}
 

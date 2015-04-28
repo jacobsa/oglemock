@@ -66,8 +66,7 @@ func (t *SaveArgTest) DestinationIsLiteralNil() {
 	f := func(a int, b int) {}
 
 	err := oglemock.SaveArg(index, nil).SetSignature(reflect.TypeOf(f))
-	ExpectThat(err, Error(HasSubstr("pointer")))
-	ExpectThat(err, Error(HasSubstr("<nil>")))
+	ExpectThat(err, Error(HasSubstr("not a pointer")))
 }
 
 func (t *SaveArgTest) DestinationIsNotAPointer() {
