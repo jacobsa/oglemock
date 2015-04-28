@@ -116,5 +116,18 @@ func (t *SaveArgTest) ExactTypeMatch() {
 }
 
 func (t *SaveArgTest) AssignableTypeMatch() {
-	AssertFalse(true, "TODO")
+	type NamedInt int
+
+	const index = 1
+	var dst int
+	f := func(a int, b NamedInt) {}
+
+	action := oglemock.SaveArg(index, &dst)
+	AssertEq(nil, action.SetSignature(reflect.TypeOf(f)))
+
+	var a int = 17
+	var b NamedInt = 19
+	_ = action.Invoke([]interface{}{a, b})
+
+	ExpectEq(19, dst)
 }
