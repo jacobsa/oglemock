@@ -80,7 +80,7 @@ func (t *SaveArgTest) DestinationIsNotAPointer() {
 }
 
 func (t *SaveArgTest) DestinationIsNilPointer() {
-	const index = 2
+	const index = 1
 	var dst *int
 	f := func(a int, b int) {}
 
@@ -89,8 +89,15 @@ func (t *SaveArgTest) DestinationIsNilPointer() {
 	ExpectThat(err, Error(HasSubstr("non-nil")))
 }
 
-func (t *SaveArgTest) DestinationNotAssignable() {
-	AssertFalse(true, "TODO")
+func (t *SaveArgTest) DestinationNotAssignableFromSource() {
+	const index = 1
+	var dst int
+	f := func(a int, b string) {}
+
+	err := oglemock.SaveArg(index, &dst).SetSignature(reflect.TypeOf(f))
+	ExpectThat(err, Error(HasSubstr("int")))
+	ExpectThat(err, Error(HasSubstr("assignable")))
+	ExpectThat(err, Error(HasSubstr("string")))
 }
 
 func (t *SaveArgTest) ExactTypeMatch() {
