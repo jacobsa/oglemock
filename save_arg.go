@@ -15,9 +15,31 @@
 
 package oglemock
 
+import (
+	"errors"
+	"reflect"
+)
+
 // Create an Action that saves the argument at the given zero-based index to
 // the supplied destination, which must be a pointer to a type that is
 // assignable from the argument type.
 func SaveArg(index int, dst interface{}) Action {
+	return &saveArg{
+		index: index,
+		dst:   dst,
+	}
+}
+
+type saveArg struct {
+	index int
+	dst   interface{}
+}
+
+func (a *saveArg) SetSignature(signature reflect.Type) (err error) {
+	err = errors.New("TODO")
+	return
+}
+
+func (a *saveArg) Invoke(methodArgs []interface{}) (rets []interface{}) {
 	panic("TODO")
 }
