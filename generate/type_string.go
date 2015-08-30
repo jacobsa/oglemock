@@ -25,6 +25,25 @@ import "reflect"
 func typeString(
 	t reflect.Type,
 	pkgPath string) (s string) {
+	// Is this type named? If so we use its name, possibly with a package prefix.
+	//
+	// Examples:
+	//
+	//     int
+	//     string
+	//     error
+	//     gcs.Bucket
+	//
+	if t.Name() != "" {
+		if t.PkgPath() == pkgPath {
+			s = t.Name()
+		} else {
+			s = t.String()
+		}
+
+		return
+	}
+
 	s = t.String()
 	return
 }
