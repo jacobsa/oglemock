@@ -196,6 +196,15 @@ func (t *CreateMockTest) GCSBucket() {
 		"Bucket")
 }
 
+func (t *CreateMockTest) GCSBucket_SamePackage() {
+	t.runGoldenTest(
+		"gcs_bucket_same_package",
+		0,
+		"--same_package",
+		"github.com/jacobsa/oglemock/createmock/testdata/gcs",
+		"Bucket")
+}
+
 func (t *CreateMockTest) IoReaderAndWriter() {
 	t.runCompilationTest(
 		"io",

@@ -27,6 +27,7 @@ import (
 	"go/printer"
 	"go/token"
 	"io"
+	"path"
 	"reflect"
 	"regexp"
 	"text/template"
@@ -39,7 +40,7 @@ const gTmplStr = `
 //     https://github.com/jacobsa/oglemock
 //
 
-package {{.Pkg}}
+package {{pathBase .OutputPkgPath}}
 
 import (
 	{{range $identifier, $import := .Imports}}{{$identifier}} "{{$import}}"
@@ -112,27 +113,29 @@ import (
 `
 
 type tmplArg struct {
-	// The package of the generated code.
-	Pkg string
+	// The set of interfaces to mock, and the full name of the package from which
+	// they all come.
+	Interfaces       []reflect.Type
+	InterfacePkgPath string
+
+	// The package path for the generate code.
+	OutputPkgPath string
 
 	// Imports needed by the interfaces.
 	Imports importMap
-
-	// The set of interfaces to mock.
-	Interfaces []reflect.Type
 }
 
-func getInputTypeString(i int, ft reflect.Type) string {
+func (a *tmplArg) getInputTypeString(i int, ft reflect.Type) string {
 	numInputs := ft.NumIn()
 	if i == numInputs-1 && ft.IsVariadic() {
-		return "..." + getTypeString(ft.In(i).Elem())
+		return "..." + a.getTypeString(ft.In(i).Elem())
 	}
 
-	return getTypeString(ft.In(i))
+	return a.getTypeString(ft.In(i))
 }
 
-func getTypeString(t reflect.Type) string {
-	return t.String()
+func (a *tmplArg) getTypeString(t reflect.Type) string {
+	return typeString(t, a.OutputPkgPath)
 }
 
 func getMethods(it reflect.Type) []reflect.Method {
@@ -242,8 +245,10 @@ func addImportsForInterfaceMethods(imports importMap, it reflect.Type) {
 
 // Given a set of interfaces, return a map from import identifier to package to
 // use that identifier for, containing elements for each import needed by the
-// mock versions of those interfaces.
-func getImports(interfaces []reflect.Type) importMap {
+// mock versions of those interfaces in a package with the given path.
+func getImports(
+	interfaces []reflect.Type,
+	pkgPath string) importMap {
 	imports := make(importMap)
 	for _, it := range interfaces {
 		addImportForType(imports, it)
@@ -257,18 +262,26 @@ func getImports(interfaces []reflect.Type) importMap {
 	imports["runtime"] = "runtime"
 	imports["unsafe"] = "unsafe"
 
+	// Remove any self-imports generated above.
+	for k, v := range imports {
+		if v == pkgPath {
+			delete(imports, k)
+		}
+	}
+
 	return imports
 }
 
-// Given a set of interfaces to mock, write out source code for a package named
-// `pkg` that contains mock implementations of those interfaces.
+// Given a set of interfaces to mock, write out source code suitable for
+// inclusion in a package with the supplied full package path containing mock
+// implementations of those interfaces.
 func GenerateMockSource(
 	w io.Writer,
-	pkg string,
+	outputPkgPath string,
 	interfaces []reflect.Type) (err error) {
 	// Sanity-check arguments.
-	if pkg == "" {
-		return errors.New("Package name must be non-empty.")
+	if outputPkgPath == "" {
+		return errors.New("Package path must be non-empty.")
 	}
 
 	if len(interfaces) == 0 {
@@ -282,21 +295,36 @@ func GenerateMockSource(
 		}
 	}
 
+	// Make sure each interface is from the same package.
+	interfacePkgPath := interfaces[0].PkgPath()
+	for _, t := range interfaces {
+		if t.PkgPath() != interfacePkgPath {
+			err = fmt.Errorf(
+				"Package path mismatch: %q vs. %q",
+				interfacePkgPath,
+				t.PkgPath())
+
+			return
+		}
+	}
+
 	// Set up an appropriate template arg.
 	arg := tmplArg{
-		Pkg:        pkg,
-		Imports:    getImports(interfaces),
-		Interfaces: interfaces,
+		Interfaces:       interfaces,
+		InterfacePkgPath: interfacePkgPath,
+		OutputPkgPath:    outputPkgPath,
+		Imports:          getImports(interfaces, outputPkgPath),
 	}
 
 	// Configure and parse the template.
 	tmpl := template.New("code")
 	tmpl.Funcs(template.FuncMap{
+		"pathBase":           path.Base,
 		"getMethods":         getMethods,
 		"getInputs":          getInputs,
 		"getOutputs":         getOutputs,
-		"getInputTypeString": getInputTypeString,
-		"getTypeString":      getTypeString,
+		"getInputTypeString": arg.getInputTypeString,
+		"getTypeString":      arg.getTypeString,
 	})
 
 	_, err = tmpl.Parse(gTmplStr)
@@ -313,9 +341,15 @@ func GenerateMockSource(
 
 	// Parse the output.
 	fset := token.NewFileSet()
-	astFile, err := parser.ParseFile(fset, pkg+".go", buf, parser.ParseComments)
+	astFile, err := parser.ParseFile(
+		fset,
+		path.Base(outputPkgPath+".go"),
+		buf,
+		parser.ParseComments)
+
 	if err != nil {
-		return errors.New("Error parsing generated code: " + err.Error())
+		err = fmt.Errorf("parser.ParseFile: %v", err)
+		return
 	}
 
 	// Sort the import lines in the AST in the same way that gofmt does.
