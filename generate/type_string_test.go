@@ -40,34 +40,58 @@ func init() { RegisterTestSuite(&TypeStringTest{}) }
 
 func (t *TypeStringTest) TestCases() {
 	const gcsPkgPath = "github.com/jacobsa/oglemock/createmock/test_cases/gcs"
+	to := reflect.TypeOf
 
 	testCases := []struct {
 		t        reflect.Type
 		pkgPath  string
 		expected string
 	}{
+		/////////////////////////
 		// Scalar types
-		0: {reflect.TypeOf(true), "", "bool"},
-		1: {reflect.TypeOf(true), "some/pkg", "bool"},
-		2: {reflect.TypeOf(int(17)), "some/pkg", "int"},
-		3: {reflect.TypeOf(int32(17)), "some/pkg", "int32"},
-		4: {reflect.TypeOf(uint(17)), "some/pkg", "uint"},
-		5: {reflect.TypeOf(uint32(17)), "some/pkg", "uint32"},
-		6: {reflect.TypeOf(uintptr(17)), "some/pkg", "uintptr"},
-		7: {reflect.TypeOf(float32(17)), "some/pkg", "float32"},
-		8: {reflect.TypeOf(complex64(17)), "some/pkg", "complex64"},
+		/////////////////////////
 
+		0: {to(true), "", "bool"},
+		1: {to(true), "some/pkg", "bool"},
+		2: {to(int(17)), "some/pkg", "int"},
+		3: {to(int32(17)), "some/pkg", "int32"},
+		4: {to(uint(17)), "some/pkg", "uint"},
+		5: {to(uint32(17)), "some/pkg", "uint32"},
+		6: {to(uintptr(17)), "some/pkg", "uintptr"},
+		7: {to(float32(17)), "some/pkg", "float32"},
+		8: {to(complex64(17)), "some/pkg", "complex64"},
+
+		/////////////////////////
 		// Structs
-		9: {
-			reflect.TypeOf(gcs.CreateObjectRequest{}),
-			"some/pkg",
-			"gcs.CreateObjectRequest",
-		},
+		/////////////////////////
 
-		10: {
-			reflect.TypeOf(gcs.CreateObjectRequest{}),
+		9:  {to(gcs.Object{}), "some/pkg", "gcs.Object"},
+		10: {to(gcs.Object{}), gcsPkgPath, "Object"},
+
+		/////////////////////////
+		// Arrays
+		/////////////////////////
+
+		11: {to([3]int{}), "some/pkg", "[3]int"},
+		12: {to([3]gcs.Object{}), gcsPkgPath, "[3]Object"},
+
+		/////////////////////////
+		// Channels
+		/////////////////////////
+
+		13: {to((chan int)(nil)), "some/pkg", "chan int"},
+		14: {to((<-chan int)(nil)), "some/pkg", "<-chan int"},
+		15: {to((chan<- int)(nil)), "some/pkg", "chan<- int"},
+		16: {to((<-chan gcs.Object)(nil)), gcsPkgPath, "<-chan Object"},
+
+		/////////////////////////
+		// Functions
+		/////////////////////////
+
+		17: {
+			to(func(int, gcs.Object) (*gcs.Object, error) { return nil, nil }),
 			gcsPkgPath,
-			"CreateObjectRequest",
+			"func(int, Object) (*Object, error)",
 		},
 	}
 
