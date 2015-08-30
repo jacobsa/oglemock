@@ -19,7 +19,6 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
-	. "github.com/jacobsa/ogletest"
 	"go/build"
 	"io/ioutil"
 	"os"
@@ -27,6 +26,8 @@ import (
 	"path"
 	"syscall"
 	"testing"
+
+	. "github.com/jacobsa/ogletest"
 )
 
 var dumpNew = flag.Bool("dump_new", false, "Dump new golden files.")
@@ -185,6 +186,14 @@ func (t *CreateMockTest) UnknownInterface() {
 		1,
 		"io",
 		"Frobnicator")
+}
+
+func (t *CreateMockTest) GCSBucket() {
+	t.runGoldenTest(
+		"gcs_bucket",
+		0,
+		"github.com/jacobsa/oglemock/createmock/test_cases/gcs",
+		"Bucket")
 }
 
 func (t *CreateMockTest) IoReaderAndWriter() {
