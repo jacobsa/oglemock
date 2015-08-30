@@ -25,5 +25,6 @@ import "reflect"
 func typeString(
 	t reflect.Type,
 	pkgPath string) (s string) {
-	panic("TODO")
+	s = t.String()
+	return
 }
