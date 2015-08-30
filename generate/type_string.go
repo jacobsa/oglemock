@@ -15,7 +15,11 @@
 
 package generate
 
-import "reflect"
+import (
+	"fmt"
+	"log"
+	"reflect"
+)
 
 // Return the string that should be used to refer to the supplied type within
 // the given package.
@@ -44,6 +48,14 @@ func typeString(
 		return
 	}
 
-	s = t.String()
+	// This type is unnamed. Recurse.
+	switch t.Kind() {
+	case reflect.Array:
+		s = fmt.Sprintf("[%d]%s", t.Len(), typeString(t.Elem(), pkgPath))
+
+	default:
+		log.Panicf("Unhandled kind: %v", t.Kind())
+	}
+
 	return
 }
