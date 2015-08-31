@@ -21,6 +21,7 @@ package generate
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"go/ast"
 	"go/parser"
 	"go/printer"
@@ -31,7 +32,7 @@ import (
 	"text/template"
 )
 
-const tmplStr = `
+const gTmplStr = `
 // This file was auto-generated using createmock. See the following page for
 // more information:
 //
@@ -119,21 +120,6 @@ type tmplArg struct {
 
 	// The set of interfaces to mock.
 	Interfaces []reflect.Type
-}
-
-var tmpl *template.Template
-
-func init() {
-	extraFuncs := make(template.FuncMap)
-	extraFuncs["getMethods"] = getMethods
-	extraFuncs["getInputs"] = getInputs
-	extraFuncs["getOutputs"] = getOutputs
-	extraFuncs["getInputTypeString"] = getInputTypeString
-	extraFuncs["getTypeString"] = getTypeString
-
-	tmpl = template.New("code")
-	tmpl.Funcs(extraFuncs)
-	tmpl.Parse(tmplStr)
 }
 
 func getInputTypeString(i int, ft reflect.Type) string {
@@ -276,7 +262,10 @@ func getImports(interfaces []reflect.Type) importMap {
 
 // Given a set of interfaces to mock, write out source code for a package named
 // `pkg` that contains mock implementations of those interfaces.
-func GenerateMockSource(w io.Writer, pkg string, interfaces []reflect.Type) error {
+func GenerateMockSource(
+	w io.Writer,
+	pkg string,
+	interfaces []reflect.Type) (err error) {
 	// Sanity-check arguments.
 	if pkg == "" {
 		return errors.New("Package name must be non-empty.")
@@ -293,13 +282,30 @@ func GenerateMockSource(w io.Writer, pkg string, interfaces []reflect.Type) erro
 		}
 	}
 
-	// Create an appropriate template arg, then execute the template. Write the
-	// raw output into a buffer.
-	var arg tmplArg
-	arg.Pkg = pkg
-	arg.Imports = getImports(interfaces)
-	arg.Interfaces = interfaces
+	// Set up an appropriate template arg.
+	arg := tmplArg{
+		Pkg:        pkg,
+		Imports:    getImports(interfaces),
+		Interfaces: interfaces,
+	}
 
+	// Configure and parse the template.
+	tmpl := template.New("code")
+	tmpl.Funcs(template.FuncMap{
+		"getMethods":         getMethods,
+		"getInputs":          getInputs,
+		"getOutputs":         getOutputs,
+		"getInputTypeString": getInputTypeString,
+		"getTypeString":      getTypeString,
+	})
+
+	_, err = tmpl.Parse(gTmplStr)
+	if err != nil {
+		err = fmt.Errorf("Parse: %v", err)
+		return
+	}
+
+	// Execute the template, collecting the raw output into a buffer.
 	buf := new(bytes.Buffer)
 	if err := tmpl.Execute(buf, arg); err != nil {
 		return err
