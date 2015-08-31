@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"log"
 	"reflect"
+	"strings"
 )
 
 // Return the string that should be used to refer to the supplied type within
@@ -57,7 +58,7 @@ func typeString(
 		s = fmt.Sprintf("%s %s", t.ChanDir(), typeString(t.Elem(), pkgPath))
 
 	case reflect.Func:
-		s = funcTypeString(t)
+		s = funcTypeString(t, pkgPath)
 
 	case reflect.Map:
 		s = fmt.Sprintf(
@@ -78,7 +79,26 @@ func typeString(
 	return
 }
 
-func funcTypeString(t reflect.Type) (s string) {
-	s = "TODO"
+func funcTypeString(
+	t reflect.Type,
+	pkgPath string) (s string) {
+	// Deal with input types.
+	var in []string
+	for i := 0; i < t.NumIn(); i++ {
+		in = append(in, typeString(t.In(i), pkgPath))
+	}
+
+	// And output types.
+	var out []string
+	for i := 0; i < t.NumOut(); i++ {
+		out = append(out, typeString(t.Out(i), pkgPath))
+	}
+
+	// Put it all together.
+	s = fmt.Sprintf(
+		"func(%s) (%s)",
+		strings.Join(in, ", "),
+		strings.Join(out, ", "))
+
 	return
 }

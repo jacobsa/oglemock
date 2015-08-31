@@ -99,6 +99,18 @@ func (t *TypeStringTest) TestCases() {
 		/////////////////////////
 
 		20: {
+			to(func(int, gcs.Object) {}),
+			gcsPkgPath,
+			"func(int, Object) ()",
+		},
+
+		21: {
+			to(func() (*gcs.Object, error) { return nil, nil }),
+			gcsPkgPath,
+			"func() (*Object, error)",
+		},
+
+		22: {
 			to(func(int, gcs.Object) (*gcs.Object, error) { return nil, nil }),
 			gcsPkgPath,
 			"func(int, Object) (*Object, error)",
@@ -108,53 +120,53 @@ func (t *TypeStringTest) TestCases() {
 		// Interfaces
 		/////////////////////////
 
-		21: {to((*error)(nil)).Elem(), "some/pkg", "error"},
-		22: {to((*io.Reader)(nil)).Elem(), "some/pkg", "io.Reader"},
-		23: {to((*io.Reader)(nil)).Elem(), "io", "Reader"},
+		23: {to((*error)(nil)).Elem(), "some/pkg", "error"},
+		24: {to((*io.Reader)(nil)).Elem(), "some/pkg", "io.Reader"},
+		25: {to((*io.Reader)(nil)).Elem(), "io", "Reader"},
 
 		/////////////////////////
 		// Maps
 		/////////////////////////
 
-		24: {to(map[*gcs.Object]gcs.Object{}), gcsPkgPath, "map[*Object]Object"},
+		26: {to(map[*gcs.Object]gcs.Object{}), gcsPkgPath, "map[*Object]Object"},
 
 		/////////////////////////
 		// Slices
 		/////////////////////////
 
-		25: {to([]int{}), "some/pkg", "[]int"},
-		26: {to([]gcs.Object{}), gcsPkgPath, "[]Object"},
+		27: {to([]int{}), "some/pkg", "[]int"},
+		28: {to([]gcs.Object{}), gcsPkgPath, "[]Object"},
 
 		/////////////////////////
 		// Strings
 		/////////////////////////
 
-		27: {to(""), gcsPkgPath, "string"},
+		29: {to(""), gcsPkgPath, "string"},
 
 		/////////////////////////
 		// Unsafe pointer
 		/////////////////////////
 
-		28: {to(unsafe.Pointer(nil)), gcsPkgPath, "unsafe.Pointer"},
+		30: {to(unsafe.Pointer(nil)), gcsPkgPath, "unsafe.Pointer"},
 
 		/////////////////////////
 		// Named types
 		/////////////////////////
 
-		29: {to(gcs.Int(17)), "some/pkg", "gcs.Int"},
-		30: {to(gcs.Int(17)), gcsPkgPath, "Int"},
+		31: {to(gcs.Int(17)), "some/pkg", "gcs.Int"},
+		32: {to(gcs.Int(17)), gcsPkgPath, "Int"},
 
-		31: {to(gcs.Array{}), "some/pkg", "gcs.Array"},
-		32: {to(gcs.Array{}), gcsPkgPath, "Array"},
+		33: {to(gcs.Array{}), "some/pkg", "gcs.Array"},
+		34: {to(gcs.Array{}), gcsPkgPath, "Array"},
 
-		33: {to(gcs.Chan(nil)), "some/pkg", "gcs.Chan"},
-		34: {to(gcs.Chan(nil)), gcsPkgPath, "Chan"},
+		35: {to(gcs.Chan(nil)), "some/pkg", "gcs.Chan"},
+		36: {to(gcs.Chan(nil)), gcsPkgPath, "Chan"},
 
-		35: {to(gcs.Ptr(nil)), "some/pkg", "gcs.Ptr"},
-		36: {to(gcs.Ptr(nil)), gcsPkgPath, "Ptr"},
+		37: {to(gcs.Ptr(nil)), "some/pkg", "gcs.Ptr"},
+		38: {to(gcs.Ptr(nil)), gcsPkgPath, "Ptr"},
 
-		37: {to((*gcs.Int)(nil)), "some/pkg", "*gcs.Int"},
-		38: {to((*gcs.Int)(nil)), gcsPkgPath, "*Int"},
+		39: {to((*gcs.Int)(nil)), "some/pkg", "*gcs.Int"},
+		40: {to((*gcs.Int)(nil)), gcsPkgPath, "*Int"},
 	}
 
 	for i, tc := range testCases {
