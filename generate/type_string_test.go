@@ -21,7 +21,7 @@ import (
 	"testing"
 	"unsafe"
 
-	"github.com/jacobsa/oglemock/createmock/test_cases/gcs"
+	"github.com/jacobsa/oglemock/createmock/testdata/gcs"
 	. "github.com/jacobsa/ogletest"
 )
 
@@ -41,7 +41,7 @@ func init() { RegisterTestSuite(&TypeStringTest{}) }
 ////////////////////////////////////////////////////////////////////////
 
 func (t *TypeStringTest) TestCases() {
-	const gcsPkgPath = "github.com/jacobsa/oglemock/createmock/test_cases/gcs"
+	const gcsPkgPath = "github.com/jacobsa/oglemock/createmock/testdata/gcs"
 	to := reflect.TypeOf
 
 	testCases := []struct {
