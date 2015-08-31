@@ -16,3 +16,8 @@ type CreateObjectRequest struct {
 
 type CopyObjectRequest struct {
 }
+
+type Int int
+type Array []int
+type Chan <-chan int
+type Ptr *int
