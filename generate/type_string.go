@@ -23,7 +23,8 @@ import (
 )
 
 // Return the string that should be used to refer to the supplied type within
-// the given package.
+// the given package. The output is not guaranteed to be pretty, and should be
+// run through a tool like gofmt afterward.
 //
 // For example, a pointer to an io.Reader may be rendered as "*Reader" or
 // "*io.Reader" depending on whether the package path is "io" or not.
@@ -58,7 +59,10 @@ func typeString(
 		s = fmt.Sprintf("%s %s", t.ChanDir(), typeString(t.Elem(), pkgPath))
 
 	case reflect.Func:
-		s = funcTypeString(t, pkgPath)
+		s = typeString_Func(t, pkgPath)
+
+	case reflect.Interface:
+		s = typeString_Interface(t, pkgPath)
 
 	case reflect.Map:
 		s = fmt.Sprintf(
@@ -72,14 +76,18 @@ func typeString(
 	case reflect.Slice:
 		s = fmt.Sprintf("[]%s", typeString(t.Elem(), pkgPath))
 
+	case reflect.Struct:
+		s = typeString_Struct(t, pkgPath)
+
 	default:
-		log.Panicf("Unhandled kind: %v", t.Kind())
+		log.Panicf("Unhandled kind %v for type: %v", t.Kind(), t)
 	}
 
 	return
 }
 
-func funcTypeString(
+func typeString_FuncOrMethod(
+	name string,
 	t reflect.Type,
 	pkgPath string) (s string) {
 	// Deal with input types.
@@ -96,9 +104,44 @@ func funcTypeString(
 
 	// Put it all together.
 	s = fmt.Sprintf(
-		"func(%s) (%s)",
+		"%s(%s) (%s)",
+		name,
 		strings.Join(in, ", "),
 		strings.Join(out, ", "))
 
+	return
+}
+
+func typeString_Func(
+	t reflect.Type,
+	pkgPath string) (s string) {
+	return typeString_FuncOrMethod("func", t, pkgPath)
+}
+
+func typeString_Struct(
+	t reflect.Type,
+	pkgPath string) (s string) {
+	var fields []string
+	for i := 0; i < t.NumField(); i++ {
+		f := t.Field(i)
+		fString := fmt.Sprintf("%s %s", f.Name, typeString(f.Type, pkgPath))
+		fields = append(fields, fString)
+	}
+
+	s = fmt.Sprintf("struct { %s }", strings.Join(fields, "; "))
+	return
+}
+
+func typeString_Interface(
+	t reflect.Type,
+	pkgPath string) (s string) {
+	var methods []string
+	for i := 0; i < t.NumMethod(); i++ {
+		m := t.Method(i)
+		mString := typeString_FuncOrMethod(m.Name, m.Type, pkgPath)
+		methods = append(methods, mString)
+	}
+
+	s = fmt.Sprintf("interface { %s }", strings.Join(methods, "; "))
 	return
 }
