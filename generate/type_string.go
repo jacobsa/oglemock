@@ -53,9 +53,32 @@ func typeString(
 	case reflect.Array:
 		s = fmt.Sprintf("[%d]%s", t.Len(), typeString(t.Elem(), pkgPath))
 
+	case reflect.Chan:
+		s = fmt.Sprintf("%s %s", t.ChanDir(), typeString(t.Elem(), pkgPath))
+
+	case reflect.Func:
+		s = funcTypeString(t)
+
+	case reflect.Map:
+		s = fmt.Sprintf(
+			"map[%s]%s",
+			typeString(t.Key(), pkgPath),
+			typeString(t.Elem(), pkgPath))
+
+	case reflect.Ptr:
+		s = fmt.Sprintf("*%s", typeString(t.Elem(), pkgPath))
+
+	case reflect.Slice:
+		s = fmt.Sprintf("[]%s", typeString(t.Elem(), pkgPath))
+
 	default:
 		log.Panicf("Unhandled kind: %v", t.Kind())
 	}
 
+	return
+}
+
+func funcTypeString(t reflect.Type) (s string) {
+	s = "TODO"
 	return
 }
