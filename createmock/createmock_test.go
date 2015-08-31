@@ -92,7 +92,7 @@ func (t *CreateMockTest) runGoldenTest(
 	ExpectEq(expectedReturnCode, actualReturnCode)
 
 	// Read the golden file.
-	goldenPath := path.Join("test_cases", "golden."+caseName)
+	goldenPath := path.Join("testdata", "golden."+caseName)
 	goldenData := readFileOrDie(goldenPath)
 
 	// Compare the two.
@@ -192,7 +192,7 @@ func (t *CreateMockTest) GCSBucket() {
 	t.runGoldenTest(
 		"gcs_bucket",
 		0,
-		"github.com/jacobsa/oglemock/createmock/test_cases/gcs",
+		"github.com/jacobsa/oglemock/createmock/testdata/gcs",
 		"Bucket")
 }
 
@@ -213,12 +213,12 @@ func (t *CreateMockTest) OsFileInfo() {
 
 func (t *CreateMockTest) ComplicatedSamplePackage() {
 	t.runCompilationTest(
-		"github.com/jacobsa/oglemock/generate/test_cases/complicated_pkg",
+		"github.com/jacobsa/oglemock/generate/testdata/complicated_pkg",
 		"ComplicatedThing")
 }
 
 func (t *CreateMockTest) RenamedSamplePackage() {
 	t.runCompilationTest(
-		"github.com/jacobsa/oglemock/generate/test_cases/renamed_pkg",
+		"github.com/jacobsa/oglemock/generate/testdata/renamed_pkg",
 		"SomeInterface")
 }

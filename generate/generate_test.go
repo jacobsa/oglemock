@@ -18,17 +18,18 @@ package generate_test
 import (
 	"bytes"
 	"flag"
-	. "github.com/jacobsa/oglematchers"
-	"github.com/jacobsa/oglemock/generate"
-	"github.com/jacobsa/oglemock/generate/test_cases/complicated_pkg"
-	"github.com/jacobsa/oglemock/generate/test_cases/renamed_pkg"
-	. "github.com/jacobsa/ogletest"
 	"image"
 	"io"
 	"io/ioutil"
 	"path"
 	"reflect"
 	"testing"
+
+	. "github.com/jacobsa/oglematchers"
+	"github.com/jacobsa/oglemock/generate"
+	"github.com/jacobsa/oglemock/generate/testdata/complicated_pkg"
+	"github.com/jacobsa/oglemock/generate/testdata/renamed_pkg"
+	. "github.com/jacobsa/ogletest"
 )
 
 var dumpNew = flag.Bool("dump_new", false, "Dump new golden files.")
@@ -58,7 +59,7 @@ func (t *GenerateTest) runGoldenTest(
 	AssertEq(nil, err, "Error from GenerateMockSource: %v", err)
 
 	// Read the golden file.
-	goldenPath := path.Join("test_cases", "golden."+caseName+".go")
+	goldenPath := path.Join("testdata", "golden."+caseName+".go")
 	goldenData := readFileOrDie(goldenPath)
 
 	// Compare the two.

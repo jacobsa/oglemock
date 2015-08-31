@@ -9,7 +9,7 @@ package mock_gcs
 import (
 	fmt "fmt"
 	oglemock "github.com/jacobsa/oglemock"
-	gcs "github.com/jacobsa/oglemock/createmock/test_cases/gcs"
+	gcs "github.com/jacobsa/oglemock/createmock/testdata/gcs"
 	context "golang.org/x/net/context"
 	runtime "runtime"
 	unsafe "unsafe"
